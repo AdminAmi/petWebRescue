@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:jsf="jakarta.faces"
+      xmlns:c="jakarta.tags.core"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:p="jakarta.faces.passthrough">
+    <h:head>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <title>Pet Rescue</title>
+        <h:outputStylesheet   name="bootstrap.min.css" />
+        <h:outputStylesheet   name="mycss.css" />
+        <h:outputScript   name="bootstrap.bundle.min.js" />
+        <h:outputStylesheet library="css" name="all.css"/>
+    </h:head>
+    <h:body class="test" >
+        
+        <!-- Uključujem navbar za navigaciju-->
+        <h:messages id="test" style="display: none;"/>
+        <ui:include src="resources/parts/nav.xhtml"/>
+        
+        <!-- Centralni dio ekrana -->
+        <div class="container position-absolute top-50 start-50 translate-middle"  style="opacity: 0.8">
+            <div class="mt-2 p-4 bg-light  rounded-pill">
+                <!--<br/><br/><br/><br/><br/><br/>-->
+               <p class=" fs-2  text-center" >
+                   Dobro došli na stranicu za registraciju i odabir kućnog ljubimca 
+                <span class="text-center fs-6" style="padding-top: 30px;">
+                    <br/>Ukoliko ne posjedujete korisnički račun prijavite se putem sljedećeg linka: 
+                    <a jsf:outcome="unosKorisnikaWeb">
+                        <b>Unesite korisničke podatke</b>
+                    </a>             
+                </span>
+                   <ui:include src="resources/parts/flash.xhtml"/>
+               </p>
+            </div>
+        </div >       
+        <!-- Modal dialog za logiranje -->
+        <ui:include src="resources/parts/modalPrijava.xhtml"/>
+        <!-- Uključujem stranicu za ispis greške ako se desi -->
+        <ui:include src="resources/parts/errorMessage.xhtml"/>
+        
+
+    </h:body>
+</html>

@@ -1,0 +1,80 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:ui="jakarta.faces.facelets">
+    <h:head>
+        <title>Facelet Title</title>
+    </h:head>
+    <h:body>
+       <!-- Kontejner za toaste (obično u gornjem desnom uglu) -->
+       
+        <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1100; ">
+            
+            <ui:repeat value="#{facesContext.messageList}" var="msg">
+                <div class="toast show align-items-center text-white border-0 
+                            #{msg.severity.ordinal == 0 ? 'bg-success-light' : 
+                              (msg.severity.ordinal == 2 ? 'bg-danger-light' : 'bg-warning-light')}" 
+                     role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="toast-header #{msg.severity.ordinal == 0 ? 'bg-success' : 
+                              (msg.severity.ordinal == 2 ? 'bg-danger' : 'bg-warning')}" >
+                        <strong class="text-white">PetRescue poruka</strong>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" 
+                                style="opacity: 1;" 
+                                data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                   
+                        <div class="toast-body" style="opacity: 0.85;">
+                            <strong >#{msg.summary}</strong><br/>#{msg.detail}
+                        </div>
+                        
+                    
+                </div>
+            </ui:repeat>
+        </div> 
+      
+        
+       
+       <!--
+       <script>
+           document.addEventListener("DOMContentLoaded", function() {
+                var toastElList = [].slice.call(document.querySelectorAll('.toast'));
+                var toastList = toastElList.map(function(toastEl) {
+                    var toast = new bootstrap.Toast(toastEl, { autohide: true, delay: 5000 });
+                    toast.show();
+                    return toast;
+                });
+            });
+       </script>
+       -->
+       <script>
+            // Funkcija koja pronalazi sve tostive i prikazuje ih
+            function prikaziTostove() {
+                var toastElList = [].slice.call(document.querySelectorAll('.toast'));
+                var toastList = toastElList.map(function (toastEl) {
+                    var t = new bootstrap.Toast(toastEl, { autohide: true, delay: 5000 });
+                    t.show();
+                    return t;
+                });
+            }
+
+            // Pokreni pri učitavanju stranice
+            document.addEventListener("DOMContentLoaded", prikaziTostove);
+
+            // Ako koristiš AJAX (f:ajax), dodaj i ovo da radi nakon svakog klika:
+            if (typeof jsf !== 'undefined') {
+                jsf.ajax.addOnEvent(function(data) {
+                    if (data.status === 'success') {
+                        prikaziTostove();
+                    }
+                });
+            }
+        </script>
+
+         
+            
+         
+           
+    </h:body>
+    
+</html>

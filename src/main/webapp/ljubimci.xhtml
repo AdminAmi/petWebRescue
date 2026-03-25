@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:c="jakarta.tags.core"
+      xmlns:ezcomp="jakarta.faces.composite/ezcomp">
+    <h:head>
+        <title>Pregled ljubimaca</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        
+        <h:outputStylesheet library="css" name="bootstrap.min.css" />
+        <h:outputStylesheet library="css" name="mycss.css" />
+        <h:outputScript library="js" name="bootstrap.bundle.min.js" />
+        <f:metadata>            
+            <f:viewAction action="#{ljubimacPogled.ljubimci(korisnikPogled.k.id)}"/>
+        </f:metadata>
+    </h:head>
+    <h:body>
+        <h:messages id="test" style="display: none;"/>
+        <ui:include src="resources/parts/errorMessage.xhtml"/>
+        <ui:include src="resources/parts/nav.xhtml"/>
+        <div class="container"> 
+            <ui:include src="resources/parts/zaglavlje.xhtml"/>                
+            <ezcomp:podnaslov Podnaslov="Pregled dostupnih ljubimaca:"/>
+            <div style="padding-left: 30px;padding-top: 10px;">
+                <!-- tabela sa slobodnim ljubimcima -->
+                 <ul class="nav nav-tabs">
+              <li class="nav-item">
+                <a class="nav-link active" data-bs-toggle="tab" href="#dostupni">Dostupni ljubimci - psi</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#rezervisani">Dostupni ljubimci - mačke</a>
+              </li>
+              <c:if test="#{korisnikPogled.loged}">
+              <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#udomljeni">Moji rezervisani ljubimci</a>
+              </li>
+              </c:if>
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div class="tab-pane   active " id="dostupni"><p/><ezcomp:tabelaLjubimci Zapisi="#{ljubimacPogled.psiSlobodni}"/></div>
+                <div class="tab-pane  fade" id="rezervisani"><p/><ezcomp:tabelaLjubimci Zapisi="#{ljubimacPogled.mackeSlobodne}"/> </div>
+                <div class="tab-pane  fade" id="udomljeni"><p/><ezcomp:tabelaLjubimci Zapisi="#{ljubimacPogled.rezervisaniOdKorisnika}"/> </div>
+            </div>
+            </div>              
+               
+            
+            
+        </div>
+        <ui:include src="resources/parts/modalPrijava.xhtml"/> 
+    </h:body>
+</html>

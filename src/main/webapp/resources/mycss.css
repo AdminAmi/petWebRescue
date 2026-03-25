@@ -1,0 +1,108 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Dec 9, 2022, 1:58:58 PM
+    Author     : home
+*/
+
+.pozicionirajDIVGreska2 { position: absolute;top: 80px;  right: 10px; width: 380px;opacity: 1; /*height: fit-content;   border: 3px solid #73AD21;*/}
+
+#hideMe {
+    -moz-animation: cssAnimation 0s ease-in 5s forwards;
+    /* Firefox */
+    -webkit-animation: cssAnimation 0s ease-in 5s forwards;
+    /* Safari and Chrome */
+    -o-animation: cssAnimation 0s ease-in 5s forwards;
+    /* Opera */
+    animation: cssAnimation 0s ease-in 5s forwards;
+    -webkit-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+}
+@keyframes cssAnimation {
+    to {
+        width:0;
+        height:0;
+        overflow:hidden;
+    }
+}
+@-webkit-keyframes cssAnimation {
+    to {
+        width:0;
+        height:0;
+        visibility:hidden;
+    }
+}
+ .test{
+                background-image: url('../resources/pic/logoPeets.jpg');
+                background-repeat: no-repeat;
+                background-attachment: fixed;
+                /*background-size: 100% 100%;*/
+                background-size: cover;
+                } 
+                
+.toast-container {
+    position: fixed !important; /* Garantuje da ne zauzima prostor u layoutu */
+    top: 1rem;    /* Odmak od vrha */
+    right: 1rem;  /* Odmak od desne ivice */
+    z-index: 9999; /* Da bude iznad svega */
+    width: 350px;  /* Standardna širina Bootstrap tosta */
+    height: auto;  /* Da se širi prema dole zavisno od broja poruka */
+    pointer-events: none; /* Sprečava da nevidljivi kontejner blokira klikove na stranici */
+}
+
+.toast {
+    pointer-events: auto; /* Vraća mogućnost klika na dugme 'Close' unutar samog tosta */
+    display: block; /* Osigurava da su vidljivi ako JSF renderuje ui:repeat */
+}
+
+/* Bljeđa crvena (za Error body) */
+.bg-danger-light {
+    background-color: #f8d7da !important; 
+    color: #842029 !important; /* Tamniji tekst za bolji kontrast na svijetloj pozadini */
+}
+
+/* Bljeđa zelena (za Success body) */
+.bg-success-light {
+    background-color: #d1e7dd !important;
+    color: #0f5132 !important;
+}
+
+/* Bljeđa žuta (za Warning body) */
+.bg-warning-light {
+    background-color: #fff3cd !important;
+    color: #664d03 !important;
+}
+
+/* Definisanje animacije ulaska */
+@keyframes slideInRight {
+    0% {
+        transform: translateX(110%); /* Počinje van ekrana desno */
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0);   /* Završava na svojoj poziciji */
+        opacity: 1;
+    }
+}
+
+/* Primjena na Bootstrap toast kada postane vidljiv */
+.toast.show {
+    animation: slideInRight 0.5s ease-out forwards;
+    display: block !important; /* Osigurava da se vidi */
+}
+
+/* Osiguraj da kontejner ne dozvoljava horizontalni scroll tokom animacije */
+.toast-container {
+    overflow-x: hidden;
+    padding-right: 10px !important;
+}
+
+/* Sakrij JSF-ov automatski listing poruka u uglu */
+#jakarta_faces_developmentstage_messages {
+    display: none !important;
+}
+
+

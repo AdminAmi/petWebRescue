@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="jakarta.faces.composite"
+      xmlns:ezcomp="jakarta.faces.composite/ezcomp"          
+      xmlns:h="jakarta.faces.html"
+      >
+
+    <!-- INTERFACE -->
+    <cc:interface>
+        <cc:attribute name="imeiprezime" /> 
+        <cc:attribute name="user" />
+        <cc:attribute name="pass" />
+        <cc:attribute name="adresa" />
+        <cc:attribute name="telefon" />
+        <cc:attribute name="DIS"/>
+        <cc:attribute name="ButtonAction" method-signature="java.lang.String unosNovogKorisnikaWeb()" />
+        <cc:attribute name="tekstButt" />
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <div style="padding-left: 30px;padding-top: 10px;">
+           <div class="row g-2">
+                <div class="col-md"> 
+                    <ezcomp:inputTextPopunjen ID="imeiprezime" 
+                                              TIP="text" REQ="true"
+                                              VALUE="#{cc.attrs.imeiprezime}" 
+                                              PHOLDER="Ime i prezime korisnika"/>
+                </div>
+               <div class="col-md">
+                    <ezcomp:inputTextPopunjen ID="telefon" TIP="text" 
+                                              VALUE="#{cc.attrs.telefon}" 
+                                              PHOLDER="Korisnički telefon" />
+               </div>
+           </div>
+            <ezcomp:inputTextPopunjen ID="adresa" TIP="text" 
+                                      VALUE="#{cc.attrs.adresa}" 
+                                      PHOLDER="Korisnička adresa" />
+                    
+             <div class="row g-2">
+                <div class="col-md">        
+                    <ezcomp:inputTextPopunjen ID="user" TIP="text" REQ="true"
+                                              VALUE="#{cc.attrs.user}" 
+                                              PHOLDER="Korisničko ime" 
+                                              DISABLED="#{cc.attrs.DIS}"/>
+                </div>
+                 <div class="col-md">
+                     <ezcomp:inputPassPopunjen ID="pass" REQ="true"
+                                              VALUE="#{cc.attrs.pass}" 
+                                              PHOLDER="Korisnička lozinka"/>
+                 </div>
+             </div>
+            <h:commandButton class="btn btn-outline-dark float-end" value="#{cc.attrs.tekstButt}" action="#{cc.attrs.ButtonAction}" />
+            
+        </div>
+    </cc:implementation>
+</html>

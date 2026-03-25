@@ -1,0 +1,55 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"          
+      xmlns:ezcomp="jakarta.faces.composite/ezcomp"
+      xmlns:ui="jakarta.faces.facelets">
+    <h:head>
+        <title>Facelet Title</title>
+    </h:head>
+    <h:body>
+        <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" 
+             data-bs-keyboard="false" tabindex="-1" 
+             aria-labelledby="staticBackdropLabel" aria-hidden="true">
+          <h:form>
+             
+            <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">
+                    Logiranje korisnika
+                </h5>
+                <button type="button" class="btn-close" 
+                    data-bs-dismiss="modal" aria-label="Close">                            
+                </button>
+              </div>
+              <div class="modal-body">
+                  
+                  <ezcomp:inputTextPopunjen 
+                      TIP="text"  
+                      ID="floatingInput" 
+                      VALUE="#{korisnikPogled.korisnickoIme}" 
+                      PHOLDER="Korisničko ime"/>
+                  <ui:remove>
+                  <ezcomp:inputTextPopunjen 
+                      TIP="password"  
+                      ID="floatingPassword" 
+                      VALUE="#{korisnikPogled.korisnickaLozinka}" 
+                      PHOLDER="Korisnička lozinka"/>  
+                  </ui:remove>
+                  <ezcomp:inputPassPopunjen 
+                      ID="floatingPassword"
+                      VALUE="#{korisnikPogled.korisnickaLozinka}"
+                      PHOLDER="Korisnička lozinka"/>
+              </div>
+              <div class="modal-footer">              
+                <h:commandButton class="btn btn-outline-dark" 
+                                 action="#{korisnikPogled.registracija()}" 
+                                 value="&#x2714; Prijava" />
+              </div>
+            </div>
+          </div>
+         </h:form>
+        </div>
+    </h:body>
+</html>

@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="jakarta.faces.composite"
+      xmlns:ezcomp="jakarta.faces.composite/ezcomp"
+      xmlns:c="jakarta.tags.core"
+      xmlns:h="jakarta.faces.html">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+         <cc:attribute name="naziv" /> 
+        <cc:attribute name="datum" />
+        <cc:attribute name="starost" /> 
+        <cc:attribute name="vrsta"/>
+       
+        <cc:attribute name="ButtonAction" method-signature="java.lang.String unosNovogKorisnikaWeb()" />
+        <cc:attribute name="ButtonActionRezervisi" method-signature="java.lang.String unosNovogKorisnikaWeb()" />
+        
+        <cc:attribute name="tekstButt" />
+        <cc:attribute name="rend"/>
+        <cc:attribute name="rendRezervisi"/>
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <ezcomp:inputTextPopunjen ID="nazivLjubimca" TIP="text" VALUE="#{cc.attrs.naziv}" PHOLDER="Naziv ljubimca" REQ="true"/>
+        <ezcomp:inputTextPopunjen ID="datumUdomljavanja" TIP="date" VALUE="#{cc.attrs.datum}" PHOLDER="Datum udomljavanja" />
+        <ezcomp:inputTextPopunjen ID="starost" TIP="text" VALUE="#{cc.attrs.starost}" PHOLDER="Starost ljubimca"/>  
+        <ezcomp:inputSelect ID="vrsta" VALUE="#{cc.attrs.vrsta}" />
+        <c:if test="#{ljubimacPogled.ljubimacK.ljubimac.status!='REZERVISAN'}">
+        <h:commandButton class="btn btn-outline-dark float-end" value="Rezervacija ljubimca" action="#{cc.attrs.ButtonActionRezervisi}" rendered="#{cc.attrs.rendRezervisi}" />
+        </c:if>
+        <c:if test="#{ljubimacPogled.ljubimacK.ljubimac.status=='REZERVISAN' and cc.attrs.rend}">
+            <ezcomp:inputTextPopunjen ID="rezervisan" TIP="text" VALUE="#{ljubimacPogled.koris.imeiprezime}" PHOLDER="Rezervisan od korisnika" REQ="true"/>
+            <h:commandButton class="btn btn-outline-dark float-end" value="Udomi ljubimca" action="#{ljubimacPogled.udomiLjubimca()}" />                 
+        </c:if>
+        <c:if test="#{ljubimacPogled.ljubimacK.ljubimac.idK > 0 and ljubimacPogled.ljubimacK.ljubimac.status=='UDOMLJEN'}">
+            <ezcomp:inputTextPopunjen ID="rezervisan" TIP="text" VALUE="#{ljubimacPogled.koris.imeiprezime}" PHOLDER="Udomljen od korisnika" REQ="true"/>                
+        </c:if>
+        <c:if test="#{ljubimacPogled.ljubimacK.ljubimac.idK == 0}">
+            <h:commandButton class="btn btn-outline-dark float-end" value="#{cc.attrs.tekstButt}" action="#{cc.attrs.ButtonAction}" rendered="#{cc.attrs.rend}" />
+        </c:if>
+        <c:if test="#{ljubimacPogled.ljubimacK.ljubimac.status == 'UDOMLJEN'}">
+            <h:commandButton class="btn btn-link" value="Ukloni udomljenje ljubimca" action="#{ljubimacPogled.ukloniUdomljenje()}" />
+        </c:if>
+    </cc:implementation>
+</html>
