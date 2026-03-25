@@ -33,12 +33,12 @@ public class UdomljavanjeCRUD extends korisni.Kontroler{
      */
     public void dodajRelaciju(Udomljen udomljen) throws SQLException {
         String sql = String.format("INSERT INTO udomljavanje "
-                + "(idKlijenti, idLjubimac, datumUdomljavanja, rezervacija) " +
-                "VALUES (%d, %d, '%s', %d)",
+                + "(idKlijenti, idLjubimac, datumUdomljavanja, status) " +
+                "VALUES (%d, %d, '%s', '%s')",
                 udomljen.getIdKlijenti(),
                 udomljen.getIdLjubimac(),
                 dateFormat.format(udomljen.getDatumUdomljavanja()),
-                udomljen.getRezervacija()
+                udomljen.getStatus()
         );        
         InsDelUpd(sql);
     }
@@ -79,7 +79,7 @@ public class UdomljavanjeCRUD extends korisni.Kontroler{
             st.close();
             zatvoriKonekciju();
             udomljen.setKlijent(kk.dobaviKlijentaPoId(udomljen.getIdKlijenti()));
-            udomljen.setLjubimac(lk.dobaviLjubimcaPoId(udomljen.getIdLjubimac()));
+            udomljen.setLjub(lk.dobaviLjubimcaPoId(udomljen.getIdLjubimac()));
         }       
         return udomljavanja;
     }
@@ -128,7 +128,7 @@ public class UdomljavanjeCRUD extends korisni.Kontroler{
         // Dodatno popunjavanje objekata radimo SAMO ako udomljavanje postoji (nije null)
         if (udomljen != null) {
             udomljen.setKlijent(kk.dobaviKlijentaPoId(udomljen.getIdKlijenti()));
-            udomljen.setLjubimac(lk.dobaviLjubimcaPoId(udomljen.getIdLjubimac()));
+            udomljen.setLjub(lk.dobaviLjubimcaPoId(udomljen.getIdLjubimac()));
         }
 
         return udomljen;

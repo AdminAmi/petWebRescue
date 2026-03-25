@@ -17,6 +17,7 @@
         <h:outputScript name="bootstrap.bundle.min.js" />
     </h:head>
     <h:body>
+         <h:messages id="test" style="display: none;"/>
          <c:if test="#{korisnikPogled.kont.korisnik.tip == 'ADMINISTRATOR'}">
              <ui:include src="resources/parts/nav.xhtml"/>
              <ui:include src="resources/parts/errorMessage.xhtml"/>       
@@ -25,16 +26,19 @@
                 <ezcomp:podnaslov Podnaslov="Molimo Vas da unesete podatke od ljubimca:"/>
                 <h:form>  
                     <div style="padding-left: 30px;padding-top: 10px;">
-                        <ezcomp:ljubimac ButtonAction="#{ljubimacPogled.snimiLjubimca()}"                                      
-                                      tekstButt="Unesi novog ljubimca!"
-                                      rend="true"
-                                      rendRezervisi="false"                                      
-                                      id="ljub" 
-                                      naziv="#{ljubimacPogled.ljubimacK.ljubimac.ime}"
-                                      vrsta="#{ljubimacPogled.ljubimacK.ljubimac.vrsta}"
-                                      datum="#{ljubimacPogled.ljubimacK.ljubimac.datum_udomljavanja}"
-                                      starost="#{ljubimacPogled.ljubimacK.ljubimac.starost}"
-                                      />  
+                        <ezcomp:inputTextPopunjen 
+                            ID="nazivLjubimca" TIP="text" 
+                            VALUE="#{ljubimacPogled.ljubimacK.ljubimac.ime}" 
+                            PHOLDER="Naziv ljubimca" REQ="true"/>
+                         <ezcomp:inputTextPopunjen 
+                            ID="starostLjubimca" TIP="text" 
+                            VALUE="#{ljubimacPogled.ljubimacK.ljubimac.starost}" 
+                            PHOLDER="Starost ljubimca" REQ="true"/>                       
+                        <ezcomp:inputSelect ID="vrsta" 
+                            VALUE="#{ljubimacPogled.ljubimacK.ljubimac.vrsta}" />
+                        <h:commandButton class="btn btn-outline-dark float-end" 
+                                         value="Unos novog ljubimca" 
+                                         action="#{ljubimacPogled.snimiLjubimca()}"  />
                     </div>
                 </h:form>
             </div>

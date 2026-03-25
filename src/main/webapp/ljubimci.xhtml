@@ -10,9 +10,9 @@
         <title>Pregled ljubimaca</title>
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
         
-        <h:outputStylesheet library="css" name="bootstrap.min.css" />
-        <h:outputStylesheet library="css" name="mycss.css" />
-        <h:outputScript library="js" name="bootstrap.bundle.min.js" />
+        <h:outputStylesheet  name="bootstrap.min.css" />
+        <h:outputStylesheet  name="mycss.css" />
+        <h:outputScript  name="bootstrap.bundle.min.js" />
         <f:metadata>            
             <f:viewAction action="#{ljubimacPogled.ljubimci(korisnikPogled.k.id)}"/>
         </f:metadata>
@@ -52,5 +52,6 @@
             
         </div>
         <ui:include src="resources/parts/modalPrijava.xhtml"/> 
+      
     </h:body>
 </html>

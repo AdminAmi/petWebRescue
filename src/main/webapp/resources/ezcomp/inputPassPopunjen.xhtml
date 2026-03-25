@@ -15,6 +15,7 @@
         <cc:attribute name="PHOLDER"/><!-- placeholder string za input tag-->
         <cc:attribute name="VALUE"/><!-- vrijednost iz beana za input-->
         <cc:attribute name="REQ"/> <!--vrijednosat atributa required input taga-->
+        <cc:attribute name="REQWHO"/> <!--vrijednosat atributa required input taga-->
         <cc:attribute name="DISABLED"/><!-- vrijednost atributa disabled input taga-->
         
     </cc:interface>
@@ -25,7 +26,8 @@
                    id="#{cc.attrs.ID}"                    
                    p:placeholder="#{cc.attrs.PHOLDER}"
                    value="#{cc.attrs.VALUE}" 
-                   required="#{cc.attrs.REQ}"                    
+                   required="#{cc.attrs.REQ}"
+                   requiredMessage="#{cc.attrs.REQWHO}"
                    disabled="#{cc.attrs.DISABLED}"/>
             <label for="#{cc.attrs.ID}" >
                 #{cc.attrs.PHOLDER}

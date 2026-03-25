@@ -25,6 +25,7 @@
                 <div class="col-md"> 
                     <ezcomp:inputTextPopunjen ID="imeiprezime" 
                                               TIP="text" REQ="true"
+                                              REQWHO="Vrijednost za polje ime i prezime mora biti ispunjena!!!"
                                               VALUE="#{cc.attrs.imeiprezime}" 
                                               PHOLDER="Ime i prezime korisnika"/>
                 </div>
@@ -41,14 +42,16 @@
              <div class="row g-2">
                 <div class="col-md">        
                     <ezcomp:inputTextPopunjen ID="user" TIP="text" REQ="true"
-                                              VALUE="#{cc.attrs.user}" 
-                                              PHOLDER="Korisničko ime" 
-                                              DISABLED="#{cc.attrs.DIS}"/>
+                      REQWHO="Vrijednost za polje korisničkog imena mora biti ispunjena!!!"
+                      VALUE="#{cc.attrs.user}" 
+                      PHOLDER="Korisničko ime" 
+                      DISABLED="#{cc.attrs.DIS}"/>
                 </div>
                  <div class="col-md">
-                     <ezcomp:inputPassPopunjen ID="pass" REQ="true"
-                                              VALUE="#{cc.attrs.pass}" 
-                                              PHOLDER="Korisnička lozinka"/>
+                     <ezcomp:inputPassPopunjen ID="pass" REQ="true" 
+                           REQWHO="Vrijednost za polje pasworda mora biti ispunjena!!!"
+                           VALUE="#{cc.attrs.pass}" 
+                           PHOLDER="Korisnička lozinka"/>
                  </div>
              </div>
             <h:commandButton class="btn btn-outline-dark float-end" value="#{cc.attrs.tekstButt}" action="#{cc.attrs.ButtonAction}" />

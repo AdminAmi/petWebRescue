@@ -4,7 +4,8 @@
       xmlns:cc="jakarta.faces.composite"
       xmlns:ezcomp="jakarta.faces.composite/ezcomp"
       xmlns:c="jakarta.tags.core"
-      xmlns:h="jakarta.faces.html">
+      xmlns:h="jakarta.faces.html"
+      xmlns:ui="jakarta.faces.facelets">
 
     <!-- INTERFACE -->
     <cc:interface>
@@ -34,10 +35,12 @@
             <ezcomp:inputTextPopunjen ID="rezervisan" TIP="text" VALUE="#{ljubimacPogled.koris.imeiprezime}" PHOLDER="Rezervisan od korisnika" REQ="true"/>
             <h:commandButton class="btn btn-outline-dark float-end" value="Udomi ljubimca" action="#{ljubimacPogled.udomiLjubimca()}" />                 
         </c:if>
+        <ui:remove>
         <c:if test="#{ljubimacPogled.ljubimacK.ljubimac.idK > 0 and ljubimacPogled.ljubimacK.ljubimac.status=='UDOMLJEN'}">
             <ezcomp:inputTextPopunjen ID="rezervisan" TIP="text" VALUE="#{ljubimacPogled.koris.imeiprezime}" PHOLDER="Udomljen od korisnika" REQ="true"/>                
         </c:if>
-        <c:if test="#{ljubimacPogled.ljubimacK.ljubimac.idK == 0}">
+        </ui:remove>
+        <c:if test="#{ljubimacPogled.ljubimacK.ljubimac.status == null}">
             <h:commandButton class="btn btn-outline-dark float-end" value="#{cc.attrs.tekstButt}" action="#{cc.attrs.ButtonAction}" rendered="#{cc.attrs.rend}" />
         </c:if>
         <c:if test="#{ljubimacPogled.ljubimacK.ljubimac.status == 'UDOMLJEN'}">

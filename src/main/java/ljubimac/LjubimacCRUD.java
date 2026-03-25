@@ -13,7 +13,7 @@ import udomljavanje.UdomljavanjeCRUD;
 
 public class LjubimacCRUD extends korisni.Kontroler{
     public static final String[] tip= {"pas", "mačka"};
-    private Ljubimac ljubimac;
+    private Ljubimac ljubimac = new Ljubimac();
     List<Ljubimac> ljubimci = new ArrayList<>();
     private udomljavanje.UdomljavanjeCRUD uc;
     private final klijent.KlijentCRUD kc = new KlijentCRUD();
@@ -45,7 +45,8 @@ public class LjubimacCRUD extends korisni.Kontroler{
      * Dobavlja list ljubimaca zavisno od parametara
      * @param opcija govori koju vrstu ljubimca dobavlja(0 sve, 1 pse, 2 mascke)
      * @param ime ime ili pocetak imena ljubimca
-     * @param opcija2 govori da li su udomljeni(1) ili ne odmljeni(0) ljubimci koji se dobavljaju
+     * @param opcija2 govori da li su 1-slobodan 2-rezervisan 3-udomljen
+     * ili 0 ako nam to netreba ljubimci koji se dobavljaju
      * @return list ljubimaca
      * @throws SQLException
      */
@@ -60,10 +61,17 @@ public class LjubimacCRUD extends korisni.Kontroler{
         default -> ""; 
     };
 
-    String uvjetStatus = (opcija2 == 0) ? "status = 'NE'" : "status = 'DA'";
+    String uvjetStatus = switch (opcija2) {
+        case 1 -> " AND status = 'SLOBODAN'";
+        case 2 -> " AND status = 'REZERVISAN'";
+        case 3 -> " AND status = 'UDOMLJEN'"  ;  
+        default -> "";
+    };
+            
+            //(opcija2 == 0) ? "status = 'SLOBODAN'" : "status = 'REZERVISAN'";
     
     // Finalni SQL sa '?' za ime (sigurnost!)
-    sql = "SELECT DISTINCT * FROM ljubimac WHERE " + uvjetVrsta + "ime LIKE ? AND " + uvjetStatus;
+    sql = "SELECT DISTINCT * FROM ljubimac WHERE " + uvjetVrsta + "ime LIKE ?  " + uvjetStatus;
 
     // 2. Try-with-resources za automatsko zatvaranje
     try (Connection konekcija = getKon();
@@ -198,14 +206,14 @@ public class LjubimacCRUD extends korisni.Kontroler{
         ljub.setStatus("NE");
         azurirajLjubimca(ljubimac);
     }
-
+    public Ljubimac getLjubimac() {
+        return ljubimac;
+    }
     public void setLjubimac(Ljubimac ljubimac) {
         this.ljubimac = ljubimac;
     }
     
-    public Ljubimac getLjubimac() {
-        return ljubimac;
-    }
+   
    
     
     

@@ -14,9 +14,9 @@ public class Udomljen {
     private int idKlijenti;
     private int idLjubimac;
     private Date datumUdomljavanja;
-    private Ljubimac ljubimac;
+    private Ljubimac ljub;
     private Klijent klijent;    
-    private int rezervacija;
+    private String status;
 
     
 
@@ -34,15 +34,16 @@ public class Udomljen {
         this.idKlijenti = idKlijenti;
         this.idLjubimac = idLjubimac;
         this.datumUdomljavanja = datumUdomljavanja;
-        this.rezervacija=0;
+        this.status=ljubimac.StanjeLjubimca.SLOBODAN.toString();
     }
     public Udomljen(int idKlijenti, int idLjubimac, Date datumUdomljavanja,
-            ljubimac.Ljubimac ljubimac, klijent.Klijent korisnik) {
+            ljubimac.Ljubimac ljubi, klijent.Klijent korisnik) {
         this.idKlijenti = idKlijenti;
         this.idLjubimac = idLjubimac;
         this.datumUdomljavanja = datumUdomljavanja;
-        this.ljubimac=ljubimac;
+        this.ljub=ljubi;
         this.klijent=korisnik;
+        this.status=ljubimac.StanjeLjubimca.SLOBODAN.toString();
     }
 
     // Getteri i setteri
@@ -77,19 +78,19 @@ public class Udomljen {
         return klijent;
     }
 
-    public Ljubimac getLjubimac() {
-        return ljubimac;
+    public Ljubimac getLjub() {
+        return ljub;
     }
-    public void setLjubimac(Ljubimac lj){
-        ljubimac=lj;
+    public void setLjub(Ljubimac lj){
+        ljub=lj;
     }
     
-    public int getRezervacija() {
-        return rezervacija;
+    public String getStatus() {
+        return status;
     }
 
-    public void setRezervacija(int rezervacija) {
-        this.rezervacija = rezervacija;
+    public void setStatus(String status) {
+        this.status = status;
     }
     
 

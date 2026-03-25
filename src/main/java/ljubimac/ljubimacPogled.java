@@ -49,16 +49,16 @@ public class ljubimacPogled implements Serializable {
     }    
     
     public String snimiLjubimca(){
-//        try {
-//            LjubimacK.getLjubimac().setStatus("SLOBODAN");
-//            //LjubimacK.getLjubimac().setIdK(0);
-//            LjubimacK.dodajLjubimca(LjubimacK.getLjubimac());
-//            //snimiSliku(LjubimacK.Ljubimac.getId());
-//            webUtil.infoPoruka("Uspješan unos ljubimca", "");
-//        } catch (SQLException ex) {
-//            webUtil.errPoruka("Neuspješan unos!!!" + ex,"");
-//            return null;
-//        } 
+        try {
+            LjubimacK.getLjubimac().setStatus(ljubimac.StanjeLjubimca.SLOBODAN.toString());
+            //LjubimacK.getLjubimac().setIdK(0);
+            LjubimacK.dodajLjubimca(LjubimacK.getLjubimac());
+            //snimiSliku(LjubimacK.Ljubimac.getId());
+            webUtil.infoPoruka("Uspješan unos ljubimca", "");
+        } catch (SQLException ex) {
+            webUtil.errPoruka("Neuspješan unos!!!" + ex,"");
+            return null;
+        } 
         return "pocetna"; 
 //        
     }
@@ -79,9 +79,8 @@ public class ljubimacPogled implements Serializable {
     }
    
     public void ljubimci(int idK){
-//        try {
-//            ArrayList<ljubimac> ukloniRez = new ArrayList<>();
-//            ukloniRez = LjubimacK.vratiLjubimceIstekleRezervacije();            
+        ArrayList<Ljubimac> ukloniRez = new ArrayList<>();
+        //ukloniRez = LjubimacK.vratiLjubimceIstekleRezervacije();            
 //            for (ljubimac object : ukloniRez) {
 //                LjubimacK.ukloniRezervacija(object.getId());  
 //                //webUtil.infoPoruka("Broj za obrisati rez: " + String.valueOf(object.getId()), "");
@@ -89,14 +88,10 @@ public class ljubimacPogled implements Serializable {
 //            ljub=LjubimacK.vratiLjubimce(1);
 //            rezervisani=LjubimacK.vratiLjubimce(2);
 //            udomljeni=LjubimacK.vratiLjubimce(3);
-//            psiSlobodni=LjubimacK.vratiLjubimce(4);
+               dostupniPsi();
 //            mackeSlobodne=LjubimacK.vratiLjubimce(5);
 //            rezervisaniOdKorisnika=LjubimacK.vratiRezervisane(idK);
-//            
-//            
-//        } catch (SQLException ex) {
-//            webUtil.errPoruka("Greška u učitavanju ljubimaca" + ex, "");
-//        }
+//
     }
     public void slobodniLjubimci(){
 //        try {
@@ -120,11 +115,13 @@ public class ljubimacPogled implements Serializable {
 //        }
     }
     public void dostupniPsi(){
-//        try {
-//            psiSlobodni=LjubimacK.vratiLjubimce(4);            
-//        } catch (SQLException ex) {
-//            webUtil.errPoruka("Greška u učitavanju ljubimaca" + ex, "");
-//        }
+        try {
+            psiSlobodni=(ArrayList<Ljubimac>) LjubimacK.dobaviSveLjubimce(1, "", 1);
+            System.out.println
+        ("Ljubimac.ljubimacPogled.dostupniPsi()" + String.valueOf(psiSlobodni.size()));
+        } catch (SQLException ex) {
+            webUtil.errPoruka("Greška u učitavanju ljubimaca" + ex, "");
+        }
     }
     public void dostupneMacke(){
 //        try {
@@ -135,15 +132,13 @@ public class ljubimacPogled implements Serializable {
     }
     
     public void ucitajLjubimca(){
-//        try {
-//            LjubimacK.setLjubimac(LjubimacK.vratiLjubimcaPoID(selektovaniID));
-//            if(LjubimacK.getLjubimac().getIdK()>0){
-//                korisnikKontroler kk = new korisnikKontroler();
-//                setKoris(kk.VratiKorisnikaPoID(LjubimacK.getLjubimac().getIdK()));
-//                }
-//            } catch (SQLException ex) {
-//            webUtil.errPoruka("Greška u učitavanju ljubimaca" + ex, "");
-//        }
+        try {
+            LjubimacK.setLjubimac(LjubimacK.dobaviLjubimcaPoId(selektovaniID));
+            //Treba dodati kod koji učitava sve udomitelje i one koji su rezervisali
+            //datog ljubimca
+            } catch (SQLException ex) {
+            webUtil.errPoruka("Greška u učitavanju ljubimaca" + ex, "");
+        }
     }
     
     public void azurirajLjubimca(Ljubimac temp){
@@ -329,6 +324,7 @@ public class ljubimacPogled implements Serializable {
     public void setDatoteka(Part datoteka) {
         this.datoteka = datoteka;
     }
+    
 
    
 }

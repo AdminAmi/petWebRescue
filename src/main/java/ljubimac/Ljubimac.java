@@ -26,7 +26,6 @@ public class Ljubimac {
      * @param ime
      * @param vrsta
      * @param starost
-     * @param korisnici
      */
     public Ljubimac(String ime, String vrsta, String starost) {
         this.ime = ime;
@@ -45,29 +44,34 @@ public class Ljubimac {
     }
 
     // Getteri i setteri
+    public void setId(int id) {
+        this.id = id;
+    }
+    
     public int getId() {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getIme() {
-        return ime;
-    }
+    
 
     public void setIme(String ime) {
         this.ime = ime;
     }
-
-    public String getVrsta() {
-        return vrsta;
+    
+    public String getIme() {
+        return ime;
     }
 
+    
+    
     public void setVrsta(String vrsta) {
         this.vrsta = vrsta;
     }
+    
+    public String getVrsta() {
+        return vrsta;
+    }
+    
 
     public String getStarost() {
         return starost;

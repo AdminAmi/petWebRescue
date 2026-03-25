@@ -50,7 +50,9 @@
                 <f:facet name="header">Datum </f:facet>                    
                     <h:outputText rendered="#{ljub.status=='REZERVISAN'}" value="Rezervacija: #{ljub.datum}"/>
                     <h:outputText rendered="#{ljub.status=='UDOMLJEN'}" value="Udomljenje: #{ljub.datum}"/>
+                    <ui:remove>
                     <h:outputText rendered="#{ljub.status=='SLOBODAN'}" value="Primljen: #{ljub.datum_udomljavanja}"/>
+                    </ui:remove>
             </h:column>
             <h:column rendered="#{korisnikPogled.kont.korisnik.tip=='ADMINISTRATOR'}">
                 <f:facet name="header">Akcije</f:facet>

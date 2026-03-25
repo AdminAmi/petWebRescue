@@ -5,20 +5,22 @@
 package ljubimac;
 
 public enum StanjeLjubimca {
-    SLOBODAN(0),
-    REZERVISAN(1),
-    UDOMLJEN(2);
+    SLOBODAN("SLOBODAN"),
+    REZERVISAN("REZERVISAN"),
+    UDOMLJEN("UDOMLJEN");
+    
+    private final String opis;
 
-    private final int sifra;
-
-    // Konstruktor enuma
-    StanjeLjubimca(int sifra) {
-        this.sifra = sifra;
+    private StanjeLjubimca(String opis) {
+        this.opis = opis;
     }
 
-    // Metoda za dobijanje broja
-    public int getSifra() {
-        return sifra;
+    @Override
+    public String toString() {
+        return opis;
     }
+
+        
+   
 }
 

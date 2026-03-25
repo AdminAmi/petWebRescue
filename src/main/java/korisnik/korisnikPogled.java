@@ -67,15 +67,14 @@ public class korisnikPogled implements Serializable {
             korisnickoIme="";
             korisnickaLozinka="";
             loged=true;
-            webUtil.testUsp("Uspješno logiranje!!!");
+            webUtil.testUsp("Uspješno logiranje!!!");           
             return "pocetna?faces-redirect=true";
         }
         else 
         {
             loged=false;
-            webUtil.errPoruka("Prijava na sistem","Netacni korisnički podaci!!!",""); 
-            webUtil.infoPoruka("Test", "");
-            webUtil.warPoruka("Test", "");
+            webUtil.errPoruka("Netacni korisnički podaci!!!",""); 
+            
             return null;
         }
     }

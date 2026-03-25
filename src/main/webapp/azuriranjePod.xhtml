@@ -17,6 +17,7 @@
         <h:outputScript name="bootstrap.bundle.min.js" />
     </h:head>
     <h:body>
+        
         <c:if test="#{korisnikPogled.loged }" > 
             <ui:include src="resources/parts/errorMessage.xhtml"/>       
             <ui:include src="resources/parts/nav.xhtml"/>
@@ -27,7 +28,7 @@
             <h:form >                
                 <ezcomp:korisnik 
                     ButtonAction="#{korisnikPogled.azuriranjeKorisnika()}" 
-                    imeiprezime="#{korisnikPogled.kont.korisnik.imeiprezime}" DIS="true"
+                    imeiprezime="#{korisnikPogled.kont.korisnik.imeIPrezime}" DIS="true"
                     user="#{korisnikPogled.kont.korisnik.user}" pass="#{korisnikPogled.kont.korisnik.pass}"
                     id="korisnik1" tekstButt="Ažuriraj podatke korisnika!"
                     />    

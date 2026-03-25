@@ -12,7 +12,9 @@
         <cc:attribute name="PHOLDER"/><!-- placeholder string za input tag-->
         <cc:attribute name="VALUE"/><!-- vrijednost iz beana za input-->
         <cc:attribute name="REQ"/> <!--vrijednosat atributa required input taga-->
+        <cc:attribute name="REQWHO"/> <!--Objašnjenje koje polje mora biti popunjeno-->
         <cc:attribute name="DISABLED"/><!-- vrijednost atributa disabled input taga-->
+        
         
     </cc:interface>
      <!-- IMPLEMENTATION -->
@@ -24,6 +26,7 @@
                    placeholder="#{cc.attrs.PHOLDER}"
                    jsf:value="#{cc.attrs.VALUE}" 
                    required="#{cc.attrs.REQ}" 
+                   jsf:requiredMessage="#{cc.attrs.REQWHO}"
                    jsf:redisplay="true"
                    disabled="#{cc.attrs.DISABLED}"/>
             <label for="#{cc.attrs.ID}" >
