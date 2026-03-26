@@ -54,8 +54,13 @@ public class korisnikPogled implements Serializable {
     }
     
     public String pretragaK(){
-        //kont.vratiKojiZadovoljavajuUvjet(imeiPrZaPretragu, 0);
-        pretragaKorisnika=kont.vratiKojiZadovoljavajuUvjet(imeiPrZaPretragu);
+        try {
+            //kont.vratiKojiZadovoljavajuUvjet(imeiPrZaPretragu, 0);
+            pretragaKorisnika=kont.vratiKojiZadovoljavajuUvjet(imeiPrZaPretragu);
+            return null;
+        } catch (SQLException ex) {
+            System.getLogger(korisnikPogled.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+        }
         return null;
     }
     

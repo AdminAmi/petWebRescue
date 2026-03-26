@@ -25,10 +25,10 @@
               </div>
               <div class="modal-body">
                   
-                  <ezcomp:inputTextPopunjen 
-                      TIP="text"  
-                      ID="floatingInput" 
-                      VALUE="#{korisnikPogled.korisnickoIme}" 
+                  <ezcomp:inputTextPopunjen_1 
+                      TIP="text" 
+                      ID="floatingInput"  
+                      VALUE="#{korisnikPogled.korisnickoIme}"                      
                       PHOLDER="Korisničko ime"/>
                   <ui:remove>
                   <ezcomp:inputTextPopunjen 
@@ -38,14 +38,16 @@
                       PHOLDER="Korisnička lozinka"/>  
                   </ui:remove>
                   <ezcomp:inputPassPopunjen 
-                      ID="floatingPassword"
+                      ID="floatingPassword" 
                       VALUE="#{korisnikPogled.korisnickaLozinka}"
                       PHOLDER="Korisnička lozinka"/>
               </div>
               <div class="modal-footer">              
-                <h:commandButton class="btn btn-outline-dark" 
-                                 action="#{korisnikPogled.registracija()}" 
-                                 value="&#x2714; Prijava" />
+                <h:commandButton 
+                       class="btn btn-outline-dark" 
+                       
+                       action="#{korisnikPogled.registracija()}" 
+                       value="&#x2714; Prijava" />
               </div>
             </div>
           </div>

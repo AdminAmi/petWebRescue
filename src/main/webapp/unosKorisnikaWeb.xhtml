@@ -3,6 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="jakarta.faces.html"
       xmlns:ui="jakarta.faces.facelets"
+      xmlns:p="jakarta.faces.passthrough"
       xmlns:ezcomp="jakarta.faces.composite/ezcomp">
     <h:head>
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -10,31 +11,26 @@
         <h:outputStylesheet name="bootstrap.min.css" />
         <h:outputStylesheet name="mycss.css" />
         <h:outputScript name="bootstrap.bundle.min.js" />
+        <h:outputScript library="js" name="myjs.js"/>
     </h:head>
     <h:body >
-        
+        <h:messages style="display: none"/>
         <ui:include src="resources/parts/nav.xhtml"/>
-        
-        
-         <div class="container">
-          
-            
-                 
-                 <p class="fs-2 lead" style="padding-top: 80px;">Dobro došli </p>                
-                 <ezcomp:podnaslov Podnaslov="Molimo Vas da unesete svoje korisničke podatke:"/>
-                 <h:form>     
-                     
-                    <ezcomp:korisnik 
-                        ButtonAction="#{korisnikPogled.unosNovogKorisnikaWeb()}" 
-                         imeiprezime="#{korisnikPogled.imeIPrezime}"
-                         user="#{korisnikPogled.korisnickoIme}" 
-                         pass="#{korisnikPogled.korisnickaLozinka}"
-                         adresa="#{korisnikPogled.adresa}"
-                         id="korisnik1" 
-                         tekstButt="Unesi novog korisnika!"/> 
-                     
-                 </h:form>
-             </div>            
+        <div class="container">
+             <p class="fs-2 lead" style="padding-top: 80px;">Dobro došli </p>                
+             <ezcomp:podnaslov Podnaslov="Molimo Vas da unesete svoje korisničke podatke:"/>
+             <h:form styleClass="needs-validation" p:novalidate="novalidate" >
+                <ezcomp:korisnik 
+                    ButtonAction="#{korisnikPogled.unosNovogKorisnikaWeb()}" 
+                    imeiprezime="#{korisnikPogled.imeIPrezime}"
+                    user="#{korisnikPogled.korisnickoIme}" 
+                    pass="#{korisnikPogled.korisnickaLozinka}"
+                    adresa="#{korisnikPogled.adresa}"
+                    telefon="#{korisnikPogled.telefon}"
+                    id="korisnik1" 
+                    tekstButt="Unesi novog korisnika!"/> 
+             </h:form>
+         </div>            
         
         
         <ui:include src="resources/parts/modalPrijava.xhtml"/>

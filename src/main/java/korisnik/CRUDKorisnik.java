@@ -5,7 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import korisni.MyLogger;
 
 /**
  *
@@ -28,8 +27,10 @@ public class CRUDKorisnik extends korisni.Kontroler{
                 "user TEXT NOT NULL UNIQUE," +
                 "pass TEXT NOT NULL," +
                 "ime TEXT NOT NULL," +
-                "prezime TEXT NOT NULL, "
-                + "tip TEXT)";       
+                "prezime TEXT NOT NULL, " + 
+                "tip TEXT, " + 
+                "adresa TEXT, " +
+                "telefon TEXT NOT NULL)";       
         InsDelUpd(sql);       
     }
      
@@ -39,23 +40,25 @@ public class CRUDKorisnik extends korisni.Kontroler{
      * @throws SQLException ukoliko nije bilo uspjesno povezivanje sa bazom podataka
      */
     public void UnesiKorisnika(Korisnik temp) throws SQLException {
-        String sql = "INSERT INTO korisnik (user,pass,ime,prezime,tip)"
+        String sql = "INSERT INTO korisnik (user,pass,ime,prezime,tip,adresa,telefon)"
                 + " VALUES ('" + temp.getUser()+"','"
                 + temp.getPass()+"','"+temp.getIme()+"','"
-                + temp.getPrezime()+"','"+temp.getTip()+ "' )";  
-        
+                + temp.getPrezime()+"','"+temp.getTip()+"','" 
+                + temp.getAdresa()+"','"+temp.getTelefon()+"' )";         
         InsDelUpd(sql);       
     }
     /**
      * Metoda <code>azurirajKorisnika</code> vrši azuiriranje podataka korisnka
-     * i to ime i prezime korisnika
+     * i to ime, prezime, adresu i telefon korisnika
      * @param temp objekat korisnika nad kojim se vrsi azuriranje
      * @throws SQLException ukoliko nije bilo uspjesno povezivanje sa bazom podataka
      */
     public void azurirajKorisnika(Korisnik temp) throws SQLException {
         String sql = "UPDATE korisnik SET ime = '"+ 
                     temp.getIme()+ "', prezime = '"+
-                    temp.getPrezime()+"' WHERE id = " + temp.getId();        
+                    temp.getPrezime()+ "', adresa = '"+
+                    temp.getAdresa()+ "', telefon = '"+
+                    "' WHERE id = " + temp.getId();        
         InsDelUpd(sql);
     }
     /**
@@ -84,7 +87,7 @@ public class CRUDKorisnik extends korisni.Kontroler{
      * @param id korisnika koji se trazi
      * @return objekat korisnik koji ima taj ID, ukoliko ga ne nadje vraca null
      */
-    public Korisnik VratiKorisnikaPoID(int id) {
+    public Korisnik VratiKorisnikaPoID(int id) throws SQLException {
     String sql = "SELECT * FROM korisnik WHERE id = ?";
     // Bolje je inicijalizirati na null da znaš ako korisnik ne postoji
     Korisnik kor = null;
@@ -102,14 +105,13 @@ public class CRUDKorisnik extends korisni.Kontroler{
                 kor.setIme(rs.getString("ime"));
                 kor.setPrezime(rs.getString("prezime"));
                 kor.setTip(rs.getString("tip"));
+                kor.setAdresa(rs.getString("adresa"));
+                kor.setTelefon(rs.getString("telefon"));
                 // Ako imaš sliku u bazi, ovdje bi je dodao:
                 // kor.setSlika(rs.getBytes("photo")); 
             }
         }
-    } catch (SQLException e) {
-        System.err.println("Greška prilikom dohvata korisnika: " + e.getMessage());
-        // Ovdje možeš baciti vlastiti exception ili logirati grešku
-    }
+    } 
 
     return kor; 
 }
@@ -139,6 +141,8 @@ public class CRUDKorisnik extends korisni.Kontroler{
                     Korisnik.setPass(rs.getString("pass"));
                     Korisnik.setPrezime(rs.getString("prezime"));
                     Korisnik.setTip(rs.getString("tip"));
+                    Korisnik.setAdresa(rs.getString("adresa"));
+                    Korisnik.setTelefon(rs.getString("telefon"));
                     zastavica = true;
                 }
             }
@@ -152,8 +156,10 @@ public class CRUDKorisnik extends korisni.Kontroler{
      *
      * @param uvjet
      * @return
+     * @throws java.sql.SQLException
      */
-    public ArrayList<Korisnik> vratiKojiZadovoljavajuUvjet(String uvjet) {
+    public ArrayList<Korisnik> vratiKojiZadovoljavajuUvjet(String uvjet) 
+            throws SQLException {
     ArrayList<Korisnik> rezultat = new ArrayList<>();
     // Koristimo upitnik za parametar kako bismo spriječili SQL Injection
     String sql = "SELECT * FROM korisnik WHERE ime LIKE ?";
@@ -171,13 +177,12 @@ public class CRUDKorisnik extends korisni.Kontroler{
                 kor.setPass(rs.getString("pass"));
                 kor.setPrezime(rs.getString("prezime"));
                 kor.setTip(rs.getString("tip"));
+                kor.setAdresa(rs.getString("adresa"));
+                kor.setTelefon(rs.getString("telefon"));
                 rezultat.add(kor);
             }
         }
-    } catch (SQLException e) {
-        // Ispis greške u konzolu (u produkciji koristi Logger)
-        System.err.println("Greška u pretrazi korisnika: " + e.getMessage());
-    }
+    } 
     
     // Čak i ako se dogodi greška, vraćamo (praznu) listu umjesto null, 
     // što je bolja praksa u Javi (izbjegava NullPointerException).
@@ -205,13 +210,12 @@ public class CRUDKorisnik extends korisni.Kontroler{
                     kor.setPass(rs.getString("pass"));
                     kor.setPrezime(rs.getString("prezime"));
                     kor.setTip(rs.getString("tip"));
+                    kor.setAdresa(rs.getString("adresa"));
+                    kor.setTelefon(rs.getString("telefon"));
                     rezultat.add(kor);
                 }
             }
-        } catch (SQLException e) {
-            // Ispis greške u konzolu (u produkciji koristi Logger)
-            System.err.println("Greška u pretrazi korisnika: " + e.getMessage());
-        }
+        } 
         return rezultat;
     }
     

@@ -2,8 +2,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:cc="jakarta.faces.composite"
-      xmlns:jsf="jakarta.faces"          
-      xmlns:ui="jakarta.faces.facelets">
+      xmlns:jsf="jakarta.faces"
+      >
     <cc:interface>
         <cc:attribute name="cssDIV"/> <!-- css string za DIV tag-->
         <cc:attribute name="ID"/> <!-- id od input taga-->
@@ -14,30 +14,30 @@
         <cc:attribute name="REQ"/> <!--vrijednosat atributa required input taga-->
         <cc:attribute name="REQWHO"/> <!--Objašnjenje koje polje mora biti popunjeno-->
         <cc:attribute name="DISABLED"/><!-- vrijednost atributa disabled input taga-->
+        
+        
     </cc:interface>
      <!-- IMPLEMENTATION -->
     <cc:implementation>
-         <!-- Provjeravamo ima li ovaj input grešku u porukama -->
-        <ui:param name="puniId" value="#{cc.clientId}:#{cc.attrs.ID}" />
-        <ui:param name="jeNevazece" 
-                  value="#{not empty facesContext.getMessageList(puniId)}" />
         <div class="form-floating mb-3 #{cc.attrs.cssDIV}">
-            <input jsf:id="#{cc.attrs.ID}" 
+            <input 
+                
+                class="form-control 
+                    
+                   #{cc.attrs.CSS}" 
+                   jsf:id="#{cc.attrs.ID}" 
+                   
                    type="#{cc.attrs.TIP}" 
-                   class="form-control #{facesContext.postback ? 
-                         (jeNevazece ? 'is-invalid' : '') : ''} #{cc.attrs.CSS}" 
                    placeholder="#{cc.attrs.PHOLDER}"
                    jsf:value="#{cc.attrs.VALUE}" 
-                   jsf:required="#{cc.attrs.REQ}" 
+                   required="#{cc.attrs.REQ}" 
                    jsf:requiredMessage="#{cc.attrs.REQWHO}"
+                   jsf:redisplay="true"
                    disabled="#{cc.attrs.DISABLED}"/>
-            <label for="#{puniId}">
+            <label for="#{cc.attrs.ID}" >
                 #{cc.attrs.PHOLDER}
-            </label>
-            <!-- Prikazuje se samo ako postoji greška -->
-            <div class="invalid-feedback">
-                #{cc.attrs.REQWHO}
-            </div>
+            </label>  
+            
         </div>
     </cc:implementation>
 </html>

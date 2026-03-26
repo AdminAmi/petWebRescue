@@ -7,8 +7,7 @@
       xmlns:c="jakarta.tags.core"
       xmlns:ui="jakarta.faces.facelets"
       xmlns:p="jakarta.faces.passthrough"
-      xmlns:ezcomp="jakarta.faces.composite/ezcomp"
->
+      xmlns:ezcomp="jakarta.faces.composite/ezcomp">
     <h:head>
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
         <title>Facelet Title</title>
@@ -17,25 +16,26 @@
         <h:outputScript name="bootstrap.bundle.min.js" />
     </h:head>
     <h:body>
+        <h:messages style="display: none"/>
         <c:if test="#{korisnikPogled.loged }" > 
             <ui:include src="resources/parts/nav.xhtml"/>
             <ui:include src="resources/parts/errorMessage.xhtml"/>
-        <div class="container">
-            <ui:include src="resources/parts/zaglavlje.xhtml" />
-             <div class="p-0 ">
-                 
-                               
-                 <ezcomp:podnaslov Podnaslov="Molimo Vas da unesete podatke za novog administratora "/>
-                 <h:form>               
-                    <ezcomp:korisnik ButtonAction="#{korisnikPogled.unosNovogAdministratoraWeb()}" 
-                                     imeiprezime="#{korisnikPogled.imeIPrezime}"
-                                     user="#{korisnikPogled.korisnickoIme}" pass="#{korisnikPogled.korisnickaLozinka}"
-                                     id="korisnik1" tekstButt="Unesi novog korisnika!"/>              
-                 </h:form>
-                 
-                 
-             </div>            
-        </div>
+            <div class="container">
+                <ui:include src="resources/parts/zaglavlje.xhtml" />
+                <div class="p-0 ">     
+                    <ezcomp:podnaslov Podnaslov="Molimo Vas da unesete podatke za novog administratora "/>
+                    <h:form >               
+                        <ezcomp:korisnik 
+                            ButtonAction="#{korisnikPogled.unosNovogAdministratoraWeb()}" 
+                            imeiprezime="#{korisnikPogled.imeIPrezime}"
+                            adresa="#{korisnikPogled.adresa}"
+                            telefon="#{korisnikPogled.telefon}"
+                            user="#{korisnikPogled.korisnickoIme}" 
+                            pass="#{korisnikPogled.korisnickaLozinka}"
+                            id="korisnik1" tekstButt="Unesi novog administratora sistema!"/>              
+                    </h:form>
+                </div>            
+            </div>
             <ui:include src="resources/parts/modalPrijava.xhtml"/>
         </c:if>
         <ezcomp:greskaLog/>

@@ -11,27 +11,24 @@ public class Korisnik {
     private String ime;
     private String prezime;
     private String tip;
+    private String adresa;
+    private String telefon;
 
     public Korisnik() {}
 
-//    public Korisnik(int id, String user, String pass, String ime, String prezime) {
-//        this.id = id;
-//        this.user = user;
-//        this.pass = pass;
-//        this.ime = ime;
-//        this.prezime = prezime;
-//        this.tip=tip;
-//        
-//    }
-
-    public Korisnik(int id, String user, String pass, String ime, String prezime, String tip) {
+    public Korisnik(int id, String user, String pass, String ime, 
+            String prezime, String tip, String adresa, String telefon) {
         this.id = id;
         this.user = user;
         this.pass = pass;
         this.ime = ime;
         this.prezime = prezime;
         this.tip = tip;
+        this.adresa = adresa;
+        this.telefon = telefon;
     }
+
+    
     
 
     @Override
@@ -42,9 +39,24 @@ public class Korisnik {
                 ", prezime='" + prezime + '\'' +
                 '}';    
     }
-
-   
     //setteri i getteri
+    public String getAdresa() {
+        return adresa;
+    }
+
+    public void setAdresa(String adresa) {   
+        this.adresa = adresa;
+    }
+
+    public String getTelefon() {
+        return telefon;
+    }
+
+    
+    public void setTelefon(String telefon) {    
+        this.telefon = telefon;
+    }
+
     public int getId() {
         return id;
     }

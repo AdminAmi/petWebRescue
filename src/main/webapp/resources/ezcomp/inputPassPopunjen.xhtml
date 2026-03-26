@@ -4,7 +4,8 @@
       xmlns:cc="jakarta.faces.composite"
       xmlns:jsf="jakarta.faces"
       xmlns:p="jakarta.faces.passthrough"
-       xmlns:h="jakarta.faces.html">
+      xmlns:h="jakarta.faces.html"
+      xmlns:ui="jakarta.faces.facelets">
           
      
     <cc:interface>
@@ -20,9 +21,13 @@
         
     </cc:interface>
      <!-- IMPLEMENTATION -->
+     <ui:remove>
     <cc:implementation>
+        <!-- Provjeravamo ima li ovaj input grešku u porukama -->
+        <ui:param name="puniId" value="#{cc.clientId}:#{cc.attrs.ID}" />
+        <ui:param name="jeNevazece" value="#{not empty facesContext.getMessageList(puniId)}" />
         <div class="form-floating mb-3 #{cc.attrs.cssDIV}">
-            <h:inputSecret class="form-control #{cc.attrs.CSS}" 
+            <h:inputSecret class="form-control #{jeNevazece ? 'is-invalid' : ''} #{cc.attrs.CSS}" 
                    id="#{cc.attrs.ID}"                    
                    p:placeholder="#{cc.attrs.PHOLDER}"
                    value="#{cc.attrs.VALUE}" 
@@ -31,7 +36,13 @@
                    disabled="#{cc.attrs.DISABLED}"/>
             <label for="#{cc.attrs.ID}" >
                 #{cc.attrs.PHOLDER}
-            </label>            
+            </label> 
+            <!-- Prikazuje se samo ako postoji greška -->
+            <div class="invalid-feedback">
+                #{cc.attrs.REQWHO}
+            </div>
         </div>
     </cc:implementation>
+     </ui:remove>
+     
 </html>
