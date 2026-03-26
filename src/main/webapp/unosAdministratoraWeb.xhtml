@@ -24,7 +24,7 @@
                 <ui:include src="resources/parts/zaglavlje.xhtml" />
                 <div class="p-0 ">     
                     <ezcomp:podnaslov Podnaslov="Molimo Vas da unesete podatke za novog administratora "/>
-                    <h:form >               
+                    <h:form styleClass="needs-validation" p:novalidate="novalidate">               
                         <ezcomp:korisnik 
                             ButtonAction="#{korisnikPogled.unosNovogAdministratoraWeb()}" 
                             imeiprezime="#{korisnikPogled.imeIPrezime}"

@@ -16,28 +16,37 @@
         <cc:attribute name="DISABLED"/><!-- vrijednost atributa disabled input taga-->
     </cc:interface>
      <!-- IMPLEMENTATION -->
-    <cc:implementation>
-         <!-- Provjeravamo ima li ovaj input grešku u porukama -->
+    <cc:implementation >
         <ui:param name="puniId" value="#{cc.clientId}:#{cc.attrs.ID}" />
-        <ui:param name="jeNevazece" 
-                  value="#{not empty facesContext.getMessageList(puniId)}" />
+        <ui:param name="imaGresku" value="#{not empty facesContext.getMessageList(puniId)}" />
+        
+        <!-- Provjeravamo i poslanu vrijednost i trenutnu vrijednost u bean-u -->
+        <ui:param name="imaVrijednost" value="#{not empty cc.attrs.VALUE or not empty param[puniId]}" />
+
+        <!-- LOGIKA: Ako je postback, a nema greške i polje nije prazno -> postani zeleno -->
+        <ui:param name="statusKlasa" value="#{facesContext.postback ? (imaGresku ? 'is-invalid' : (imaVrijednost ? 'is-valid' : '')) : ''}" />
+    
         <div class="form-floating mb-3 #{cc.attrs.cssDIV}">
             <input jsf:id="#{cc.attrs.ID}" 
                    type="#{cc.attrs.TIP}" 
-                   class="form-control #{facesContext.postback ? 
-                         (jeNevazece ? 'is-invalid' : '') : ''} #{cc.attrs.CSS}" 
+                   class="form-control #{statusKlasa} #{cc.attrs.CSS}" 
                    placeholder="#{cc.attrs.PHOLDER}"
                    jsf:value="#{cc.attrs.VALUE}" 
                    jsf:required="#{cc.attrs.REQ}" 
                    jsf:requiredMessage="#{cc.attrs.REQWHO}"
                    disabled="#{cc.attrs.DISABLED}"/>
+
             <label for="#{puniId}">
                 #{cc.attrs.PHOLDER}
             </label>
-            <!-- Prikazuje se samo ako postoji greška -->
+
             <div class="invalid-feedback">
                 #{cc.attrs.REQWHO}
             </div>
+            <div class="valid-feedback">
+                Izgleda dobro!
+            </div>
         </div>
     </cc:implementation>
+
 </html>

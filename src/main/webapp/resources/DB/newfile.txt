@@ -42,35 +42,27 @@
         </div>
     </div>
 
-<cc:implementation>
+ <cc:implementation>
+         <!-- Provjeravamo ima li ovaj input grešku u porukama -->
         <ui:param name="puniId" value="#{cc.clientId}:#{cc.attrs.ID}" />
-        <ui:param name="imaGresku" value="#{not empty facesContext.getMessageList(puniId)}" />
-
-        <!-- NOVI USLOV: Zeleno je samo ako je forma poslana I ako NIJE prazno polje -->
-        <!-- (Izbjegavamo zeleno na praznim opcionalnim poljima dok se stvarno ne popune) -->
-        <ui:param name="prazno" value="#{empty cc.attrs.VALUE}" />
-
-        <ui:param name="validnaKlasa" value="#{facesContext.postback and not imaGresku and not prazno ? 'is-valid' : ''}" />
-        <ui:param name="invalidnaKlasa" value="#{imaGresku ? 'is-invalid' : ''}" />
-
+        <ui:param name="jeNevazece" 
+                  value="#{not empty facesContext.getMessageList(puniId)}" />
         <div class="form-floating mb-3 #{cc.attrs.cssDIV}">
             <input jsf:id="#{cc.attrs.ID}" 
-                   type="#{cc.attrs.TIP}"
-                   class="form-control #{invalidnaKlasa} #{validnaKlasa} #{cc.attrs.CSS}" 
+                   type="#{cc.attrs.TIP}" 
+                   class="form-control #{facesContext.postback ? 
+                         (jeNevazece ? 'is-invalid' : '') : ''} #{cc.attrs.CSS}" 
+                   placeholder="#{cc.attrs.PHOLDER}"
                    jsf:value="#{cc.attrs.VALUE}" 
                    jsf:required="#{cc.attrs.REQ}" 
                    jsf:requiredMessage="#{cc.attrs.REQWHO}"
                    disabled="#{cc.attrs.DISABLED}"/>
-             <label for="#{puniId}">
-            #{cc.attrs.PHOLDER}
-        </label>
-        
-        <!-- Prikazuje se samo ako postoji greška -->
-        <div class="invalid-feedback">
-            #{cc.attrs.REQWHO}
+            <label for="#{puniId}">
+                #{cc.attrs.PHOLDER}
+            </label>
+            <!-- Prikazuje se samo ako postoji greška -->
+            <div class="invalid-feedback">
+                #{cc.attrs.REQWHO}
+            </div>
         </div>
-        <div class="valid-feedback">
-            Izgleda dobro!
-        </div>
-    </div>
     </cc:implementation>
