@@ -12,30 +12,32 @@
         <cc:attribute name="user" />
         <cc:attribute name="pass" />
         <cc:attribute name="adresa" />
-        <cc:attribute name="telefon" />
-        <cc:attribute name="DIS"/>
+        <cc:attribute name="telefon" />       
         <cc:attribute name="ButtonAction" method-signature="java.lang.String unosNovogKorisnikaWeb()" />
         <cc:attribute name="tekstButt" />
         <cc:attribute name="trebaLiPass" type="java.lang.Boolean" default="false"/>
+        <cc:attribute name="samoPass" type="java.lang.Boolean" default="true"/>
     </cc:interface>
 
     <!-- IMPLEMENTATION -->
     <cc:implementation>
         <div style="padding-left: 30px;padding-top: 10px;">
-            <div class="row g-2">                
-                <ezcomp:inputTextPopunjen 
-                    ID="imeiprezime" TIP="text" REQ="true" cssDIV="col-md"                    
-                    REQWHO="Vrijednost za polje ime i prezime mora biti ispunjena!!!"
-                    VALUE="#{cc.attrs.imeiprezime}" 
-                    PHOLDER="Ime i prezime korisnika"/>
-                <ezcomp:inputTextPopunjen 
-                    ID="telefon" TIP="text" REQ="true" cssDIV="col-md"
-                    REQWHO="Vrijednost za polje telefon mora biti ispunjena!!!"
-                    VALUE="#{cc.attrs.telefon}" PHOLDER="Korisnički telefon" />               
+            <div style="#{cc.attrs.samoPass ? 'display:none;' : ''}">
+                <div class="row g-2">                
+                    <ezcomp:inputTextPopunjen 
+                        ID="imeiprezime" TIP="text" REQ="true" cssDIV="col-md"                    
+                        REQWHO="Vrijednost za polje ime i prezime mora biti ispunjena!!!"
+                        VALUE="#{cc.attrs.imeiprezime}" 
+                        PHOLDER="Ime i prezime korisnika"/>
+                    <ezcomp:inputTextPopunjen 
+                        ID="telefon" TIP="text" REQ="true" cssDIV="col-md"
+                        REQWHO="Vrijednost za polje telefon mora biti ispunjena!!!"
+                        VALUE="#{cc.attrs.telefon}" PHOLDER="Korisnički telefon" />               
+                </div>
+                <ezcomp:inputTextPopunjen ID="adresa" TIP="text" 
+                        VALUE="#{cc.attrs.adresa}" PHOLDER="Korisnička adresa" /> 
             </div>
-            <ezcomp:inputTextPopunjen ID="adresa" TIP="text" 
-                    VALUE="#{cc.attrs.adresa}" PHOLDER="Korisnička adresa" />                    
-            <div class="row g-2">                        
+            <div class="row g-2" style="#{cc.attrs.trebaLiPass ? '' : 'display:none;'}">                        
                 <ezcomp:inputTextPopunjen 
                     ID="user" TIP="text" REQ="#{cc.attrs.trebaLiPass}" cssDIV="col-md"
                     REQWHO="Vrijednost za polje korisničkog imena mora biti ispunjena!!!"

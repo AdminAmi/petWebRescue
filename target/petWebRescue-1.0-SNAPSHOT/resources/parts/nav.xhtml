@@ -103,9 +103,21 @@
                           <a class="nav-link btn btn-light" href="#">Rezervisani ljubimci</a>
                       </li>
                     -->
-                      <li class="nav-item">
-                          <a class="nav-link btn btn-light" jsf:outcome="azuriranjePod">Promjena korisničkih podataka</a>
-                      </li>
+                    <li class="nav-item dropdown">                    
+                      <a class="nav-link dropdown-toggle btn btn-light" href="#" 
+                         id="navbarPodaci" role="button" 
+                         data-bs-toggle="dropdown" aria-expanded="false">
+                          Promjena podataka korisnika 
+                      </a>
+                      <ul class="dropdown-menu" aria-labelledby="navbarPodaci">
+                          <li class="nav-item">
+                              <a class="dropdown-item" jsf:outcome="azuriranjePod">Promjena korisničkih podataka</a>
+                          </li>
+                          <li class="nav-item">
+                              <a class="dropdown-item" jsf:outcome="azuriranjePass">Promjena lozinke</a>
+                          </li>
+                      </ul>
+                    </li>
                    </h:panelGroup>
               </ul>
 

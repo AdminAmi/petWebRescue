@@ -110,7 +110,8 @@ public class korisnikPogled implements Serializable {
         return null;
        
     }
-     public String unosNovogAdministratoraWeb() {        
+    
+    public String unosNovogAdministratoraWeb() {        
         try { 
             Korisnik unos = new Korisnik();
             unos.setImeIPrezime(imeIPrezime);
@@ -130,6 +131,14 @@ public class korisnikPogled implements Serializable {
    
     public String azuriranjeKorisnika() throws SQLException{
         kont.azurirajKorisnika(k);
+        //kont.promjenaPassworda(k, k.getPass(), tip);
+        //webUtil.infoPoruka("Uspješno ažuriranje korisnika","");
+        webUtil.infoPoruka("Uspješno ažuriranje podataka korisnika", "");
+        return null;
+    }
+    
+    public String azuriranjePassworda() throws SQLException{
+        //kont.azurirajKorisnika(k);
         kont.promjenaPassworda(k, k.getPass(), tip);
         //webUtil.infoPoruka("Uspješno ažuriranje korisnika","");
         webUtil.infoPoruka("Uspješno ažuriranje podataka korisnika", "");

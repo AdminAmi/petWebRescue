@@ -13,13 +13,11 @@
 
     <!-- IMPLEMENTATION -->
     <cc:implementation>
-        <h:panelGroup rendered="#{not empty cc.attrs.ListaZaTabelu}">
-              
+        <h:panelGroup rendered="#{not empty cc.attrs.ListaZaTabelu}">              
             <ezcomp:tabelaLjubimci Zapisi="#{cc.attrs.ListaZaTabelu}"/>
         </h:panelGroup>
         <h:panelGroup 
-            rendered="#{empty cc.attrs.ListaZaTabelu}">
-            
+            rendered="#{empty cc.attrs.ListaZaTabelu}">            
             <div class="alert alert-info">
                 #{cc.attrs.Poruka}
             </div>

@@ -27,12 +27,12 @@
             <!--<ui:include src="parts/logAz.xhtml"/> -->
             <h:form >                
                 <ezcomp:korisnik 
-                    ButtonAction="#{korisnikPogled.azuriranjeKorisnika()}" 
+                    ButtonAction="#{korisnikPogled.azuriranjePassworda()}" 
                     adresa="#{korisnikPogled.kont.korisnik.adresa}"
                     telefon="#{korisnikPogled.kont.korisnik.telefon}"
                     imeiprezime="#{korisnikPogled.kont.korisnik.imeIPrezime}" 
-                    samoPass="false"
-                    user="#{korisnikPogled.kont.korisnik.user}" pass="#{korisnikPogled.kont.korisnik.pass}"
+                    user="#{korisnikPogled.kont.korisnik.user}" pass="#{korisnikPogled.kont.korisnik.pass}"                     
+                    trebaLiPass="true"
                     id="korisnik1" tekstButt="Ažuriraj podatke korisnika!"
                     />    
             </h:form>           
