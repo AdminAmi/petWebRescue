@@ -16,6 +16,7 @@
         <cc:attribute name="DIS"/>
         <cc:attribute name="ButtonAction" method-signature="java.lang.String unosNovogKorisnikaWeb()" />
         <cc:attribute name="tekstButt" />
+        <cc:attribute name="trebaLiPass" type="java.lang.Boolean" default="false"/>
     </cc:interface>
 
     <!-- IMPLEMENTATION -->
@@ -36,13 +37,14 @@
                     VALUE="#{cc.attrs.adresa}" PHOLDER="Korisnička adresa" />                    
             <div class="row g-2">                        
                 <ezcomp:inputTextPopunjen 
-                    ID="user" TIP="text" REQ="true" cssDIV="col-md"
+                    ID="user" TIP="text" REQ="#{cc.attrs.trebaLiPass}" cssDIV="col-md"
                     REQWHO="Vrijednost za polje korisničkog imena mora biti ispunjena!!!"
                     VALUE="#{cc.attrs.user}" 
                     PHOLDER="Korisničko ime" 
                     DISABLED="#{cc.attrs.DIS}"/>                
                  <ezcomp:inputPassPopunjen 
-                    ID="pass" REQ="true" cssDIV="col-md"
+                     ID="pass" REQ="#{cc.attrs.trebaLiPass}" cssDIV="col-md" 
+                     DISABLED="#{not cc.attrs.trebaLiPass}"
                     REQWHO="Vrijednost za polje pasworda mora biti ispunjena!!!"
                     VALUE="#{cc.attrs.pass}" PHOLDER="Korisnička lozinka"/>
             </div>

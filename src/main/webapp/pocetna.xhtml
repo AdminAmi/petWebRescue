@@ -110,12 +110,13 @@
                                   
                                 <div class="input-group mb-3"> 
                                    
-                                    <ezcomp:inputTextPopunjen_1 cssDIV="form-floating" 
-                                                              CSS="form-control" ID="ime"                                                            
-                                                              prikaziMarginu="false"
-                                                              PHOLDER="Unesite ime ljubimca"
-                                                              VALUE="#{ljubimacPogled.prLjubimca}"/>
-                                    <h:commandButton value="&#128269; Pretraga" class="btn btn-outline-secondary" 
+                                    <ezcomp:inputTextPopunjen cssDIV="form-floating" 
+                                      CSS="form-control" ID="ime"                                                            
+                                      prikaziMarginu="false"
+                                      PHOLDER="Unesite ime ljubimca"
+                                      VALUE="#{ljubimacPogled.prLjubimca}"/>
+                                    <h:commandButton value="&#128269; Pretraga" 
+                                      class="btn btn-outline-secondary" 
                                                      action="#{ljubimacPogled.pretraga()}"/>
                                 </div>
                                    <h:panelGroup id="pretraga1" rendered="#{not empty ljubimacPogled.pretragaLista  }">
