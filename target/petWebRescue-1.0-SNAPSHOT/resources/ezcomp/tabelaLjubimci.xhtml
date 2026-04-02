@@ -1,0 +1,67 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="jakarta.faces.composite"
+      xmlns:h="jakarta.faces.html"
+      xmlns:jsf="jakarta.faces"      
+      xmlns:f="jakarta.faces.core"
+      xmlns:c="jakarta.tags.core"
+      xmlns:ui="jakarta.faces.facelets">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+        <cc:attribute name="Zapisi" required="true" type="java.util.ArrayList"/>
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <div class="table-responsive">
+            <h:dataTable value="#{cc.attrs.Zapisi}" var="ljub" class="table table-bordered align-middle" >
+                <ui:remove>
+                <h:column>
+                    <f:facet name="header">Slika ljubimca</f:facet> 
+                    #{ljub.path}
+                    <div style="text-align: center">
+                        <c:if test="#{ljub.path == 'null'}">
+                            <h:graphicImage value="/resources/pic/avatar.jpg" height="75px" />
+
+                        </c:if>
+                        <c:if test="#{ljub.path != 'null'}">
+                            <h:graphicImage value="#{ljub.path}" class="rounded" height="75px" />
+
+                        </c:if>
+                    </div>
+                </h:column>
+                </ui:remove>
+            <h:column>
+                <f:facet name="header">Naziv ljubimca</f:facet> 
+                <a data-toggle="tooltip" data-placement="left"  title="Manipulacija sa korisnikom" jsf:outcome="ljubimacInfo" > 
+                #{ljub.ime} 
+                <f:param name="IDLjubimca" value="#{ljub.id}"/>  
+                </a>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Vrsta ljubimca</f:facet> #{ljub.vrsta}
+            </h:column>
+            <h:column>
+                <f:facet name="header">Starost</f:facet> #{ljub.starost}. god.
+            </h:column>
+            <h:column>
+                <f:facet name="header">Datum </f:facet>                    
+                    <h:outputText rendered="#{ljub.status=='REZERVISAN'}" value="Rezervacija: #{ljub.datum}"/>
+                    <h:outputText rendered="#{ljub.status=='UDOMLJEN'}" value="Udomljenje: #{ljub.datum}"/>
+                    <ui:remove>
+                    <h:outputText rendered="#{ljub.status=='SLOBODAN'}" value="Primljen: #{ljub.datum_udomljavanja}"/>
+                    </ui:remove>
+            </h:column>
+            <h:column rendered="#{korisnikPogled.kont.korisnik.tip=='ADMINISTRATOR'}">
+                <f:facet name="header">Akcije</f:facet>
+                <h:form>
+                    <h:commandButton action="#{ljubimacPogled.rezervisiLjubimca(ljub.id)}" value="Ukloni " rendered="#{ljub.status=='REZERVISAN'}"/>                                     
+                    <h:commandButton action="#{ljubimacPogled.ukloniUdomljenje(ljub.id)}" value="ukloni" rendered="#{ljub.status=='UDOMLJEN'}"/>
+                </h:form>
+            </h:column>
+        </h:dataTable>
+        </div>
+    </cc:implementation>
+</html>

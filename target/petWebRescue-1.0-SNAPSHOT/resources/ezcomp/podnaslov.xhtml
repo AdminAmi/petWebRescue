@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="jakarta.faces.composite">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+        <cc:attribute name="Podnaslov"/>
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <!-- https://unicode-table.com/en/sets/arrow-symbols/#right-arrows -->
+        <span class="lead fs-4">&#10158; #{cc.attrs.Podnaslov}</span>
+        <div style="padding-left: 30px;"><hr  class="my-1"/></div>
+    </cc:implementation>
+</html>

@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="jakarta.faces.composite"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+        <cc:attribute name="cssDIV"/> <!-- css string za DIV tag-->
+        <cc:attribute name="ID"/> <!-- id od input taga-->
+        <cc:attribute name="TIP"/> <!-- tip - type od input taga-->
+        <cc:attribute name="CSS"/> <!-- css za input tag-->
+        <cc:attribute name="PHOLDER"/><!-- placeholder string za input tag-->
+        <cc:attribute name="VALUE"/><!-- vrijednost iz beana za input-->
+        <cc:attribute name="REQ"/> <!--vrijednosat atributa required input taga-->
+        <cc:attribute name="DISABLED"/><!-- vrijednost atributa disabled input taga-->
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+         <div class="form-floating mb-3 #{cc.attrs.cssDIV}">
+             <h:selectOneMenu id="#{cc.attrs.ID}" class="form-select " value="#{cc.attrs.VALUE}" >
+                  <f:selectItem itemLabel="PAS" itemValue="pas"/>
+                  <f:selectItem itemLabel="MAČKA" itemValue="macka"/>                                            
+              </h:selectOneMenu>
+              <label for="#{cc.attrs.ID}" class="form-label">Vrsta ljubimca</label> 
+          </div>
+    </cc:implementation>
+</html>

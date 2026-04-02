@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:jsf="jakarta.faces"
+      xmlns:c="jakarta.tags.core"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:p="jakarta.faces.passthrough"
+      xmlns:ezcomp="jakarta.faces.composite/ezcomp"
+>
+    <h:head>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <title>Facelet Title</title>
+        <h:outputStylesheet name="bootstrap.min.css" />
+        <h:outputStylesheet name="mycss.css" />
+        <h:outputScript name="bootstrap.bundle.min.js" />
+    </h:head>
+    <h:body>
+         <h:messages  style="display: none;"/>
+         <c:if test="#{korisnikPogled.kont.korisnik.tip == 'ADMINISTRATOR'}">
+             <ui:include src="resources/parts/nav.xhtml"/>
+             <ui:include src="resources/parts/errorMessage.xhtml"/>       
+            <div class="container"> 
+                <ui:include src="resources/parts/zaglavlje.xhtml"/>                
+                <ezcomp:podnaslov Podnaslov="Molimo Vas da unesete podatke od ljubimca:"/>
+                <h:form>  
+                    <div style="padding-left: 30px;padding-top: 10px;">
+                        <ezcomp:inputTextPopunjen 
+                            ID="nazivLjubimca" TIP="text" 
+                            VALUE="#{ljubimacPogled.ljubimacK.ljubimac.ime}" 
+                            PHOLDER="Naziv ljubimca" REQ="true"/>
+                         <ezcomp:inputTextPopunjen 
+                            ID="starostLjubimca" TIP="text" 
+                            VALUE="#{ljubimacPogled.ljubimacK.ljubimac.starost}" 
+                            PHOLDER="Starost ljubimca" REQ="true"/>                       
+                        <ezcomp:inputSelect ID="vrsta" 
+                            VALUE="#{ljubimacPogled.ljubimacK.ljubimac.vrsta}" />
+                        <h:commandButton class="btn btn-outline-dark float-end" 
+                                         value="Unos novog ljubimca" 
+                                         action="#{ljubimacPogled.snimiLjubimca()}"  />
+                    </div>
+                </h:form>
+            </div>
+        </c:if>
+        <!--
+        <ezcomp:grskaP/>
+        -->
+        <c:if test="#{korisnikPogled.kont.korisnik.tip != 'ADMINISTRATOR'}">
+            <ui:include src="resources/parts/greska.xhtml"/>
+        </c:if>
+    </h:body>
+</html>

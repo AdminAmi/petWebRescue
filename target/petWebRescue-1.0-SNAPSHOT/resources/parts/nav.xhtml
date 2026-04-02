@@ -1,0 +1,135 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:jsf="jakarta.faces"          
+      xmlns:ui="jakarta.faces.facelets">
+    <h:head>
+        <title>Navigacija</title>
+    </h:head>
+    <h:body>
+        <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light">
+          <div class="container">
+              <a class="navbar-brand" jsf:outcome="index">PetRescue</a>
+            <button class="navbar-toggler" type="button" 
+                    data-bs-toggle="collapse" 
+                    data-bs-target="#navbarTogglerDemo02" 
+                    aria-controls="navbarTogglerDemo02" 
+                    aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+                
+            <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+               
+              <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                  <!--
+                  Dio navbara koji trebaju da vide svi gosti korisnici i administratori                  
+                  -->
+                  <li class="nav-item dropdown">                    
+                      <a class="nav-link dropdown-toggle btn btn-light" 
+                         href="#" id="navbarONama" role="button" 
+                         data-bs-toggle="dropdown" aria-expanded="false">
+                         O nama 
+                      </a>
+                      <ul class="dropdown-menu" aria-labelledby="navbarOnama">
+                          <li><a class="dropdown-item" >O nama</a></li>
+                          <li><a class="dropdown-item" >Volontiranje</a></li> 
+                          <li><a class="dropdown-item" >Donacije</a></li>
+                      </ul>
+                  </li>
+                 
+                   <li class="nav-item">
+                        
+                           <a class="nav-link btn btn-light" 
+                              jsf:outcome="ljubimci">
+                               Ljubimci
+                           </a>
+                       
+                   </li>
+                  <!---->
+                <h:panelGroup rendered="#{korisnikPogled.loged}">
+                   
+                <h:panelGroup rendered="#{korisnikPogled.kont.korisnik.tip == 'ADMINISTRATOR'}">
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-light" jsf:outcome="pocetna">Početna</a>
+                      </li>
+                    <li class="nav-item dropdown">                    
+                      <a class="nav-link dropdown-toggle btn btn-light" href="#" 
+                         id="navbarScrollZivotinje" role="button" 
+                         data-bs-toggle="dropdown" aria-expanded="false">
+                          Akcije sa ljubimcem 
+                      </a>
+                      <ul class="dropdown-menu" 
+                          aria-labelledby="navbarScrollZivotinje">
+                          <li>
+                              <a class="dropdown-item" 
+                                 jsf:outcome="unosLjubimca">
+                                  Unos novog ljubimca
+                              </a>
+                          </li>
+                          <li>
+                              <a class="dropdown-item  " 
+                                 jsf:outcome="pretragaLjubimca" >
+                                  Pretraga ljubimca po imenu
+                              </a>
+                          </li>                  
+                      </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                      <a class="nav-link dropdown-toggle btn btn-light" 
+                         href="#" id="navbarScrollKorisnici" role="button" 
+                         data-bs-toggle="dropdown" aria-expanded="false">
+                          Akcije sa Korisnicima
+                      </a>
+                      <ul class="dropdown-menu" 
+                          aria-labelledby="navbarScrollKorisnici">
+                          <li>
+                              <a class="dropdown-item" 
+                                 jsf:outcome="unosAdministratoraWeb">
+                                  Unos novog administratora
+                              </a>
+                          </li>
+                        <li>
+                            <a class="dropdown-item disabled" href="#">
+                                Pretraga korisnika po imenu
+                            </a>
+                        </li>                    
+                      </ul>
+                    </li>
+                </h:panelGroup>
+                   
+                        <!--
+                      <li class="nav-item">
+                          <a class="nav-link btn btn-light" href="#">Rezervisani ljubimci</a>
+                      </li>
+                    -->
+                      <li class="nav-item">
+                          <a class="nav-link btn btn-light" jsf:outcome="azuriranjePod">Promjena korisničkih podataka</a>
+                      </li>
+                   </h:panelGroup>
+              </ul>
+
+               <h:panelGroup rendered="#{korisnikPogled.loged == true}"> 
+                  <h:form class="d-flex">                 
+                      <h:commandLink   
+                          value="Odjava #{korisnikPogled.kont.korisnik.imeIPrezime}"
+                          action="#{korisnikPogled.logOff()}" 
+                          class="btn btn-outline-primary float-end"/>
+                  </h:form>
+               </h:panelGroup>
+               <h:panelGroup rendered="#{korisnikPogled.loged == false}">
+                  <h:form class="d-flex "> 
+                    <button type="button" class="btn btn-light  float-end " 
+                            data-bs-toggle="modal" 
+                            data-bs-target="#staticBackdrop"  >
+                            Prijavi se 
+                    </button>
+                      <!--&#10158;  -->
+                  </h:form>
+                   
+               </h:panelGroup>
+                </div>    
+          </div>
+         </nav>
+    </h:body>
+</html>

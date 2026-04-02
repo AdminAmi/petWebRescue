@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:ezcomp="jakarta.faces.composite/ezcomp"
+      xmlns:c="jakarta.tags.core"
+      xmlns:jsf="http://xmlns.jcp.org/jsf" 
+      >
+    <h:head>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <title>Tutorial</title>
+        <h:outputStylesheet name="bootstrap.min.css" />
+        <h:outputStylesheet name="mycss.css" />
+        <h:outputScript name="bootstrap.bundle.min.js" />
+    </h:head>
+    <h:body>
+         <h:messages style="display: none;"/>
+         <c:if test="#{korisnikPogled.loged }" > 
+             <ui:include src="resources/parts/nav.xhtml"/>
+        <div class="container " >  
+            <ui:include src="resources/parts/errorMessage.xhtml"/>
+            <ui:include src="resources/parts/zaglavlje.xhtml"/> 
+            <ezcomp:podnaslov Podnaslov="Pretraga ljubimaca"/>
+            <div style="padding-left: 30px;padding-top: 10px;">
+            <h:form id="pretraga">  
+            <div class="input-group mb-3"> 
+                <div class="form-floating ">
+                    <input type="text" class="form-control" id="drzava" minlength="2"
+                           placeholder="Unesite ime klijenta" jsf:value="#{ljubimacPogled.prLjubimca}">
+                       
+                    </input>
+                    <label for="drzava">Unesite ime ljubimca za pretraživanje.</label>
+                </div>
+                <h:commandButton value="&#128269; Pretraga" class="btn btn-outline-secondary" action="#{ljubimacPogled.pretraga()}"/>
+            </div>
+                <h:panelGroup id="pretraga1" rendered="#{ljubimacPogled.pretragaLista != null }">
+                    <ezcomp:tabelaLjubimci Zapisi="#{ljubimacPogled.pretragaLista}" />
+                </h:panelGroup>
+                <h:panelGroup rendered="#{ljubimacPogled.pretragaLista == null or ljubimacPogled.pretragaLista.size() == 0}">
+                    Za unešene podatke nema rezultata pretraživanja.
+                </h:panelGroup>
+                
+            </h:form>
+            </div>
+        </div>
+        </c:if>
+        <ezcomp:greskaLog/>
+    </h:body>
+</html>

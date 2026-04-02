@@ -126,7 +126,7 @@ public class webUtil {
     }
     public static void testErr(String poruka){
         FacesContext.getCurrentInstance().getExternalContext()
-                .getFlash().put("errorMessageMessage", poruka);
+                .getFlash().put("errorMessage", poruka);
     }
     
 }

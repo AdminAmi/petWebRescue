@@ -84,22 +84,25 @@ public class korisnikPogled implements Serializable {
         }
     }
     
-    public String unosNovogKorisnikaWeb() {        
+    public String unosNovogKorisnikaWeb(int tip) {        
         try { 
             Korisnik unos = new Korisnik();
             unos.setImeIPrezime(imeIPrezime);
             unos.setId(0);
+            unos.setAdresa(adresa);
+            unos.setTelefon(telefon);
             unos.setUser(korisnickoIme);
             unos.setPass(korisnickaLozinka);
-            unos.setTip("KORISNIK");
+            if (tip==1) unos.setTip("KORISNIK");
+            else unos.setTip("ADMINISTRATOR");
             kont.UnesiKorisnika(unos);
             //kont.UnesiKorisnika(new Korisnik(0, imeIPrezime, korisnickoIme, korisnickaLozinka,"KORISNIK")); 
-            klijent.Klijent k = new Klijent(0,imeIPrezime, adresa, telefon);
-            kl.dodajKlijenta(k);
+//            klijent.Klijent k = new Klijent(0,imeIPrezime, adresa, telefon);
+//            kl.dodajKlijenta(k);
             setFlasMessage("Korisnik: " + imeIPrezime + " je uspješno dodan u bazu.");
             webUtil.testUsp(flasMessage);
             korisnickoIme=null;
-            return null;
+            return "pocetna?faces-redirect=true";
         } catch (SQLException ex) {
             korisnickoIme=null;
             webUtil.errPoruka("Greška u unosu korisnika", ex.getMessage() + " " + ex.getSQLState(), "");

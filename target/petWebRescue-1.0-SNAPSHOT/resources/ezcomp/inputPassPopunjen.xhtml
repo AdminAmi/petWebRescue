@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="jakarta.faces.composite"
+      xmlns:jsf="jakarta.faces"
+      xmlns:p="jakarta.faces.passthrough"
+      xmlns:h="jakarta.faces.html"
+      xmlns:ui="jakarta.faces.facelets">
+          
+     
+    <cc:interface>
+        <cc:attribute name="cssDIV"/> <!-- css string za DIV tag-->
+        <cc:attribute name="ID"/> <!-- id od input taga-->
+        
+        <cc:attribute name="CSS"/> <!-- css za input tag-->
+        <cc:attribute name="PHOLDER"/><!-- placeholder string za input tag-->
+        <cc:attribute name="VALUE"/><!-- vrijednost iz beana za input-->
+        <cc:attribute name="REQ"/> <!--vrijednosat atributa required input taga-->
+        <cc:attribute name="REQWHO"/> <!--vrijednosat atributa required input taga-->
+        <cc:attribute name="DISABLED"/><!-- vrijednost atributa disabled input taga-->
+        
+    </cc:interface>
+     <!-- IMPLEMENTATION -->
+     <ui:remove>
+    <cc:implementation>
+        <!-- Provjeravamo ima li ovaj input grešku u porukama -->
+        <ui:param name="puniId" value="#{cc.clientId}:#{cc.attrs.ID}" />
+        <ui:param name="jeNevazece" value="#{not empty facesContext.getMessageList(puniId)}" />
+        <div class="form-floating mb-3 #{cc.attrs.cssDIV}">
+            <h:inputSecret class="form-control #{jeNevazece ? 'is-invalid' : ''} #{cc.attrs.CSS}" 
+                   id="#{cc.attrs.ID}"                    
+                   p:placeholder="#{cc.attrs.PHOLDER}"
+                   value="#{cc.attrs.VALUE}" 
+                   required="#{cc.attrs.REQ}"
+                   requiredMessage="#{cc.attrs.REQWHO}"
+                   disabled="#{cc.attrs.DISABLED}"/>
+            <label for="#{cc.attrs.ID}" >
+                #{cc.attrs.PHOLDER}
+            </label> 
+            <!-- Prikazuje se samo ako postoji greška -->
+            <div class="invalid-feedback">
+                #{cc.attrs.REQWHO}
+            </div>
+        </div>
+    </cc:implementation>
+     </ui:remove>
+     
+</html>

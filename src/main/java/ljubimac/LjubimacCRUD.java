@@ -72,7 +72,7 @@ public class LjubimacCRUD extends korisni.Kontroler{
     
     // Finalni SQL sa '?' za ime (sigurnost!)
     sql = "SELECT DISTINCT * FROM ljubimac WHERE " + uvjetVrsta + "ime LIKE ?  " + uvjetStatus;
-
+     System.out.println(sql);
     // 2. Try-with-resources za automatsko zatvaranje
     try (Connection konekcija = getKon();
          PreparedStatement pstmt = konekcija.prepareStatement(sql)) {
@@ -103,6 +103,54 @@ public class LjubimacCRUD extends korisni.Kontroler{
 
     return ljubimci;
 }
+ 
+    public List<Ljubimac> dobaviSveLjubimce(int opcija, String ime, int opcija2, int stranica) throws SQLException {
+        List<Ljubimac> ljubimci = new ArrayList<>();
+        int pageSize = 10;
+        int offset = (stranica - 1) * pageSize; // Izračunava odakle baza počinje čitati
+
+        // Postojeći uslovi ostaju isti
+        String uvjetVrsta = switch (opcija) {
+            case 1 -> "vrsta = 'pas' AND ";
+            case 2 -> "vrsta = 'mačka' AND ";
+            default -> ""; 
+        };
+
+        String uvjetStatus = switch (opcija2) {
+            case 1 -> " AND status = 'SLOBODAN'";
+            case 2 -> " AND status = 'REZERVISAN'";
+            case 3 -> " AND status = 'UDOMLJEN'";  
+            default -> "";
+        };
+
+        // Dodajemo ORDER BY (važno za stabilnu paginaciju) i LIMIT/OFFSET na kraj
+        String sql = "SELECT DISTINCT * FROM ljubimac WHERE " + uvjetVrsta + "ime LIKE ? " + uvjetStatus 
+                   + " ORDER BY id LIMIT ? OFFSET ?";
+
+        try (Connection konekcija = getKon();
+             PreparedStatement pstmt = konekcija.prepareStatement(sql)) {
+
+            pstmt.setString(1, ime + "%");
+            pstmt.setInt(2, pageSize); // LIMIT: koliko redova (10)
+            pstmt.setInt(3, offset);   // OFFSET: od kojeg reda počinje
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    ljubimci.add(new Ljubimac(
+                        rs.getInt("id"),
+                        rs.getString("ime"),
+                        rs.getString("vrsta"),
+                        rs.getString("starost"),
+                        rs.getString("status")
+                    ));
+                }
+            }
+        } catch (SQLException e) {
+            throw new SQLException(e);
+        }
+        return ljubimci;
+    }
+
 
 
     /**

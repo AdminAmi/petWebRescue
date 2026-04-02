@@ -7,18 +7,11 @@ package ljubimac;
 import jakarta.inject.Named;
 import jakarta.faces.view.ViewScoped;
 import jakarta.servlet.http.Part;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import korisnik.Korisnik;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.sql.SQLException;
 import korisni.webUtil;
-import korisnik.CRUDKorisnik;
 
 /**
  *
@@ -64,14 +57,15 @@ public class ljubimacPogled implements Serializable {
     }
     
     public String pretraga(){
+        pretragaLista=null;
         try {
             if(prLjubimca.isEmpty()) {
-                webUtil.infoPoruka("Unesite baren jedbo slovo za pretraživanje", "");
-                pretragaLista=null;
-                return null;
+                webUtil.infoPoruka("Unesite barem jedno slovo za pretraživanje", "");                                
             }
-            pretragaLista = (ArrayList<Ljubimac>) LjubimacK.dobaviSveLjubimce(0,prLjubimca,0);
-            System.out.println("Ljubimac.ljubimacPogled.pretraga()" + String.valueOf(pretragaLista.size()));
+            else{
+                pretragaLista = (ArrayList<Ljubimac>) LjubimacK.dobaviSveLjubimce(0,prLjubimca,0);
+                if (pretragaLista.isEmpty()) webUtil.testErr("Za unešene podatke nema rezultata pretraživanja!");
+            }
         } catch (SQLException ex) {
              webUtil.errPoruka("Greška u pretraživanju ljubimaca" + ex, "");
         }
@@ -85,7 +79,7 @@ public class ljubimacPogled implements Serializable {
 //                LjubimacK.ukloniRezervacija(object.getId());  
 //                //webUtil.infoPoruka("Broj za obrisati rez: " + String.valueOf(object.getId()), "");
 //            }
-//            ljub=LjubimacK.vratiLjubimce(1);
+              slobodniLjubimci();
 //            rezervisani=LjubimacK.vratiLjubimce(2);
 //            udomljeni=LjubimacK.vratiLjubimce(3);
                dostupniPsi();
@@ -94,11 +88,11 @@ public class ljubimacPogled implements Serializable {
 //
     }
     public void slobodniLjubimci(){
-//        try {
-//            ljub=LjubimacK.vratiLjubimce(1);            
-//        } catch (SQLException ex) {
-//            webUtil.errPoruka("Greška u učitavanju ljubimaca" + ex, "");
-//        }
+        try {
+            ljub=(ArrayList<Ljubimac>) LjubimacK.dobaviSveLjubimce(1, "", 1);            
+        } catch (SQLException ex) {
+            webUtil.errPoruka("Greška u učitavanju ljubimaca" + ex, "");
+        }
     }
     public void rezervisaniLjubimci(){
 //        try {
@@ -117,8 +111,7 @@ public class ljubimacPogled implements Serializable {
     public void dostupniPsi(){
         try {
             psiSlobodni=(ArrayList<Ljubimac>) LjubimacK.dobaviSveLjubimce(1, "", 1);
-            System.out.println
-        ("Ljubimac.ljubimacPogled.dostupniPsi()" + String.valueOf(psiSlobodni.size()));
+            
         } catch (SQLException ex) {
             webUtil.errPoruka("Greška u učitavanju ljubimaca" + ex, "");
         }
@@ -142,12 +135,12 @@ public class ljubimacPogled implements Serializable {
     }
     
     public void azurirajLjubimca(Ljubimac temp){
-//        try {
-//            LjubimacK.azurirajLjubimca(temp);
-//            webUtil.infoPoruka("Uspješno ažuriranje ljubimca", "");
-//        } catch (SQLException ex) {
-//           webUtil.errPoruka("Greška u učitavanju ljubimaca" + ex, "");
-//        }
+        try {
+            LjubimacK.azurirajLjubimca(temp);
+            webUtil.infoPoruka("Uspješno ažuriranje ljubimca", "");
+        } catch (SQLException ex) {
+           webUtil.errPoruka("Greška u učitavanju ljubimaca: " + ex, "");
+        }
     }
     public String rezervisiLjubimca(long idK){
 //        try {
@@ -323,8 +316,7 @@ public class ljubimacPogled implements Serializable {
 
     public void setDatoteka(Part datoteka) {
         this.datoteka = datoteka;
-    }
-    
+    }  
 
    
 }
