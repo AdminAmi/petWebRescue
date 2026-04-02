@@ -43,6 +43,7 @@
                             <a class="nav-link active" data-bs-toggle="tab" href="#pretraga">Pretraga ljubimaca</a>
                           </li>
                         </ul>
+                    <br/>
                         <!-- Tab panes -->                        
                         <div class="tab-content">
                             <div class="tab-pane  fade" id="dostupni">
@@ -62,8 +63,7 @@
                           </div>
                           <div class="tab-pane  active" id="pretraga">
                               <ui:remove>
-                              <h:form>
-                                  <br/>
+                              <h:form>                                  
                                   <h:inputText value="#{ljubimacPogled.prLjubimca}" >
                                       <f:ajax event="keydown" listener="#{ljubimacPogled.pretragaSaTastaturom()}" render="tabeladata" />
                               </h:inputText>
@@ -105,7 +105,7 @@
                                      
                               </h:form>
                               </ui:remove>
-                              <br/>
+                              
                                <h:form id="pretraga"> 
                                   
                                 <div class="input-group mb-3"> 

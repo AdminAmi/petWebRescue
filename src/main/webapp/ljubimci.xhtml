@@ -42,8 +42,8 @@
 
             <!-- Tab panes -->
             <div class="tab-content">
-                <div class="tab-pane   active " id="dostupni"><p/><ezcomp:tabelaLjubimci Zapisi="#{ljubimacPogled.ljub}"/></div>
-                <div class="tab-pane  fade" id="rezervisani"><p/><ezcomp:tabelaLjubimci Zapisi="#{ljubimacPogled.mackeSlobodne}"/> </div>
+                <div class="tab-pane   active " id="dostupni"><p/><ezcomp:tabeleZaljubimceSaIspisom ListaZaTabelu="#{ljubimacPogled.psiSlobodni}" Poruka="Nema slobodnih pasa u udomilištu!"/></div>
+                <div class="tab-pane  fade" id="rezervisani"><p/><ezcomp:tabeleZaljubimceSaIspisom ListaZaTabelu="#{ljubimacPogled.mackeSlobodne}" Poruka="Nema slobodnih mačaka u udomilištu!"/> </div>
                 <div class="tab-pane  fade" id="udomljeni"><p/><ezcomp:tabelaLjubimci Zapisi="#{ljubimacPogled.rezervisaniOdKorisnika}"/> </div>
             </div>
             </div>              
