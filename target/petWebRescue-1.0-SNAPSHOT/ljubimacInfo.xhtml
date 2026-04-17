@@ -4,7 +4,6 @@
       xmlns:h="jakarta.faces.html"
       xmlns:ui="jakarta.faces.facelets"
       xmlns:ezcomp="jakarta.faces.composite/ezcomp"
-      xmlns:p="jakarta.faces.passthrough"
       xmlns:c="jakarta.tags.core"
       xmlns:f="jakarta.faces.core">
     <h:head>
@@ -24,7 +23,7 @@
         <h:messages style="display: none"/>
         <ui:include src="resources/parts/nav.xhtml"/>
         <ui:include src="resources/parts/errorMessage.xhtml"/>       
-        <div class="container"> 
+        <div class="container">   
             <ui:include src="resources/parts/zaglavlje.xhtml"/>                
             <ezcomp:podnaslov Podnaslov="Podaci o ljubimcu:"/>
             <div style="padding-left: 30px;padding-top: 10px;">
@@ -40,10 +39,37 @@
                             PHOLDER="Starost ljubimca" REQ="true"/>                       
                         <ezcomp:inputSelect ID="vrsta" 
                             VALUE="#{ljubimacPogled.ljubimacK.ljubimac.vrsta}" />
+                        <div class="d-flex justify-content-end gap-2">
+                        <c:if test="#{korisnikPogled.kont.korisnik.tip=='ADMINISTRATOR' and 
+                              ljubimacPogled.ljubimacK.ljubimac.status=='SLOBODAN'}">
                          <h:commandButton class="btn btn-outline-dark float-end" 
-                                          value="Ažuriraj podatke od ljubimca." 
-                                          
-                                          rendered="#{korisnikPogled.k.tip=='ADMINISTRATOR'}" />
+                          value="Ažuriraj podatke od ljubimca." 
+                          action="#{ljubimacPogled.azurirajLjubimca(ljubimacPogled.ljubimacK.ljubimac)}"
+                           />
+                        </c:if>
+                        <c:if test="#{korisnikPogled.loged and 
+                              ljubimacPogled.ljubimacK.ljubimac.status=='SLOBODAN'}" >
+                            <h:commandButton class="btn btn-outline-dark float-end" 
+                              value="Napravi rezervaciju" 
+                              action="#{ljubimacPogled.rezervisiLjubimca(korisnikPogled.kont.korisnik.id,
+                                        ljubimacPogled.ljubimacK.ljubimac)}"
+                               />
+                        
+                        </c:if>
+                        <c:if test="#{korisnikPogled.kont.korisnik.tip=='ADMINISTRATOR' and 
+                              ljubimacPogled.ljubimacK.ljubimac.status=='REZERVISAN'}">
+                            <h:commandButton class="btn btn-outline-dark float-end" 
+                              value="Napravi udomljenje" 
+                              
+                               />
+                            
+                            <h:commandButton class="btn btn-outline-dark float-end" 
+                              value="Ukloni rezervaciju" 
+                              
+                               />
+                            
+                        </c:if>
+                        </div>
                 </h:form>
             </div>
         </div>

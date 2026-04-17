@@ -31,7 +31,9 @@
             value="#{not empty cc.attrs.VALUE or not empty param[puniId]}" />
         <!-- LOGIKA: Ako je postback, a nema greške i polje nije prazno -> postani zeleno -->
         <ui:param name="statusKlasa" 
-            value="#{facesContext.postback and poljeJePoslano ? (imaGresku ? 'is-invalid' : (not empty cc.attrs.VALUE ? 'is-valid' : '')) : ''}" />
+            value="#{facesContext.postback and poljeJePoslano ? 
+             (imaGresku ? 'is-invalid' : (cc.attrs.VALIDATE and not empty cc.attrs.VALUE ? 'is-valid' : '')) 
+             : ''}" />
         
         <div class="form-floating #{cc.attrs.prikaziMarginu ? 'mb-3' : ''} #{cc.attrs.cssDIV}">
             <input jsf:id="#{cc.attrs.ID}" 

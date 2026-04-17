@@ -71,7 +71,8 @@ public class LjubimacCRUD extends korisni.Kontroler{
             //(opcija2 == 0) ? "status = 'SLOBODAN'" : "status = 'REZERVISAN'";
     
     // Finalni SQL sa '?' za ime (sigurnost!)
-    sql = "SELECT DISTINCT * FROM ljubimac WHERE " + uvjetVrsta + "ime LIKE ?  " + uvjetStatus;
+    sql = "SELECT DISTINCT * FROM ljubimac WHERE " + uvjetVrsta + "ime LIKE ?  " 
+            + uvjetStatus;
      System.out.println(sql);
     // 2. Try-with-resources za automatsko zatvaranje
     try (Connection konekcija = getKon();
@@ -104,7 +105,8 @@ public class LjubimacCRUD extends korisni.Kontroler{
     return ljubimci;
 }
  
-    public List<Ljubimac> dobaviSveLjubimce(int opcija, String ime, int opcija2, int stranica) throws SQLException {
+    public List<Ljubimac> dobaviSveLjubimce
+        (int opcija, String ime, int opcija2, int stranica) throws SQLException {
         List<Ljubimac> ljubimci = new ArrayList<>();
         int pageSize = 10;
         int offset = (stranica - 1) * pageSize; // Izračunava odakle baza počinje čitati
@@ -112,7 +114,7 @@ public class LjubimacCRUD extends korisni.Kontroler{
         // Postojeći uslovi ostaju isti
         String uvjetVrsta = switch (opcija) {
             case 1 -> "vrsta = 'pas' AND ";
-            case 2 -> "vrsta = 'mačka' AND ";
+            case 2 -> "vrsta = 'macka' AND ";
             default -> ""; 
         };
 
@@ -261,6 +263,48 @@ public class LjubimacCRUD extends korisni.Kontroler{
         this.ljubimac = ljubimac;
     }
     
+     /**
+     * Dobavlja list ljubimaca zavisno od parametara
+     * @param idKorisnik
+     * @return list ljubimaca
+     * @throws SQLException
+     */
+     public List<Ljubimac> dobaviSveLjubimceKorisnika( int idKorisnik) 
+             throws SQLException {
+        List<Ljubimac> ljubimci = new ArrayList<>();
+        String sql = "SELECT ljubimac.id, ljubimac.ime, ljubimac.starost,"
+                + " ljubimac.vrsta, ljubimac.status FROM ljubimac, udomljavanje WHERE " 
+                + " udomljavanje.status= ? AND "
+                + " udomljavanje.idKlijenti= ? AND ljubimac.id=udomljavanje.idLjubimac" ;
+         System.out.println(sql);
+        // 2. Try-with-resources za automatsko zatvaranje
+        try (Connection konekcija = getKon();
+             PreparedStatement pstmt = konekcija.prepareStatement(sql)) {
+            pstmt.setString(1, "REZERVISAN");
+            pstmt.setInt(2, idKorisnik);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    Ljubimac ljub = new Ljubimac(
+                        rs.getInt("id"),
+                        rs.getString("ime"),
+                        rs.getString("vrsta"),
+                        rs.getString("starost"),
+                        rs.getString("status")
+                    );
+
+                    // Ovdje po potrebi možeš dohvatiti sliku ako je BLOB
+                    // byte[] slika = rs.getBytes("slika_kolona");
+
+                    ljubimci.add(ljub);
+                }
+            }
+        } catch (SQLException e) {
+            //System.err.println("Greška pri dohvatu ljubimaca: " + e.getMessage());
+            throw new SQLException(e);
+        }
+
+        return ljubimci;
+    }
    
    
     

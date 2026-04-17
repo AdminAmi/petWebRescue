@@ -11,7 +11,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import korisnik.Korisnik;
 import java.sql.SQLException;
+import java.util.Date;
 import korisni.webUtil;
+import udomljavanje.UdomljavanjeCRUD;
+import udomljavanje.Udomljen;
 
 /**
  *
@@ -74,15 +77,25 @@ public class ljubimacPogled implements Serializable {
    
     public void ljubimci(int idK){
         ArrayList<Ljubimac> ukloniRez = new ArrayList<>();
-        //ukloniRez = LjubimacK.vratiLjubimceIstekleRezervacije();            
+        try {
+            //ukloniRez = LjubimacK.vratiLjubimceIstekleRezervacije();
 //            for (ljubimac object : ukloniRez) {
 //                LjubimacK.ukloniRezervacija(object.getId());  
 //                //webUtil.infoPoruka("Broj za obrisati rez: " + String.valueOf(object.getId()), "");
 //            }
-              slobodniLjubimci();
+//      slobodniLjubimci();
+            psiSlobodni=(ArrayList<Ljubimac>) LjubimacK.dobaviSveLjubimce(1, "", 1);
+            mackeSlobodne=(ArrayList<Ljubimac>) LjubimacK.dobaviSveLjubimce(2, "", 1);
+            rezervisaniOdKorisnika=(ArrayList<Ljubimac>) LjubimacK.dobaviSveLjubimceKorisnika(idK);
+            
+            
+            } catch (SQLException ex) {
+            webUtil.infoPoruka(ex.getMessage(), "");
+            }
+              rezervisaniLjubimci();
 //            rezervisani=LjubimacK.vratiLjubimce(2);
 //            udomljeni=LjubimacK.vratiLjubimce(3);
-               dostupniPsi();
+              
 //            mackeSlobodne=LjubimacK.vratiLjubimce(5);
 //            rezervisaniOdKorisnika=LjubimacK.vratiRezervisane(idK);
 //
@@ -95,11 +108,11 @@ public class ljubimacPogled implements Serializable {
         }
     }
     public void rezervisaniLjubimci(){
-//        try {
-//            rezervisani=LjubimacK.vratiLjubimce(2);            
-//        } catch (SQLException ex) {
-//            webUtil.errPoruka("Greška u učitavanju ljubimaca" + ex, "");
-//        }
+        try {
+            rezervisani=(ArrayList<Ljubimac>) LjubimacK.dobaviSveLjubimce(0, "", 2);            
+        } catch (SQLException ex) {
+            webUtil.errPoruka("Greška u učitavanju ljubimaca" + ex, "");
+        }
     }
     public void udomljeniLjubimci(){
 //        try {
@@ -142,16 +155,30 @@ public class ljubimacPogled implements Serializable {
            webUtil.errPoruka("Greška u učitavanju ljubimaca: " + ex, "");
         }
     }
-    public String rezervisiLjubimca(long idK){
-//        try {
+    public String rezervisiLjubimca(long idK, Ljubimac temp){
+        System.out.println(selektovaniID);
+        System.out.println(idK);
+        try {
 //            LjubimacK.unesiRezervacija(idK, selektovaniID);
-//            webUtil.infoPoruka("Uspješno ažuriranje ljubimca", "");
-//        } catch (SQLException ex) {
-//            webUtil.errPoruka("Greška u rezervisanju ljubimaca" + ex, "");
-//        }
+            udomljavanje.UdomljavanjeCRUD rezervisi = new UdomljavanjeCRUD();
+            udomljavanje.Udomljen trenutni= new Udomljen();
+            trenutni.setIdKlijenti((int) idK);
+            trenutni.setIdLjubimac(selektovaniID);
+            trenutni.setDatumUdomljavanja(new Date());
+            trenutni.setStatus(ljubimac.StanjeLjubimca.REZERVISAN.toString());
+            rezervisi.dodajRelaciju(trenutni);
+            temp.setStatus(ljubimac.StanjeLjubimca.REZERVISAN.toString());
+            LjubimacK.azurirajLjubimca(temp);
+            webUtil.infoPoruka("Uspješno ažuriranje ljubimca", "");
+        } catch (SQLException ex) {
+            webUtil.errPoruka("Greška u rezervisanju ljubimaca" + ex, "");
+        }
         return null;
     }
      public String udomiLjubimca(){
+//         udomljavanje.UdomljavanjeCRUD rezervisi = new UdomljavanjeCRUD();
+//         udomljavanje.Udomljen trnutni= new Udomljen();
+         
 //        try {
 //            LjubimacK.unesiUdomljenje(selektovaniID);
 //            webUtil.infoPoruka("Uspješno udomljenje ljubimca", "");

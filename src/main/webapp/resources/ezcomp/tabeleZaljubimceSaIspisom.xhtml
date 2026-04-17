@@ -10,7 +10,6 @@
         <cc:attribute name="ListaZaTabelu" required="true" type="java.util.ArrayList"/>
         <cc:attribute name="Poruka" required="true" />
     </cc:interface>
-
     <!-- IMPLEMENTATION -->
     <cc:implementation>
         <h:panelGroup rendered="#{not empty cc.attrs.ListaZaTabelu}">              
@@ -18,9 +17,7 @@
         </h:panelGroup>
         <h:panelGroup 
             rendered="#{empty cc.attrs.ListaZaTabelu}">            
-            <div class="alert alert-info">
-                #{cc.attrs.Poruka}
-            </div>
+            <div class="alert alert-info">#{cc.attrs.Poruka}</div>
         </h:panelGroup>
     </cc:implementation>
 </html>
