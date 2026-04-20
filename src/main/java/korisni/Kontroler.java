@@ -20,7 +20,7 @@ import javax.swing.JOptionPane;
 public abstract class Kontroler {
     protected final String      dbPath = "jdbc:sqlite:" + 
             webUtil.vratiPathDB()+"registracija";;
-    protected Connection        kon;
+    protected Connection        kone;
     
      public Kontroler() {
         try {            
@@ -38,7 +38,7 @@ public abstract class Kontroler {
      * @return objecat Connection
      * @throws SQLException ukoliko nije uspješno povezivanje sa bazom podataka
      */
-    protected Connection getKon() throws SQLException {
+    protected Connection getKone() throws SQLException {
         return DriverManager.getConnection(dbPath);        
     }
     
@@ -75,7 +75,7 @@ public abstract class Kontroler {
      * @throws SQLException ukoliko se desila neka greska sa bazom podataka
      */
     public void zatvoriKonekciju() throws SQLException{
-        if(kon != null && ! kon.isClosed()) kon.close();        
+        if(kone != null && ! kone.isClosed()) kone.close();        
     } 
     
     protected String escapeSql(String input) {

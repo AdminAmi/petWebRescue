@@ -75,7 +75,7 @@ public class LjubimacCRUD extends korisni.Kontroler{
             + uvjetStatus;
      System.out.println(sql);
     // 2. Try-with-resources za automatsko zatvaranje
-    try (Connection konekcija = getKon();
+    try (Connection konekcija = getKone();
          PreparedStatement pstmt = konekcija.prepareStatement(sql)) {
         
         // Postavljanje parametra za LIKE (ime + postotak)
@@ -129,7 +129,7 @@ public class LjubimacCRUD extends korisni.Kontroler{
         String sql = "SELECT DISTINCT * FROM ljubimac WHERE " + uvjetVrsta + "ime LIKE ? " + uvjetStatus 
                    + " ORDER BY id LIMIT ? OFFSET ?";
 
-        try (Connection konekcija = getKon();
+        try (Connection konekcija = getKone();
              PreparedStatement pstmt = konekcija.prepareStatement(sql)) {
 
             pstmt.setString(1, ime + "%");
@@ -166,7 +166,7 @@ public class LjubimacCRUD extends korisni.Kontroler{
         Ljubimac ljub = null;
 
         // Try-with-resources osigurava zatvaranje čak i ako postaviKorisnike baci error
-        try (Connection konekcija = getKon();
+        try (Connection konekcija = getKone();
              PreparedStatement pstmt = konekcija.prepareStatement(sql)) {
             pstmt.setInt(1, id);
             try (ResultSet rs = pstmt.executeQuery()) {
@@ -278,7 +278,7 @@ public class LjubimacCRUD extends korisni.Kontroler{
                 + " udomljavanje.idKlijenti= ? AND ljubimac.id=udomljavanje.idLjubimac" ;
          System.out.println(sql);
         // 2. Try-with-resources za automatsko zatvaranje
-        try (Connection konekcija = getKon();
+        try (Connection konekcija = getKone();
              PreparedStatement pstmt = konekcija.prepareStatement(sql)) {
             pstmt.setString(1, "REZERVISAN");
             pstmt.setInt(2, idKorisnik);
