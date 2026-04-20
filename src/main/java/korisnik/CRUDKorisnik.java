@@ -93,7 +93,7 @@ public class CRUDKorisnik extends korisni.Kontroler{
     Korisnik kor = null;
     // Svi resursi u zagradama se automatski zatvaraju 
     // (Connection, PreparedStatement, ResultSet)
-    try (Connection konekcija = getKone();
+    try (Connection konekcija = getKon();
         PreparedStatement pstmt = konekcija.prepareStatement(sql)) {        
         pstmt.setInt(1, id); // Sigurno postavljanje ID-a        
         try (ResultSet rs = pstmt.executeQuery()) {
@@ -128,7 +128,7 @@ public class CRUDKorisnik extends korisni.Kontroler{
     public boolean login(String log, String pass) throws SQLException {        
         boolean zastavica = false;
         String sql = "SELECT * FROM korisnik WHERE user = ? AND pass = ? ";
-        try (Connection konekcija = getKone();
+        try (Connection konekcija = getKon();
             PreparedStatement pstmt = konekcija.prepareStatement(sql)) { 
             pstmt.setString(1, log);
             pstmt.setString(2, pass);
@@ -164,7 +164,7 @@ public class CRUDKorisnik extends korisni.Kontroler{
     // Koristimo upitnik za parametar kako bismo spriječili SQL Injection
     String sql = "SELECT * FROM korisnik WHERE ime LIKE ?";
     // Automatsko zatvaranje konekcije i statement-a
-    try (Connection konekcija = getKone();
+    try (Connection konekcija = getKon();
          PreparedStatement pstmt = konekcija.prepareStatement(sql)) {        
         // Postavljamo uvjet: string + postotak za LIKE operator
         pstmt.setString(1, uvjet + "%");        
@@ -199,7 +199,7 @@ public class CRUDKorisnik extends korisni.Kontroler{
         ArrayList<Korisnik> rezultat = new ArrayList();        
         String sql =  "SELECT * FROM korisnik " ;  
          // Automatsko zatvaranje konekcije i statement-a
-        try (Connection konekcija = getKone();
+        try (Connection konekcija = getKon();
             PreparedStatement pstmt = konekcija.prepareStatement(sql)) {
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {

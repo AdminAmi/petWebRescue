@@ -63,7 +63,7 @@ public class UdomljavanjeCRUD extends korisni.Kontroler{
             sql = "SELECT * FROM udomljavanje WHERE rezervacija=0"; 
         else 
             sql = "SELECT * FROM udomljavanje WHERE rezervacija=1";
-        Statement st = getKone().createStatement();        
+        Statement st = getKon().createStatement();        
         ResultSet resultSet = st.executeQuery(sql);
         Udomljen udomljen = null;
             
@@ -100,7 +100,7 @@ public class UdomljavanjeCRUD extends korisni.Kontroler{
         sql=sql + dodatak;
         Udomljen udomljen = null;
 
-        try (Connection konekcija = getKone();
+        try (Connection konekcija = getKon();
              PreparedStatement pstmt = konekcija.prepareStatement(sql)) {
 
             pstmt.setInt(1, idKlijenti);
@@ -196,7 +196,7 @@ public class UdomljavanjeCRUD extends korisni.Kontroler{
     String sql = "SELECT idKlijenti FROM udomljavanje WHERE idLjubimac = ?";
 
     // Automatsko zatvaranje Connection, PreparedStatement i ResultSet
-    try (Connection kon = getKone();
+    try (Connection kon = getKon();
          PreparedStatement pstmt = kon.prepareStatement(sql)) {
         pstmt.setInt(1, id);
         try (ResultSet rs = pstmt.executeQuery()) {
@@ -222,7 +222,7 @@ public class UdomljavanjeCRUD extends korisni.Kontroler{
         String sql = "SELECT idLjubimac FROM udomljavanje WHERE idKlijenti = ?";
 
         // Automatsko zatvaranje resursa (Connection, PreparedStatement, ResultSet)
-        try (Connection konekcija = getKone();
+        try (Connection konekcija = getKon();
              PreparedStatement pstmt = konekcija.prepareStatement(sql)) {
 
             pstmt.setInt(1, id);
