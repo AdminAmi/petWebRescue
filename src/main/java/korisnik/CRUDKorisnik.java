@@ -1,25 +1,52 @@
 package korisnik;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
- *
- * @author Amel Dzanic
+ * Kontroler klasa za upravljanje podacima korisnika u bazi podataka.
+ * Implementira CRUD operacije, login logiku i automatsko kreiranje tabela.
+ * 
+ * @author Amel Džanić
+ * @version 2.0
  */
-public class CRUDKorisnik extends korisni.Kontroler{
-    Korisnik Korisnik = new Korisnik();
+public class CRUDKorisnik extends korisni.Kontroler {
+    
+    /** Trenutno aktivni korisnik (npr. nakon logina). */
+    private Korisnik korisnik = new Korisnik();
 
+    /**
+     * Inicijalizuje kontroler i osigurava postojanje tabele korisnik.
+     * @throws SQLException Ako dođe do greške pri radu sa bazom.
+     */
     public CRUDKorisnik() throws SQLException {        
         createTable();
     }
     
     /**
-     * Ova metoda kreira tabelu u bazi podataka
-     * @throws SQLException
+     * Pomoćna metoda (DRY) za mapiranje trenutnog reda ResultSet-a u objekat Korisnik.
+     * 
+     * @param rs ResultSet pozicioniran na red koji treba mapirati.
+     * @return {@link Korisnik} objekat sa popunjenim podacima.
+     * @throws SQLException Ako kolona ne postoji.
+     */
+    private Korisnik mapirajKorisnika(ResultSet rs) throws SQLException {
+        Korisnik k = new Korisnik();
+        k.setId(rs.getInt("id"));
+        k.setUser(rs.getString("user"));
+        k.setPass(rs.getString("pass"));
+        k.setIme(rs.getString("ime"));
+        k.setPrezime(rs.getString("prezime"));
+        k.setTip(rs.getString("tip"));
+        k.setAdresa(rs.getString("adresa"));
+        k.setTelefon(rs.getString("telefon"));
+        return k;
+    }
+
+    /**
+     * Kreira tabelu 'korisnik' ako ista ne postoji.
+     * @throws SQLException U slučaju SQL greške.
      */
     public final void createTable() throws SQLException  {
         String sql = "CREATE TABLE IF NOT EXISTS korisnik (" +
@@ -31,200 +58,156 @@ public class CRUDKorisnik extends korisni.Kontroler{
                 "tip TEXT, " + 
                 "adresa TEXT, " +
                 "telefon TEXT NOT NULL)";       
-        InsDelUpd(sql);       
-    }
-     
-      /**
-     *Metoda unesiKorisnika unosi sve podatke o novom korisniku sistema
-     * @param temp predstavlja objekat korisnik koji se unosi u bazu
-     * @throws SQLException ukoliko nije bilo uspjesno povezivanje sa bazom podataka
-     */
-    public void UnesiKorisnika(Korisnik temp) throws SQLException {
-        String sql = "INSERT INTO korisnik (user,pass,ime,prezime,tip,adresa,telefon)"
-                + " VALUES ('" + temp.getUser()+"','"
-                + temp.getPass()+"','"+temp.getIme()+"','"
-                + temp.getPrezime()+"','"+temp.getTip()+"','" 
-                + temp.getAdresa()+"','"+temp.getTelefon()+"' )";         
-        InsDelUpd(sql);       
-    }
-    /**
-     * Metoda <code>azurirajKorisnika</code> vrši azuiriranje podataka korisnka
-     * i to ime, prezime, adresu i telefon korisnika
-     * @param temp objekat korisnika nad kojim se vrsi azuriranje
-     * @throws SQLException ukoliko nije bilo uspjesno povezivanje sa bazom podataka
-     */
-    public void azurirajKorisnika(Korisnik temp) throws SQLException {
-        String sql = "UPDATE korisnik SET ime = '"+ 
-                    temp.getIme()+ "', prezime = '"+
-                    temp.getPrezime()+ "', adresa = '"+
-                    temp.getAdresa()+ "', telefon = '"+
-                    "' WHERE id = " + temp.getId();        
-        InsDelUpd(sql);
-    }
-    /**
-     * Metoda koja vrši izmjenu korisnicke sifre
-     * @param temp objekat korisnika koji mjenja sifru
-     * @param New nova sifra
-     * @param Rep ponovni unos nove sifre
-     * @throws SQLException ukoliko nije bilo uspjesno povezivanje sa bazom podataka
-     */
-    public void promjenaPassworda(Korisnik temp, String New, String Rep) throws SQLException {
-        String sql = "UPDATE korisnik SET pass ='"+New+"' WHERE id =" + temp.getId();
-        InsDelUpd(sql);        
+        try (Connection kon = getKone(); Statement st = kon.createStatement()) {
+            st.execute(sql);
+        }
     }
     
     /**
-     *
-     * @param id
-     * @throws SQLException
+     * Unosi novog korisnika koristeći parametrizovani upit (sigurnost).
+     * 
+     * @param k Objekat korisnika za unos.
+     * @throws SQLException Ako korisničko ime već postoji ili baza nije dostupna.
+     */
+    public void unesiKorisnika(Korisnik k) throws SQLException {
+        String sql = "INSERT INTO korisnik (user, pass, ime, prezime, tip, adresa, telefon) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        try (Connection kon = getKone(); PreparedStatement pstmt = kon.prepareStatement(sql)) {
+            pstmt.setString(1, k.getUser());
+            pstmt.setString(2, k.getPass());
+            pstmt.setString(3, k.getIme());
+            pstmt.setString(4, k.getPrezime());
+            pstmt.setString(5, k.getTip());
+            pstmt.setString(6, k.getAdresa());
+            pstmt.setString(7, k.getTelefon());
+            pstmt.executeUpdate();
+        }
+    }
+    
+    /**
+     * Ažurira osnovne podatke korisnika na osnovu njegovog ID-a.
+     * 
+     * @param k Objekat sa novim podacima.
+     * @throws SQLException Ako ID nije pronađen ili upit ne uspije.
+     */
+    public void azurirajKorisnika(Korisnik k) throws SQLException {
+        String sql = "UPDATE korisnik SET ime = ?, prezime = ?, adresa = ?, telefon = ? WHERE id = ?";        
+        try (Connection kon = getKone(); PreparedStatement pstmt = kon.prepareStatement(sql)) {
+            pstmt.setString(1, k.getIme());
+            pstmt.setString(2, k.getPrezime());
+            pstmt.setString(3, k.getAdresa());
+            pstmt.setString(4, k.getTelefon());
+            pstmt.setInt(5, k.getId());
+            pstmt.executeUpdate();
+        }
+    }
+  
+    /**
+     * Postavlja novu lozinku za korisnika.
+     * 
+     * @param k Korisnik čija se lozinka mijenja.
+     * @param novaLozinka Novi tekst lozinke.
+     * @throws SQLException Ako ažuriranje ne uspije.
+     */
+    public void promjenaPassworda(Korisnik k, String novaLozinka) throws SQLException {
+        String sql = "UPDATE korisnik SET pass = ? WHERE id = ?";
+        try (Connection kon = getKone(); PreparedStatement pstmt = kon.prepareStatement(sql)) {
+            pstmt.setString(1, novaLozinka);
+            pstmt.setInt(2, k.getId());
+            pstmt.executeUpdate();
+        }
+    }
+    
+    /**
+     * Briše korisnika iz baze podataka.
+     * @param id ID korisnika za brisanje.
+     * @throws SQLException Ako brisanje nije moguće.
      */
     public void obrisiKorisnika(int id) throws SQLException {
-        String sql = "DELETE FROM korisnik WHERE id = " + id;        
-        InsDelUpd(sql);
-    } 
-    /**
-     * Metoda vraca objekat korisnika koji ima trazeni ID
-     * @param id korisnika koji se trazi
-     * @return objekat korisnik koji ima taj ID, ukoliko ga ne nadje vraca null
-     */
-    public Korisnik VratiKorisnikaPoID(int id) throws SQLException {
-    String sql = "SELECT * FROM korisnik WHERE id = ?";
-    // Bolje je inicijalizirati na null da znaš ako korisnik ne postoji
-    Korisnik kor = null;
-    // Svi resursi u zagradama se automatski zatvaraju 
-    // (Connection, PreparedStatement, ResultSet)
-    try (Connection konekcija = getKone();
-        PreparedStatement pstmt = konekcija.prepareStatement(sql)) {        
-        pstmt.setInt(1, id); // Sigurno postavljanje ID-a        
-        try (ResultSet rs = pstmt.executeQuery()) {
-            if (rs.next()) { // Koristimo 'if' jer tražimo jednog korisnika po ID-u
-                kor = new Korisnik();
-                kor.setId(rs.getInt("id"));
-                kor.setUser(rs.getString("user"));
-                kor.setPass(rs.getString("pass"));
-                kor.setIme(rs.getString("ime"));
-                kor.setPrezime(rs.getString("prezime"));
-                kor.setTip(rs.getString("tip"));
-                kor.setAdresa(rs.getString("adresa"));
-                kor.setTelefon(rs.getString("telefon"));
-                // Ako imaš sliku u bazi, ovdje bi je dodao:
-                // kor.setSlika(rs.getBytes("photo")); 
-            }
+        String sql = "DELETE FROM korisnik WHERE id = ?";        
+        try (Connection kon = getKone(); PreparedStatement pstmt = kon.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+            pstmt.executeUpdate();
         }
     } 
-
-    return kor; 
-}
-
-    
-    /**
-     * metoda login je zaduzena za logovanje na sistem ukoliko su uneseni parametri tacni
-     * pored toga ucitava iz baze sve podatke o zadanom korisniku
-     * @param log predstavlja korisnicko ime
-     * @param pass predstavlja korisnicku sifru
-     * @return true ukoliko su podaci ispravni
-     * @throws SQLException ukoliko nije bilo uspjesno povezivanje sa bazom podataka
-     */
-    public boolean login(String log, String pass) throws SQLException {        
-        boolean zastavica = false;
-        String sql = "SELECT * FROM korisnik WHERE user = ? AND pass = ? ";
-        try (Connection konekcija = getKone();
-            PreparedStatement pstmt = konekcija.prepareStatement(sql)) { 
-            pstmt.setString(1, log);
-            pstmt.setString(2, pass);
+   
+    /** @return Vraća korisnika po ID-u ili null ako ne postoji. */
+    public Korisnik vratiKorisnikaPoID(int id) throws SQLException {
+        String sql = "SELECT * FROM korisnik WHERE id = ?";
+        try (Connection kon = getKone(); PreparedStatement pstmt = kon.prepareStatement(sql)) {        
+            pstmt.setInt(1, id);        
             try (ResultSet rs = pstmt.executeQuery()) {
-                while (rs.next()) 
-                {
-                    Korisnik.setId(rs.getInt("id"));
-                    Korisnik.setIme(rs.getString("ime"));
-                    Korisnik.setUser(rs.getString("user"));
-                    Korisnik.setPass(rs.getString("pass"));
-                    Korisnik.setPrezime(rs.getString("prezime"));
-                    Korisnik.setTip(rs.getString("tip"));
-                    Korisnik.setAdresa(rs.getString("adresa"));
-                    Korisnik.setTelefon(rs.getString("telefon"));
-                    zastavica = true;
-                }
+                if (rs.next()) return mapirajKorisnika(rs);
             }
-        }
-        return zastavica;
+        } 
+        return null; 
     }
 
-   
-    
     /**
-     *
-     * @param uvjet
-     * @return
-     * @throws java.sql.SQLException
+     * Provjerava kredencijale i popunjava lokalni objekat 'korisnik' ako je uspješno.
+     * 
+     * @param user Korisničko ime.
+     * @param pass Lozinka.
+     * @return true ako su podaci ispravni, inače false.
      */
-    public ArrayList<Korisnik> vratiKojiZadovoljavajuUvjet(String uvjet) 
-            throws SQLException {
-    ArrayList<Korisnik> rezultat = new ArrayList<>();
-    // Koristimo upitnik za parametar kako bismo spriječili SQL Injection
-    String sql = "SELECT * FROM korisnik WHERE ime LIKE ?";
-    // Automatsko zatvaranje konekcije i statement-a
-    try (Connection konekcija = getKone();
-         PreparedStatement pstmt = konekcija.prepareStatement(sql)) {        
-        // Postavljamo uvjet: string + postotak za LIKE operator
-        pstmt.setString(1, uvjet + "%");        
-        try (ResultSet rs = pstmt.executeQuery()) {
-            while (rs.next()) {
-                Korisnik kor = new Korisnik();
-                kor.setId(rs.getInt("id"));
-                kor.setIme(rs.getString("ime"));
-                kor.setUser(rs.getString("user"));
-                kor.setPass(rs.getString("pass"));
-                kor.setPrezime(rs.getString("prezime"));
-                kor.setTip(rs.getString("tip"));
-                kor.setAdresa(rs.getString("adresa"));
-                kor.setTelefon(rs.getString("telefon"));
-                rezultat.add(kor);
+    public boolean login(String user, String pass) throws SQLException {        
+        String sql = "SELECT * FROM korisnik WHERE user = ? AND pass = ?";
+        try (Connection kon = getKone(); PreparedStatement pstmt = kon.prepareStatement(sql)) { 
+            pstmt.setString(1, user);
+            pstmt.setString(2, pass);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    this.korisnik = mapirajKorisnika(rs);
+                    return true;
+                }
             }
         }
-    } 
-    
-    // Čak i ako se dogodi greška, vraćamo (praznu) listu umjesto null, 
-    // što je bolja praksa u Javi (izbjegava NullPointerException).
-    return rezultat;
-}
+        return false;
+    }
 
-
-    /**
-     *
-     * @return
-     * @throws SQLException
-     */
-    public ArrayList<Korisnik> vratiSve() throws SQLException {        
-        ArrayList<Korisnik> rezultat = new ArrayList();        
-        String sql =  "SELECT * FROM korisnik " ;  
-         // Automatsko zatvaranje konekcije i statement-a
-        try (Connection konekcija = getKone();
-            PreparedStatement pstmt = konekcija.prepareStatement(sql)) {
-            try (ResultSet rs = pstmt.executeQuery()) {
-                while (rs.next()) {
-                    Korisnik kor = new Korisnik();
-                    kor.setId(rs.getInt("id"));
-                    kor.setIme(rs.getString("ime"));
-                    kor.setUser(rs.getString("user"));
-                    kor.setPass(rs.getString("pass"));
-                    kor.setPrezime(rs.getString("prezime"));
-                    kor.setTip(rs.getString("tip"));
-                    kor.setAdresa(rs.getString("adresa"));
-                    kor.setTelefon(rs.getString("telefon"));
-                    rezultat.add(kor);
-                }
+    /** @return Lista svih korisnika u bazi. */
+    public List<Korisnik> vratiSve() throws SQLException {        
+        List<Korisnik> rezultat = new ArrayList<>();        
+        String sql = "SELECT * FROM korisnik";  
+        try (Connection kon = getKone(); Statement st = kon.createStatement(); ResultSet rs = st.executeQuery(sql)) {
+            while (rs.next()) {
+                rezultat.add(mapirajKorisnika(rs));
             }
         } 
         return rezultat;
     }
     
-    public Korisnik getKorisnik() {
-        return Korisnik;
+        /**
+     * Pretražuje korisnike čije ime počinje zadanim nizom karaktera.
+     * Koristi 'LIKE' operator sa parametrizovanim upitom radi sigurnosti.
+     * 
+     * @param uvjet Početna slova imena za pretragu.
+     * @return Lista korisnika koji zadovoljavaju kriterij.
+     * @throws SQLException U slučaju greške u radu sa bazom.
+     */
+    public ArrayList<Korisnik> vratiKojiZadovoljavajuUvjet(String uvjet) throws SQLException {
+        ArrayList<Korisnik> rezultat = new ArrayList<>();
+        String sql = "SELECT * FROM korisnik WHERE ime LIKE ?";
+        
+        try (Connection konekcija = getKone();
+             PreparedStatement pstmt = konekcija.prepareStatement(sql)) {        
+            
+            // Postavljamo parametar sa džoker znakom (%) na kraju
+            pstmt.setString(1, uvjet + "%");        
+            
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    // Pozivamo zajedničku metodu za mapiranje podataka (DRY)
+                    rezultat.add(mapirajKorisnika(rs));
+                }
+            }
+        } 
+        return rezultat;
     }
 
-    public void setKorisnik(Korisnik Korisnik) {
-        this.Korisnik = Korisnik;
-    }
 
+    /** @return Trenutno učitani korisnik. */
+    public Korisnik getKorisnik() { return korisnik; }
+    
+    /** @param k Postavlja trenutnog korisnika. */
+    public void setKorisnik(Korisnik k) { this.korisnik = k; }
 }

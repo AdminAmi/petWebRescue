@@ -11,7 +11,6 @@ import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import klijent.Klijent;
 import klijent.KlijentCRUD;
 import korisni.webUtil;
 
@@ -95,7 +94,7 @@ public class korisnikPogled implements Serializable {
             unos.setPass(korisnickaLozinka);
             if (tip==1) unos.setTip("KORISNIK");
             else unos.setTip("ADMINISTRATOR");
-            kont.UnesiKorisnika(unos);
+            kont.unesiKorisnika(unos);
             //kont.UnesiKorisnika(new Korisnik(0, imeIPrezime, korisnickoIme, korisnickaLozinka,"KORISNIK")); 
 //            klijent.Klijent k = new Klijent(0,imeIPrezime, adresa, telefon);
 //            kl.dodajKlijenta(k);
@@ -119,7 +118,7 @@ public class korisnikPogled implements Serializable {
             unos.setUser(korisnickoIme);
             unos.setPass(korisnickaLozinka);
             unos.setTip("ADMINISTRATOR");
-            kont.UnesiKorisnika(unos);
+            kont.unesiKorisnika(unos);
             //kont.UnesiKorisnika(new Korisnik(0, imeIPrezime, korisnickoIme, korisnickaLozinka,"ADMINISTRATOR"));             
             return "index?faces-redirect=true";
         } catch (SQLException ex) {
@@ -139,7 +138,8 @@ public class korisnikPogled implements Serializable {
     
     public String azuriranjePassworda() throws SQLException{
         //kont.azurirajKorisnika(k);
-        kont.promjenaPassworda(k, k.getPass(), tip);
+        kont.promjenaPassworda(k, k.getPass());
+        //kont.promjenaPassworda(k, k.getPass(), tip);
         //webUtil.infoPoruka("Uspješno ažuriranje korisnika","");
         webUtil.infoPoruka("Uspješno ažuriranje podataka korisnika", "");
         return null;

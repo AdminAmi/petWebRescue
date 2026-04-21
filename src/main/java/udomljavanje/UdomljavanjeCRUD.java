@@ -8,16 +8,38 @@ import java.util.List;
 import ljubimac.LjubimacCRUD;
 import klijent.KlijentCRUD;
 
+/**
+ * Kontroler klasa koja upravlja veznom tabelom 'udomljavanje'.
+ * Realizuje M:N relaciju, prati statuse udomljenja/rezervacija i 
+ * upravlja historijom vraćanja ljubimaca.
+ * 
+ * @author Amel Džanić
+ * @version 1.2
+ */
 public class UdomljavanjeCRUD extends korisni.Kontroler {
+    /** Servis za rad sa klijentima. */
     private final KlijentCRUD kk = new KlijentCRUD();
-    private final LjubimacCRUD lk = new LjubimacCRUD(); 
+    /** Servis za rad sa ljubimcima. */
+    private final LjubimacCRUD lk = new LjubimacCRUD();
+    /** Standardni format za spašavanje datuma u SQLite bazu. */
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");   
-
+    /**
+     * Konstruktor koji osigurava postojanje tabele udomljavanje.
+     * 
+     * @throws SQLException U slučaju greške pri inicijalizaciji baze.
+     */
     public UdomljavanjeCRUD() throws SQLException {
         createTable();       
     }
 
-    // --- DRY: Pomoćna metoda za mapiranje ---
+    /**
+     * Mapira red iz baze u objekat klase {@link Udomljen}.
+     * Vrši parsiranje datuma iz String formata u {@link java.util.Date}.
+     * 
+     * @param rs ResultSet pozicioniran na odgovarajući red.
+     * @return {@link Udomljen} model.
+     * @throws SQLException Ako format datuma nije ispravan ili kolone nedostaju.
+     */
     private Udomljen mapirajUdomljavanje(ResultSet rs) throws SQLException {
         try {
             Udomljen u = new Udomljen(
@@ -31,7 +53,12 @@ public class UdomljavanjeCRUD extends korisni.Kontroler {
             throw new SQLException("Greška u formatu datuma baze: " + e.getMessage());
         }
     }
-
+    /**
+     * Dodaje novi zapis o udomljavanju ili rezervaciji u bazu.
+     * 
+     * @param u Objekat koji sadrži ID-ove klijenta, ljubimca i datum.
+     * @throws SQLException Ako upit ne uspije.
+     */
     public void dodajRelaciju(Udomljen u) throws SQLException {
         String sql = "INSERT INTO udomljavanje (idKlijenti, idLjubimac, datumUdomljavanja, status) VALUES (?, ?, ?, ?)";
         try (Connection kon = getKone(); PreparedStatement pstmt = kon.prepareStatement(sql)) {
@@ -42,15 +69,32 @@ public class UdomljavanjeCRUD extends korisni.Kontroler {
             pstmt.executeUpdate();
         }
     }
-
+    /**
+     * Dobavlja listu svih završenih udomljavanja (isključuje rezervacije).
+     * 
+     * @return Lista realizovanih udomljenja.
+     * @throws SQLException Greška pri čitanju podataka.
+     */
     public List<Udomljen> dobaviSvaUdomljavanja() throws SQLException {
         return dobaviListu("SELECT * FROM udomljavanje WHERE status != 'REZERVISAN'");
     }
-
+    /**
+     * Dobavlja listu svih aktivnih rezervacija.
+     * 
+     * @return Lista rezervisala.
+     * @throws SQLException Greška u SQL upitu.
+     */
     public List<Udomljen> dobaviSveRezervacije() throws SQLException {
         return dobaviListu("SELECT * FROM udomljavanje WHERE status = 'REZERVISAN'");
     }
-
+    /**
+     * Pomoćna metoda koja izvršava upit i popunjava listu objektima.
+     * Automatski učitava povezane objekte Klijent i Ljubimac.
+     * 
+     * @param sql SQL upit za filtriranje.
+     * @return Popunjena lista udomljenja.
+     * @throws SQLException Greška pri mapiranju ili dohvatu.
+     */
     private List<Udomljen> dobaviListu(String sql) throws SQLException {
         List<Udomljen> lista = new ArrayList<>();
         try (Connection kon = getKone(); 
@@ -66,7 +110,14 @@ public class UdomljavanjeCRUD extends korisni.Kontroler {
         }
         return lista;
     }
-
+    /**
+     * Dobavlja specifičnu relaciju na osnovu primarnog ključa (Klijent-Ljubimac).
+     * 
+     * @param idKlijenti ID udomitelja.
+     * @param idLjubimac ID životinje.
+     * @return {@link Udomljen} objekat ili {@code null}.
+     * @throws SQLException Greška pri dohvatu.
+     */
     public Udomljen dobaviRelaciju(int idKlijenti, int idLjubimac) throws SQLException {
         String sql = "SELECT * FROM udomljavanje WHERE idKlijenti = ? AND idLjubimac = ?";
         try (Connection kon = getKone(); PreparedStatement pstmt = kon.prepareStatement(sql)) {
@@ -83,7 +134,12 @@ public class UdomljavanjeCRUD extends korisni.Kontroler {
         }
         return null;
     }
-
+    /**
+     * Ažurira status ili datum postojećeg udomljavanja.
+     * 
+     * @param u Objekat sa novim podacima.
+     * @throws SQLException Greška pri ažuriranju.
+     */
     public void azurirajUdomljavanje(Udomljen u) throws SQLException {
         String sql = "UPDATE udomljavanje SET datumUdomljavanja = ?, status = ? WHERE idKlijenti = ? AND idLjubimac = ?";
         try (Connection kon = getKone(); PreparedStatement pstmt = kon.prepareStatement(sql)) {
@@ -94,7 +150,8 @@ public class UdomljavanjeCRUD extends korisni.Kontroler {
             pstmt.executeUpdate();
         }
     }
-
+   
+    //Ne koristiti
     public void obrisiUdomljavanje(int idKlijenti, int idLjubimac) throws SQLException {
         String sql = "DELETE FROM udomljavanje WHERE idKlijenti = ? AND idLjubimac = ?";
         
@@ -110,7 +167,11 @@ public class UdomljavanjeCRUD extends korisni.Kontroler {
             pstmt.executeUpdate();
         }
     }
-
+    /**
+     * Kreira veznu tabelu 'udomljavanje' sa stranim ključevima.
+     * 
+     * @throws SQLException Greška pri definisanju šeme baze.
+     */
     public final void createTable() throws SQLException {
         String sql = "CREATE TABLE IF NOT EXISTS udomljavanje (" +
                      "idKlijenti INTEGER NOT NULL, " +
@@ -126,16 +187,22 @@ public class UdomljavanjeCRUD extends korisni.Kontroler {
         }
     }
 
-
+    /** @return Lista ID-ova klijenata povezanih sa ljubimcem. */   
     public ArrayList<Integer> vratiIdKlijenata(int idLjubimac) {
         return vratiListuId("SELECT idKlijenti FROM udomljavanje WHERE idLjubimac = ?", idLjubimac);
     }
-
+    /** @return Lista ID-ova ljubimaca povezanih sa klijentom. */   
     public ArrayList<Integer> vratiIdLjubimaca(int idKlijenti) {
         return vratiListuId("SELECT idLjubimac FROM udomljavanje WHERE idKlijenti = ?", idKlijenti);
     }
 
-    // Dodatna DRY metoda za izvlačenje ID-ova
+    /**
+     * Pomoćna metoda za dohvaćanje liste cijelih brojeva (ID-ova) iz baze.
+     * 
+     * @param sql SQL upit.
+     * @param id  ID za filtriranje.
+     * @return Lista rezultujućih ID-ova.
+     */
     private ArrayList<Integer> vratiListuId(String sql, int id) {
         ArrayList<Integer> lista = new ArrayList<>();
         try (Connection kon = getKone(); PreparedStatement pstmt = kon.prepareStatement(sql)) {
@@ -150,8 +217,14 @@ public class UdomljavanjeCRUD extends korisni.Kontroler {
     }
     
     /**
-     * Vraća kompletnu historiju udomljavanja za određenog ljubimca
-     * (uključujući trenutne vlasnike, rezervacije i one koji su vratili ljubimca)
+     * Vraća kompletnu historiju udomljavanja za određenog ljubimca.
+     * Uključuje sve klijente koji su ikada imali interakciju sa ljubimcem (rezervacije, 
+     * trenutna udomljenja, vraćene životinje). Rezultati su sortirani po datumu, 
+     * od najnovijeg ka starijem.
+     * 
+     * @param idLjubimca Identifikator ljubimca za kojeg se traži historija.
+     * @return Lista {@link Udomljen} objekata sa popunjenim podacima o klijentima.
+     * @throws SQLException Ako dođe do greške pri čitanju iz baze.
      */
     public List<Udomljen> dobaviHistorijuLjubimca(int idLjubimca) throws SQLException {
         List<Udomljen> historija = new ArrayList<>();
@@ -173,6 +246,16 @@ public class UdomljavanjeCRUD extends korisni.Kontroler {
         }
         return historija;
     }
+    /**
+     * Vraća kompletnu historiju udomljavanja za određenog klijenta.
+     * Uključuje sve ljubimce koji su ikada imali interakciju sa klijentom (rezervacije, 
+     * trenutna udomljenja, vraćene životinje). Rezultati su sortirani po datumu, 
+     * od najnovijeg ka starijem.
+     * 
+     * @param idKlijenta Identifikator klijenta za kojeg se traži historija.
+     * @return Lista {@link Udomljen} objekata sa popunjenim podacima o ljubimcima.
+     * @throws SQLException Ako dođe do greške pri čitanju iz baze.
+     */
     public List<Udomljen> dobaviHistorijuKlijenta(int idKlijenta) throws SQLException {
         List<Udomljen> lista = new ArrayList<>();
         String sql = "SELECT * FROM udomljavanje WHERE idKlijenti = ? ORDER BY datumUdomljavanja DESC";
@@ -190,6 +273,15 @@ public class UdomljavanjeCRUD extends korisni.Kontroler {
         }
         return lista;
     }
+    
+     /**
+     * Proces vraćanja ljubimca u sklonište. 
+     * Koristi transakciju kako bi osigurao da se status promijeni u obje tabele istovremeno.
+     * 
+     * @param idKlijenti ID klijenta koji vraća ljubimca.
+     * @param idLjubimac ID ljubimca koji se vraća.
+     * @throws SQLException U slučaju greške, transakcija se vraća (rollback).
+     */
     
     public void vratiLjubimcaSaUdomljavanja(int idKlijenti, int idLjubimac) throws SQLException {
         // 1. SQL za promjenu statusa u relaciji (udomljavanje postaje historija)
@@ -223,7 +315,13 @@ public class UdomljavanjeCRUD extends korisni.Kontroler {
             }
         }
     }
-    
+    /**
+     * Automatski pronalazi i poništava rezervacije starije od 3 dana.
+     * Proces se odvija u dva koraka: identifikacija isteklih rezervacija i 
+     * grupno ažuriranje statusa unutar jedne transakcije.
+     * 
+     * @throws SQLException U slučaju greške pri radu sa bazom ili prekida transakcije.
+     */
     public void ponistiIstekleRezervacije() throws SQLException {
         String sqlRezervacije = "SELECT idKlijenti, idLjubimac, datumUdomljavanja FROM udomljavanje WHERE status = 'REZERVISAN'";
         List<int[]> zaPonistiti = new ArrayList<>();
@@ -262,7 +360,15 @@ public class UdomljavanjeCRUD extends korisni.Kontroler {
             }
         }
     }
-
+    /**
+     * Pomoćna metoda za oslobađanje ljubimca unutar postojeće transakcije.
+     * Postavlja status udomljavanja na 'ISTEKLO' i vraća status ljubimca na 'SLOBODAN'.
+     * 
+     * @param kon Aktivna SQL konekcija.
+     * @param idK ID klijenta čija rezervacija ističe.
+     * @param idLj ID ljubimca koji se oslobađa.
+     * @throws SQLException Ako bilo koji od dva povezana upita ne uspije.
+     */
     private void izvrsiOslobadjanje(Connection kon, int idK, int idLj) throws SQLException {
         // Ažuriraj udomljavanje
         String sql1 = "UPDATE udomljavanje SET status = 'ISTEKLO' WHERE idKlijenti = ? AND idLjubimac = ?";
