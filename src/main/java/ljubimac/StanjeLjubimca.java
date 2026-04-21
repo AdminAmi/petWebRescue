@@ -1,26 +1,45 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package ljubimac;
 
+/**
+ * Predstavlja moguća stanja u kojima se ljubimac može nalaziti unutar sistema.
+ * Koristi se za praćenje statusa udomljavanja i dostupnosti životinja.
+ * 
+ * @author Amel Džanić
+ * @version 1.0
+ */
 public enum StanjeLjubimca {
-    SLOBODAN("SLOBODAN"),
-    REZERVISAN("REZERVISAN"),
-    UDOMLJEN("UDOMLJEN");
     
+    /** Ljubimac je dostupan za udomljavanje. */
+    SLOBODAN("SLOBODAN"),
+    
+    /** Ljubimac je trenutno rezervisan od strane potencijalnog udomitelja. */
+    REZERVISAN("REZERVISAN"),
+    
+    /** Ljubimac je uspješno udomljen i više nije u skloništu. */
+    UDOMLJEN("UDOMLJEN"),
+    
+    /** Ljubimac je vraćen u sklonište nakon prethodnog udomljavanja. */
+    VRACEN("VRACEN");
+    
+    /** Kratki opis stanja ljubimca. */
     private final String opis;
 
+    /**
+     * Konstruktor za postavljanje opisa stanja.
+     * 
+     * @param opis Tekstualni opis stanja.
+     */
     private StanjeLjubimca(String opis) {
         this.opis = opis;
     }
 
+    /**
+     * Vraća tekstualni prikaz stanja ljubimca.
+     * 
+     * @return Opis stanja kao String.
+     */
     @Override
     public String toString() {
         return opis;
     }
-
-        
-   
 }
-
