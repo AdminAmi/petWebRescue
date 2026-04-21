@@ -20,11 +20,11 @@ import javax.swing.JOptionPane;
 public abstract class Kontroler {
     protected final String      dbPath = "jdbc:sqlite:" + 
             webUtil.vratiPathDB()+"registracija";;
-    protected Connection        kon;
+    protected Connection        kone;
     
      public Kontroler() {
         try {            
-            System.out.println(dbPath + "\nU kontroleru sam");
+           // System.out.println(dbPath + "\nU kontroleru sam");
             Class.forName("org.sqlite.JDBC");       
         } catch (ClassNotFoundException ex) {
             //Ispisati grešku da nema dobrog drivera za bazu
@@ -38,8 +38,14 @@ public abstract class Kontroler {
      * @return objecat Connection
      * @throws SQLException ukoliko nije uspješno povezivanje sa bazom podataka
      */
-    protected Connection getKon() throws SQLException {
-        return DriverManager.getConnection(dbPath);        
+    protected Connection getKone() throws SQLException {
+        Connection conn = DriverManager.getConnection(dbPath); 
+        // 2. KLJUČNI DIO: Omogućavanje stranih ključeva
+//        try (Statement st = conn.createStatement()) {
+//            st.execute("PRAGMA foreign_keys = ON;");
+//        }
+
+        return conn;
     }
     
     /**
@@ -75,7 +81,7 @@ public abstract class Kontroler {
      * @throws SQLException ukoliko se desila neka greska sa bazom podataka
      */
     public void zatvoriKonekciju() throws SQLException{
-        if(kon != null && ! kon.isClosed()) kon.close();        
+        if(kone != null && ! kone.isClosed()) kone.close();        
     } 
     
     protected String escapeSql(String input) {

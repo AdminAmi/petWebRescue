@@ -6,12 +6,15 @@ com\amel\petwebrescue\JakartaRestConfiguration.class
 udomljavanje\Udomljen.class
 korisni\Kontroler.class
 udomljavanje\TestUdomljavanje.class
+ljubimac\LjubimacCRUD1.class
 ljubimac\LjubimacCRUD.class
+udomljavanje\UdomljavanjeCRUD1.class
 klijent\KlijentCRUD.class
 korisni\MyLogger.class
 com\amel\petwebrescue\resources\JakartaEE11Resource.class
 klijent\testKorisnik.class
 klijent\Klijent.class
+klijent\KlijentCRUD1.class
 korisni\webUtil.class
 korisnik\Korisnik.class
 ljubimac\Ljubimac.class

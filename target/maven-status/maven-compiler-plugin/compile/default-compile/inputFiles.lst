@@ -2,6 +2,7 @@ F:\petWebRescue\src\main\java\com\amel\petwebrescue\JakartaRestConfiguration.jav
 F:\petWebRescue\src\main\java\com\amel\petwebrescue\resources\JakartaEE11Resource.java
 F:\petWebRescue\src\main\java\klijent\Klijent.java
 F:\petWebRescue\src\main\java\klijent\KlijentCRUD.java
+F:\petWebRescue\src\main\java\klijent\KlijentCRUD1.java
 F:\petWebRescue\src\main\java\klijent\testKorisnik.java
 F:\petWebRescue\src\main\java\korisni\Kontroler.java
 F:\petWebRescue\src\main\java\korisni\LogConfigListener.java
@@ -13,9 +14,11 @@ F:\petWebRescue\src\main\java\korisnik\korisnikPogled.java
 F:\petWebRescue\src\main\java\korisnik\test.java
 F:\petWebRescue\src\main\java\ljubimac\Ljubimac.java
 F:\petWebRescue\src\main\java\ljubimac\LjubimacCRUD.java
+F:\petWebRescue\src\main\java\ljubimac\LjubimacCRUD1.java
 F:\petWebRescue\src\main\java\ljubimac\ljubimacPogled.java
 F:\petWebRescue\src\main\java\ljubimac\StanjeLjubimca.java
 F:\petWebRescue\src\main\java\ljubimac\testMain.java
 F:\petWebRescue\src\main\java\udomljavanje\TestUdomljavanje.java
 F:\petWebRescue\src\main\java\udomljavanje\UdomljavanjeCRUD.java
+F:\petWebRescue\src\main\java\udomljavanje\UdomljavanjeCRUD1.java
 F:\petWebRescue\src\main\java\udomljavanje\Udomljen.java
