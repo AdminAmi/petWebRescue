@@ -19,7 +19,10 @@ public enum StanjeLjubimca {
     UDOMLJEN("UDOMLJEN"),
     
     /** Ljubimac je vraćen u sklonište nakon prethodnog udomljavanja. */
-    VRACEN("VRACEN");
+    VRACEN("VRACEN"),
+    
+    /** Ljubimac je zaprimljen u sklonište  */
+    ZAPRIMLJEN("ZAPRIMLJEN");
     
     /** Kratki opis stanja ljubimca. */
     private final String opis;

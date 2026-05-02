@@ -2,7 +2,8 @@
 package ljubimac;
 
 import java.util.ArrayList;
-import klijent.Klijent;
+
+import korisnik.Korisnik;
 
 /**
  * Predstavlja entitet ljubimca u sistemu.
@@ -22,9 +23,11 @@ public class Ljubimac {
     /** Opisna starost ljubimca (npr. "2 godine" ili "štene"). */
     private String starost;
      /** Status udomljavanja ljubimca ("SLOBODAN" ili "REZERVISAN"). */
-    private String status; // 
+    private String status; 
+    /** Datum prijema u sklonište ljubimca*/
+    private String datumPrijema;
     /** Lista klijenata koji su povezani sa ovim ljubimcem. */
-    private ArrayList <Klijent> klijenti = new ArrayList<>();    
+    private ArrayList <Korisnik> klijenti = new ArrayList<>();    
 
     
     public Ljubimac() {
@@ -38,11 +41,12 @@ public class Ljubimac {
      * @param vrsta   Vrsta životinje.
      * @param starost Starost ljubimca.
      */
-    public Ljubimac(String ime, String vrsta, String starost) {
+    public Ljubimac(String ime, String vrsta, String starost, String datum) {
         this.ime = ime;
         this.vrsta = vrsta;
         this.starost = starost;
-        this.status = "NE"; // Default vrijednost        
+        this.datumPrijema=datum;
+        this.status = StanjeLjubimca.SLOBODAN.toString(); // Default vrijednost        
     }
     /**
      * Konstruktor za kreiranje potpunog objekta ljubimca sa svim podacima.
@@ -54,11 +58,12 @@ public class Ljubimac {
      * @param status  Status udomljavanja.
      */
     public Ljubimac(int id, String ime, String vrsta, String starost,
-            String status) {
+            String status, String datum) {
         this.id = id;
         this.ime = ime;
         this.vrsta = vrsta;
         this.starost = starost;
+        this.datumPrijema=datum;
         this.status = status;        
     }
 
@@ -88,10 +93,19 @@ public class Ljubimac {
      * 
      * @return Lista objekata tipa {@link Klijent}.
      */
-    public ArrayList<Klijent> getKorisnici() {return klijenti;}
+    public ArrayList<Korisnik> getKorisnici() {return klijenti;}
     /** @param klijenti Postavlja listu klijenata. */
-    public void setKorisnici(ArrayList<Klijent> klijenti) 
+    public void setKorisnici(ArrayList<Korisnik> klijenti) 
     {this.klijenti = klijenti;}
+
+    public void setDatumPrijema(String datumPrijema) {
+        this.datumPrijema = datumPrijema;
+    }
+
+    public String getDatumPrijema() {
+        return datumPrijema;
+    }
+    
     /**
      * Vraća stringovnu reprezentaciju objekta sa osnovnim podacima.
      * 

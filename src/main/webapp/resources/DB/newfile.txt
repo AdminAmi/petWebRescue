@@ -1,3 +1,32 @@
+   public String snimiSliku(int id) {
+//        String naziv,ekstenzija="";        
+//        if(getDatoteka()!=null){
+//            naziv=getDatoteka().getSubmittedFileName();
+//            webUtil.infoPoruka(naziv, "");
+//            int i=naziv.lastIndexOf('.');
+//            if(i>0)ekstenzija=naziv.substring(i+1);
+//            naziv=String.valueOf(id)+"."+ekstenzija;
+//            try {
+//                //PK.unesiAvatar(naziv,id );
+//                LjubimacK.unesiSliku("/resources/img/"+naziv, id);
+//            } catch (SQLException ex) {
+//                webUtil.errPoruka("Greška u SQL operaciji :" + ex, "");
+//                return null;
+//            }           
+//            Path p = (Path)Paths.get(webUtil.vratiPath(), String.valueOf(id)+"."+ekstenzija);
+//            try (InputStream input = getDatoteka().getInputStream()) {
+//                
+//                Files.copy(input,p,StandardCopyOption.REPLACE_EXISTING);
+//                webUtil.resize(p.toString());                
+//            } catch (IOException ex) {
+//                webUtil.errPoruka("Greška u IO operaciji :" + ex, "");
+//                return null;
+//            }
+//            return "ljubimacInfo?faces-redirect=true&includeViewParams=true";
+//        } 
+        return null;
+    }
+
 <ui:param name="statusKlasa" value="#{facesContext.postback  and poljePoslano ?
            (imaGresku ? 'is-invalid' : (imaVrijednost ? 'is-valid' : '')) : ''}" />
 

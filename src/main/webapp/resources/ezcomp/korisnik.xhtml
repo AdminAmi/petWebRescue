@@ -4,7 +4,9 @@
       xmlns:cc="jakarta.faces.composite"
       xmlns:ezcomp="jakarta.faces.composite/ezcomp"          
       xmlns:h="jakarta.faces.html"
-      >
+      xmlns:jsf="jakarta.faces"
+          
+      xmlns:ui="jakarta.faces.facelets">
 
     <!-- INTERFACE -->
     <cc:interface>
@@ -17,12 +19,15 @@
         <cc:attribute name="tekstButt" />
         <cc:attribute name="trebaLiPass" type="java.lang.Boolean" default="false"/>
         <cc:attribute name="samoPass" type="java.lang.Boolean" default="true"/>
+        <cc:attribute name="jelUpdatePodataka" type="java.lang.Boolean" default="true" />
+        <cc:attribute name="jelUpdatePassworda" type="java.lang.Boolean" default="true" />
     </cc:interface>
 
     <!-- IMPLEMENTATION -->
     <cc:implementation>
         <div style="padding-left: 30px;padding-top: 10px;">
-            <div style="#{cc.attrs.samoPass ? 'display:none;' : ''}">
+            <ui:fragment rendered="#{ cc.attrs.jelUpdatePassworda}">
+            
                 <div class="row g-2">                
                     <ezcomp:inputTextPopunjen 
                         ID="imeiprezime" TIP="text" REQ="true" cssDIV="col-md"                    
@@ -36,22 +41,26 @@
                 </div>
                 <ezcomp:inputTextPopunjen ID="adresa" TIP="text" 
                         VALUE="#{cc.attrs.adresa}" PHOLDER="Korisnička adresa" /> 
-            </div>
-            <div class="row g-2" style="#{cc.attrs.trebaLiPass ? '' : 'display:none;'}">                        
-                <ezcomp:inputTextPopunjen 
+            
+            </ui:fragment>
+            <ui:fragment rendered="#{cc.attrs.jelUpdatePodataka}">
+            <div class="row g-2">                        
+                <ezcomp:inputTextPopunjen
                     ID="user" TIP="text" REQ="#{cc.attrs.trebaLiPass}" cssDIV="col-md"
                     REQWHO="Vrijednost za polje korisničkog imena mora biti ispunjena!!!"
                     VALUE="#{cc.attrs.user}" 
                     PHOLDER="Korisničko ime" 
-                    DISABLED="#{cc.attrs.DIS}"/>                
+                    />                
                  <ezcomp:inputPassPopunjen 
                      ID="pass" REQ="#{cc.attrs.trebaLiPass}" cssDIV="col-md" 
                      DISABLED="#{not cc.attrs.trebaLiPass}"
                     REQWHO="Vrijednost za polje pasworda mora biti ispunjena!!!"
                     VALUE="#{cc.attrs.pass}" PHOLDER="Korisnička lozinka"/>
             </div>
+            </ui:fragment>
             <h:commandButton class="btn btn-outline-dark float-end" 
                 value="#{cc.attrs.tekstButt}" onclick="aktivirajValidaciju()"
+                
                 action="#{cc.attrs.ButtonAction}" />            
         </div>
     </cc:implementation>

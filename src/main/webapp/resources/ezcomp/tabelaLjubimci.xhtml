@@ -45,16 +45,18 @@
                 <f:facet name="header">Vrsta ljubimca</f:facet> #{ljub.vrsta}
             </h:column>
             <h:column>
-                <f:facet name="header">Starost</f:facet> #{ljub.starost}. god.
+                <f:facet name="header">Starost</f:facet> #{ljub.starost}. 
             </h:column>
+                <ui:remove>
             <h:column>
                 <f:facet name="header">Datum </f:facet>                    
                     <h:outputText rendered="#{ljub.status=='REZERVISAN'}" value="Rezervacija: "/>
                     <h:outputText rendered="#{ljub.status=='UDOMLJEN'}" value="Udomljenje:"/>
-                    <ui:remove>
+                    
                     <h:outputText rendered="#{ljub.status=='SLOBODAN'}" value="Primljen: "/>
-                    </ui:remove>
+                   
             </h:column>
+                     </ui:remove>
             <h:column rendered="#{korisnikPogled.kont.korisnik.tip=='ADMINISTRATOR'}">
                 <f:facet name="header">Akcije</f:facet>
                 <h:form>

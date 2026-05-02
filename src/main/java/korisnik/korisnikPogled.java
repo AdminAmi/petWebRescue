@@ -11,7 +11,6 @@ import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import klijent.KlijentCRUD;
 import korisni.webUtil;
 
 /**
@@ -23,8 +22,7 @@ import korisni.webUtil;
 public class korisnikPogled implements Serializable {
     private String korisnickoIme, korisnickaLozinka, imeIPrezime, tip;
     private Korisnik k;     
-    private CRUDKorisnik kont;
-    private KlijentCRUD kl;
+    private CRUDKorisnik kont;    
     private List<String> tipovi = new ArrayList<>();
     private ArrayList<Korisnik> pretragaKorisnika = new ArrayList<>();
     private boolean loged = false;
@@ -33,10 +31,13 @@ public class korisnikPogled implements Serializable {
     private String adresa;
     private String telefon;    
 
+    /**
+     * Konstruktor - inicijalizira CRUD operacije nad korisnicima.
+     * U slučaju greške pri inicijalizaciji baze, prikazuje odgovarajuću poruku.
+     */
     public korisnikPogled() {
         try {
-            this.kont = new CRUDKorisnik();
-            this.kl = new KlijentCRUD();
+            this.kont = new CRUDKorisnik();            
         } catch (SQLException ex) {
             webUtil.errPoruka
             ("Greška u inicijalizaciji drviera: " + ex.getLocalizedMessage());
@@ -68,8 +69,7 @@ public class korisnikPogled implements Serializable {
         if(kont.login(korisnickoIme, korisnickaLozinka))
         {
             k= kont.getKorisnik();   
-            korisnickoIme="";
-            korisnickaLozinka="";
+            resetPolja();
             loged=true;
             webUtil.testUsp("Uspješno logiranje!!!");           
             return "pocetna?faces-redirect=true";
@@ -78,7 +78,7 @@ public class korisnikPogled implements Serializable {
         {
             loged=false;
             webUtil.errPoruka("Netacni korisnički podaci!!!",""); 
-            
+            resetPolja();
             return null;
         }
     }
@@ -95,19 +95,24 @@ public class korisnikPogled implements Serializable {
             if (tip==1) unos.setTip("KORISNIK");
             else unos.setTip("ADMINISTRATOR");
             kont.unesiKorisnika(unos);
-            //kont.UnesiKorisnika(new Korisnik(0, imeIPrezime, korisnickoIme, korisnickaLozinka,"KORISNIK")); 
-//            klijent.Klijent k = new Klijent(0,imeIPrezime, adresa, telefon);
-//            kl.dodajKlijenta(k);
+           
             setFlasMessage("Korisnik: " + imeIPrezime + " je uspješno dodan u bazu.");
             webUtil.testUsp(flasMessage);
-            korisnickoIme=null;
-            return "pocetna?faces-redirect=true";
+            resetPolja();
+            return "index?faces-redirect=true";
         } catch (SQLException ex) {
-            korisnickoIme=null;
+            resetPolja();
             webUtil.errPoruka("Greška u unosu korisnika", ex.getMessage() + " " + ex.getSQLState(), "");
         }
         return null;
        
+    }
+    public void resetPolja(){
+        korisnickoIme=null;
+        imeIPrezime=null;
+        adresa=null;
+        korisnickaLozinka=null;
+        telefon=null;
     }
     
     public String unosNovogAdministratoraWeb() {        
@@ -119,10 +124,12 @@ public class korisnikPogled implements Serializable {
             unos.setPass(korisnickaLozinka);
             unos.setTip("ADMINISTRATOR");
             kont.unesiKorisnika(unos);
-            //kont.UnesiKorisnika(new Korisnik(0, imeIPrezime, korisnickoIme, korisnickaLozinka,"ADMINISTRATOR"));             
+            //kont.UnesiKorisnika(new Korisnik(0, imeIPrezime, korisnickoIme, korisnickaLozinka,"ADMINISTRATOR"));
+            resetPolja();
             return "index?faces-redirect=true";
         } catch (SQLException ex) {
            webUtil.errPoruka("Greška u unosu korisnika", ex.getMessage() + " " + ex.getSQLState(), "");
+           resetPolja();
         }
         return null;
        
@@ -133,6 +140,7 @@ public class korisnikPogled implements Serializable {
         //kont.promjenaPassworda(k, k.getPass(), tip);
         //webUtil.infoPoruka("Uspješno ažuriranje korisnika","");
         webUtil.infoPoruka("Uspješno ažuriranje podataka korisnika", "");
+        resetPolja();
         return null;
     }
     
@@ -146,7 +154,8 @@ public class korisnikPogled implements Serializable {
     }
     
      public String logOff() {       
-        FacesContext.getCurrentInstance().getExternalContext().invalidateSession();     
+        FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
+        resetPolja();
         return "/index?faces-redirect=true";        
     }  
      

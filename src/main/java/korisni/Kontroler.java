@@ -73,23 +73,8 @@ public abstract class Kontroler {
         } catch (SQLException e) {
             throw e;
         }
-    }
-    
-        
-    /**
-     * Metoda zatvara konekciju sa bazom podataka
-     * @throws SQLException ukoliko se desila neka greska sa bazom podataka
-     */
-    public void zatvoriKonekciju() throws SQLException{
-        if(kone != null && ! kone.isClosed()) kone.close();        
-    } 
-    
-    protected String escapeSql(String input) {
-        if (input == null) {
-            return "";
-        }
-        return input.replace("'", "''");
-    }
+    }       
+  
 
     public String getDbPath() {
         return dbPath;

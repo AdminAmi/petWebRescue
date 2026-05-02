@@ -24,7 +24,7 @@
         <div class="container" > 
             <ui:include src="resources/parts/zaglavlje.xhtml"/> 
             <ezcomp:podnaslov Podnaslov="Ažuriranje korisničkih podataka"/>            
-            <!--<ui:include src="parts/logAz.xhtml"/> -->
+            
             <h:form >                
                 <ezcomp:korisnik 
                     ButtonAction="#{korisnikPogled.azuriranjePassworda()}" 
@@ -32,7 +32,8 @@
                     telefon="#{korisnikPogled.kont.korisnik.telefon}"
                     imeiprezime="#{korisnikPogled.kont.korisnik.imeIPrezime}" 
                     user="#{korisnikPogled.kont.korisnik.user}" pass="#{korisnikPogled.kont.korisnik.pass}"                     
-                    trebaLiPass="true"
+                    trebaLiPass="true" samoPass="true" 
+                    jelUpdatePassworda="false" jelUpdatePodataka="true"
                     id="korisnik1" tekstButt="Ažuriraj podatke korisnika!"
                     />    
             </h:form>           

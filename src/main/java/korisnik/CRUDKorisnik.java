@@ -3,6 +3,7 @@ package korisnik;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import korisni.MyLogger;
 
 /**
  * Kontroler klasa za upravljanje podacima korisnika u bazi podataka.
@@ -157,6 +158,7 @@ public class CRUDKorisnik extends korisni.Kontroler {
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
                     this.korisnik = mapirajKorisnika(rs);
+                    MyLogger.info("Uspješno logiranje korisnika: " + korisnik.toString());
                     return true;
                 }
             }

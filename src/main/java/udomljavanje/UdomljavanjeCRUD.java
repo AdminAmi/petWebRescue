@@ -6,7 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import ljubimac.LjubimacCRUD;
-import klijent.KlijentCRUD;
+import korisnik.CRUDKorisnik;
 
 /**
  * Kontroler klasa koja upravlja veznom tabelom 'udomljavanje'.
@@ -18,7 +18,7 @@ import klijent.KlijentCRUD;
  */
 public class UdomljavanjeCRUD extends korisni.Kontroler {
     /** Servis za rad sa klijentima. */
-    private final KlijentCRUD kk = new KlijentCRUD();
+    private final CRUDKorisnik kk = new CRUDKorisnik();
     /** Servis za rad sa ljubimcima. */
     private final LjubimacCRUD lk = new LjubimacCRUD();
     /** Standardni format za spašavanje datuma u SQLite bazu. */
@@ -103,7 +103,7 @@ public class UdomljavanjeCRUD extends korisni.Kontroler {
             while (rs.next()) {
                 Udomljen u = mapirajUdomljavanje(rs);
                 // Popunjavanje objekata podacima iz drugih tabela
-                u.setKlijent(kk.dobaviKlijentaPoId(u.getIdKlijenti()));
+                u.setKlijent(kk.vratiKorisnikaPoID(u.getIdKlijenti()));
                 u.setLjub(lk.dobaviLjubimcaPoId(u.getIdLjubimac()));
                 lista.add(u);
             }
@@ -126,7 +126,7 @@ public class UdomljavanjeCRUD extends korisni.Kontroler {
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
                     Udomljen u = mapirajUdomljavanje(rs);
-                    u.setKlijent(kk.dobaviKlijentaPoId(u.getIdKlijenti()));
+                    u.setKlijent(kk.vratiKorisnikaPoID(u.getIdKlijenti()));
                     u.setLjub(lk.dobaviLjubimcaPoId(u.getIdLjubimac()));
                     return u;
                 }
@@ -239,7 +239,7 @@ public class UdomljavanjeCRUD extends korisni.Kontroler {
                 while (rs.next()) {
                     Udomljen u = mapirajUdomljavanje(rs);
                     // Punimo podatke o klijentu da znamo IME osobe u historiji
-                    u.setKlijent(kk.dobaviKlijentaPoId(u.getIdKlijenti()));
+                    u.setKlijent(kk.vratiKorisnikaPoID(u.getIdKlijenti()));
                     historija.add(u);
                 }
             }
@@ -370,19 +370,66 @@ public class UdomljavanjeCRUD extends korisni.Kontroler {
      * @throws SQLException Ako bilo koji od dva povezana upita ne uspije.
      */
     private void izvrsiOslobadjanje(Connection kon, int idK, int idLj) throws SQLException {
-        // Ažuriraj udomljavanje
-        String sql1 = "UPDATE udomljavanje SET status = 'ISTEKLO' WHERE idKlijenti = ? AND idLjubimac = ?";
-        try (PreparedStatement p1 = kon.prepareStatement(sql1)) {
-            p1.setInt(1, idK);
-            p1.setInt(2, idLj);
+        // 1. Prvo ažuriraj ljubimca (on je "nezavisan" u ovoj relaciji)
+        String sqlLjubimac = "UPDATE ljubimac SET status = 'SLOBODAN' WHERE id = ?";
+        try (PreparedStatement p1 = kon.prepareStatement(sqlLjubimac)) {
+            p1.setInt(1, idLj);
             p1.executeUpdate();
         }
 
-        // Ažuriraj ljubimca (Direktni SQL da izbjegnemo otvaranje nove konekcije u lk)
-        String sql2 = "UPDATE ljubimac SET status = 'SLOBODAN' WHERE id = ?";
-        try (PreparedStatement p2 = kon.prepareStatement(sql2)) {
-            p2.setInt(1, idLj);
+        // 2. Zatim ažuriraj udomljavanje
+        // VAŽNO: Koristi tačan naziv kolone statusa. 
+        // Ako primarni ključ ostaje isti (idK i idLj), UPDATE ne bi smio bacati FK grešku.
+        String sqlUdomljavanje = "UPDATE udomljavanje SET status = 'ISTEKLO' " +
+                                 "WHERE idKlijenti = ? AND idLjubimac = ? AND status = 'REZERVISAN'";
+        try (PreparedStatement p2 = kon.prepareStatement(sqlUdomljavanje)) {
+            p2.setInt(1, idK);
+            p2.setInt(2, idLj);
             p2.executeUpdate();
         }
     }
+    /**
+     * Poništava relaciju udomljavanja ili rezervacije.
+     * 
+     * @param idKlijenti ID klijenta.
+     * @param idLjubimac ID ljubimca.
+     * @param opcija 1 za otkazivanje REZERVACIJE (status ide u SLOBODAN), 
+     *               2 za povrat sa UDOMLJAVANJA (status ide u VRACEN).
+     * @throws SQLException 
+     */
+    public void procesuirajPovrat(int idKlijenti, int idLjubimac, int opcija) throws SQLException {
+        // Definisanje statusa na osnovu opcije
+        String noviStatusRelacije = (opcija == 1) ? "SLOBODAN" : "VRACEN";
+
+        String sqlRelacija = "UPDATE udomljavanje SET status = ? " +
+                             "WHERE idKlijenti = ? AND idLjubimac = ? AND status != 'VRACEN'";
+
+        try (Connection kon = getKone()) {
+            kon.setAutoCommit(false);
+            try (PreparedStatement pstmt = kon.prepareStatement(sqlRelacija)) {
+                pstmt.setString(1, noviStatusRelacije);
+                pstmt.setInt(2, idKlijenti);
+                pstmt.setInt(3, idLjubimac);
+                int redova = pstmt.executeUpdate();
+
+                if (redova > 0) {
+                    // Ljubimac u bazi uvijek postaje ponovo SLOBODAN za nove udomitelje
+                    String sqlLjubimac = "UPDATE ljubimac SET status = 'SLOBODAN' WHERE id = ?";
+                    try (PreparedStatement pstmt2 = kon.prepareStatement(sqlLjubimac)) {
+                        pstmt2.setInt(1, idLjubimac);
+                        pstmt2.executeUpdate();
+                    }
+                    kon.commit();
+                } else {
+                    kon.rollback();
+                }
+            } catch (SQLException e) {
+                kon.rollback();
+                throw e;
+            } finally {
+                kon.setAutoCommit(true);
+            }
+        }
+    }
+
 }

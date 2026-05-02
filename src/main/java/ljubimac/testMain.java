@@ -16,11 +16,11 @@ public class testMain {
             LjubimacCRUD ljubimacCRUD = new LjubimacCRUD();
             
             // Dodavanje ljubimca
-            Ljubimac noviLjubimac = new Ljubimac("Rex", "pas", "5 godina");
+            Ljubimac noviLjubimac = new Ljubimac("Rex", "pas", "5 godina","");
             ljubimacCRUD.dodajLjubimca(noviLjubimac);
             
             // Dodavanje mačke
-            Ljubimac macka = new Ljubimac("Micka", "mačka", "3 godine");
+            Ljubimac macka = new Ljubimac("Micka", "mačka", "3 godine","");
             ljubimacCRUD.dodajLjubimca(macka);
             
             // Čitanje svih ljubimaca

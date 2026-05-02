@@ -3,7 +3,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:cc="jakarta.faces.composite"
       xmlns:jsf="jakarta.faces"          
-      xmlns:ui="jakarta.faces.facelets">
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:f="jakarta.faces.core">
     <cc:interface>
         <cc:attribute name="cssDIV"/> <!-- css string za DIV tag-->
         <cc:attribute name="ID"/> <!-- id od input taga-->
@@ -15,45 +16,46 @@
         <cc:attribute name="REQWHO"/> <!--Objašnjenje koje polje mora biti popunjeno-->
         <cc:attribute name="DISABLED"/><!-- vrijednost atributa disabled input taga-->
         <cc:attribute name="prikaziMarginu" type="java.lang.Boolean" default="true" />
+        
         <cc:attribute name="VISIBLE" type="java.lang.Boolean" default="true" />
         <cc:attribute name="VALIDATE" type="java.lang.Boolean" default="false" />
     </cc:interface>
      <!-- IMPLEMENTATION -->
-    <cc:implementation >
-        <ui:param name="puniId" value="#{cc.clientId}:#{cc.attrs.ID}" />
-        <!-- Provjera da li je polje bilo prisutno u HTTP zahtjevu (čak i ako je prazno) -->
-        <ui:param name="poljeJePoslano" 
-            value="#{facesContext.externalContext.requestParameterMap.containsKey(puniId)}" />
-        <ui:param name="imaGresku" 
-            value="#{not empty facesContext.getMessageList(puniId)}" />        
-        <!-- Provjeravamo i poslanu vrijednost i trenutnu vrijednost u bean-u -->
-        <ui:param name="imaVrijednost" 
-            value="#{not empty cc.attrs.VALUE or not empty param[puniId]}" />
-        <!-- LOGIKA: Ako je postback, a nema greške i polje nije prazno -> postani zeleno -->
-        <ui:param name="statusKlasa" 
-            value="#{facesContext.postback and poljeJePoslano ? 
-             (imaGresku ? 'is-invalid' : (cc.attrs.VALIDATE and not empty cc.attrs.VALUE ? 'is-valid' : '')) 
-             : ''}" />
+   <cc:implementation>
+    <div class="form-floating #{cc.attrs.prikaziMarginu ? 'mb-3' : ''} #{cc.attrs.cssDIV}">
+        <input jsf:id="#{cc.attrs.ID}" 
+               jsf:value="#{cc.attrs.VALUE}"
+               type="#{cc.attrs.TIP}"
+               jsf:required="#{cc.attrs.REQ}" 
+               jsf:requiredMessage="#{cc.attrs.REQWHO}"
+               placeholder="#{cc.attrs.PHOLDER}"
+               disabled="#{cc.attrs.DISABLED}"
+               class="form-control #{facesContext.getMessageList(cc.clientId.concat(':').concat(cc.attrs.ID)).size() gt 0 ? 'is-invalid' : 
+                                     (facesContext.getMessageList(cc.clientId.concat(':').concat(cc.attrs.ID)).size() eq 0
+                                and not empty cc.attrs.VALUE  ? 'is-valid' : '')} #{cc.attrs.CSS}">
+            <f:ajax event="blur" render="@this" execute="@this" />
+        </input>
         
-        <div class="form-floating #{cc.attrs.prikaziMarginu ? 'mb-3' : ''} #{cc.attrs.cssDIV}">
-            <input jsf:id="#{cc.attrs.ID}" 
-                   jsf:immediate="#{cc.attrs.VALIDATE}"                   
-                   type="#{cc.attrs.TIP}"
-                   style="#{cc.attrs.VISIBLE ? '' : 'display:none;'}"                   
-                   class="form-control #{statusKlasa} #{cc.attrs.CSS}" 
-                   placeholder="#{cc.attrs.PHOLDER}"
-                   jsf:value="#{cc.attrs.VALUE}" 
-                   jsf:required="#{cc.attrs.REQ}" 
-                   jsf:requiredMessage="#{cc.attrs.REQWHO}"
-                   disabled="#{cc.attrs.DISABLED}">
-                <!--<f:validateBean disabled="#{!cc.attrs.VALIDATE}" />-->
-            </input>
-            <label for="#{puniId}" style="#{cc.attrs.VISIBLE ? '' : 'display:none;'}">
-                #{cc.attrs.PHOLDER}
-            </label>
-            <div class="invalid-feedback">#{cc.attrs.REQWHO}</div>
-            <div class="valid-feedback">Izgleda dobro!</div>
-        </div>
-    </cc:implementation>
+        <label jsf:for="#{cc.attrs.ID}">
+            #{cc.attrs.PHOLDER}
+        </label>
+
+        <!-- Poruka za grešku -->
+        <ui:fragment rendered="#{facesContext.getMessageList(cc.clientId.concat(':').concat(cc.attrs.ID)).size() gt 0}">
+            <div class="invalid-feedback" style="display: block;">
+                #{cc.attrs.REQWHO}
+            </div>
+        </ui:fragment>
+        
+        <!-- Poruka za uspjeh -->
+        <ui:fragment rendered="#{ facesContext.getMessageList(cc.clientId.concat(':').concat(cc.attrs.ID)).size() eq 0
+                                and not empty cc.attrs.VALUE }">
+            <div class="valid-feedback" style="display: block;">
+                Izgleda dobro!
+            </div>
+        </ui:fragment>
+    </div>
+</cc:implementation>
+
 
 </html>

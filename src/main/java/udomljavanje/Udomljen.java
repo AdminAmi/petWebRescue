@@ -10,7 +10,7 @@ package udomljavanje;
  * @version 1.1
  */
 import java.util.Date;
-import klijent.Klijent;
+import korisnik.Korisnik;
 import ljubimac.Ljubimac;
 
 public class Udomljen {
@@ -23,7 +23,7 @@ public class Udomljen {
     /** Referenca na objekat {@link Ljubimac}. */
     private Ljubimac ljub;
     /** Referenca na objekat {@link Klijent}. */
-    private Klijent klijent;
+    private Korisnik klijent;
     /** 
      * Status udomljavanja (npr. SLOBODAN, REZERVISAN, UDOMLJEN, VRACEN).
      * Inicijalno se postavlja na SLOBODAN koristeći {@link StanjeLjubimca}.
@@ -34,14 +34,13 @@ public class Udomljen {
     /**
      * Podrazumijevani konstruktor za kreiranje praznog objekta.
      */
-    public Udomljen() {
-    }
+    public Udomljen() {}
 
     /**
      * Konstruktor za kreiranje udomljavanja na osnovu ID-ova i datuma.
      * Status se automatski postavlja na "SLOBODAN".
      *
-     * @param idKlijenti        ID klijenta.
+     * @param idKlijenti        ID klijenta/korisnika.
      * @param idLjubimac        ID ljubimca.
      * @param datumUdomljavanja Datum udomljavanja.
      */
@@ -61,7 +60,7 @@ public class Udomljen {
      * @param korisnik          Instanca objekta {@link Klijent}.
      */
     public Udomljen(int idKlijenti, int idLjubimac, Date datumUdomljavanja,
-            ljubimac.Ljubimac ljubi, klijent.Klijent korisnik) {
+            ljubimac.Ljubimac ljubi, Korisnik korisnik) {
         this.idKlijenti = idKlijenti;
         this.idLjubimac = idLjubimac;
         this.datumUdomljavanja = datumUdomljavanja;
@@ -78,7 +77,7 @@ public class Udomljen {
     /** @return Vraća ID ljubimca. */
     public int getIdLjubimac() {return idLjubimac;}
     /** @param k Postavlja referencu na klijenta. */
-    public void setKlijent(Klijent k){klijent=k;}
+    public void setKlijent(Korisnik k){klijent=k;}
     /** @param idLjubimac Postavlja ID ljubimca. */
     public void setIdLjubimac(int idLjubimac) {this.idLjubimac = idLjubimac;}
     /** @return Vraća datum udomljavanja. */
@@ -86,7 +85,7 @@ public class Udomljen {
     /** @param datumUdomljavanja Postavlja datum udomljavanja. */
     public void setDatumUdomljavanja(Date datumUdomljavanja) {this.datumUdomljavanja = datumUdomljavanja;}
     /** @return Vraća referencu na klijenta. */
-    public klijent.Klijent getKlijent() {return klijent;}
+    public Korisnik getKlijent() {return klijent;}
     /** @return Vraća referencu na ljubimca. */
     public Ljubimac getLjub() {return ljub;}
     /** @param lj Postavlja referencu na ljubimca. */
