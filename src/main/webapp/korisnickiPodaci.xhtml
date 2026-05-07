@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- 
+    Stranica za unos novog korisnika (New User Entry Page)
+    Ova Facelet stranica omogućuje unos podataka za registraciju novog korisnika sustava.
+    Koristi prilagođene komponente za unos korisničkih podataka.
+-->
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:p="jakarta.faces.passthrough"
+      xmlns:ezcomp="jakarta.faces.composite/ezcomp"
+      xmlns:f="jakarta.faces.core">
+    <!-- Odjeljak glave: Uključuje meta oznake, naslov, resurse i JavaScript -->
+    <h:head>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <title>Facelet Title</title>
+        <h:outputStylesheet name="bootstrap.min.css" />
+        <h:outputStylesheet name="mycss.css" />
+        <h:outputScript name="bootstrap.bundle.min.js" />
+        <h:outputScript library="js" name="myjs.js"/>
+        <f:view>
+         <f:metadata>
+             <f:viewParam name="IDKorisnika" value="#{webKorisnikPogled.selektovaniID}"/>            
+             <f:viewAction action="#{webKorisnikPogled.ucitajKorisnika()}"/> 
+         </f:metadata>
+        </f:view>
+    </h:head>
+    <!-- Tijelo stranice: Prikazuje obrazac za unos korisnika -->
+    <h:body >
+        <!-- Skriveni elementi za poruke -->
+        <h:messages style="display: none"/>
+        <!-- Uključi navigaciju -->
+        <ui:include src="resources/parts/nav.xhtml"/>
+        <ui:include src="resources/parts/zaglavlje.xhtml"/>
+        <div class="container">
+            
+             
+             <!-- Podnaslov za unos podataka -->
+             <ezcomp:podnaslov Podnaslov="Podaci o korisniku: #{sessionKorisnikPogled.kont.korisnik.imeIPrezime},
+              tip korisnika: #{sessionKorisnikPogled.kont.korisnik.tip}   "/>
+             
+             <!-- Obrazac za unos podataka -->
+             <h:form styleClass="needs-validation" p:novalidate="novalidate" >
+                <!-- Prilagođena komponenta za unos korisničkih podataka -->
+                <ezcomp:korisnik                      
+                    imeiprezime="#{sessionKorisnikPogled.kont.korisnik.imeIPrezime}"
+                    user="#{sessionKorisnikPogled.kont.korisnik.user}" 
+                    pass="#{sessionKorisnikPogled.kont.korisnik.pass}"
+                    adresa="#{sessionKorisnikPogled.kont.korisnik.adresa}"
+                    telefon="#{sessionKorisnikPogled.kont.korisnik.telefon}"
+                    id="korisnik1" 
+                    samoPass="false" trebaLiPass="false"
+                    jelPrikazKorisnika="false"
+                    /> 
+                <h:commandButton class="btn btn-outline-dark float-end" 
+                    value="Ažuriraj podatke korisnika"                 
+                    action="#{webKorisnikPogled.azuriranjeKorisnika
+                              (sessionKorisnikPogled.kont.korisnik)}" />  
+                
+             </h:form>
+         </div>
+        <!-- Uključi modal za prijavu -->
+        <ui:include src="resources/parts/modalPrijava.xhtml"/>
+        <!-- Uključi poruke o greškama -->
+        <ui:include src="resources/parts/errorMessage.xhtml"/>
+    </h:body>
+</html>

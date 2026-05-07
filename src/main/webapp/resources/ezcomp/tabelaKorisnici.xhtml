@@ -24,9 +24,9 @@
               
             <h:column>
                 <f:facet name="header">Ime i prezime korisnika</f:facet> 
-                <a data-toggle="tooltip" data-placement="left"  title="Manipulacija sa korisnikom" jsf:outcome="ljubimacInfo" > 
+                <a data-toggle="tooltip" data-placement="left"  title="Manipulacija sa korisnikom" jsf:outcome="korisnickiPodaci" > 
                 #{korisnik.ime} #{korisnik.prezime}
-                <f:param name="IDkorisnika" value="#{korisnik.id}"/>  
+                <f:param name="IDKorisnika" value="#{korisnik.id}"/>  
                 </a>
             </h:column>
             <h:column>

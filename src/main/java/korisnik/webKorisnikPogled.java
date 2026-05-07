@@ -13,8 +13,7 @@ import korisni.webUtil;
 public class webKorisnikPogled implements Serializable {
 
     // Polja za formu (ne čuvaju se u sesiji)
-    private String korisnickoIme;      
-    
+    private String korisnickoIme; 
     private String korisnickaLozinka;
     private String imeIPrezime;
     private String tip;
@@ -22,6 +21,7 @@ public class webKorisnikPogled implements Serializable {
     private String telefon;
     private String imeiPrZaPretragu;
     private String flasMessage;
+    private int selektovaniID;
 
     // Rezultati pretrage
     private ArrayList<Korisnik> pretragaKorisnika = new ArrayList<>();
@@ -30,6 +30,8 @@ public class webKorisnikPogled implements Serializable {
     
     // Session bean (injektiran)
     private SessionKorisnikPogled sessionKorisnik;
+    
+    
 
     
     public webKorisnikPogled() {
@@ -50,6 +52,15 @@ public class webKorisnikPogled implements Serializable {
         return sessionKorisnik != null && 
                sessionKorisnik.getK() != null && 
                "ADMINISTRATOR".equals(sessionKorisnik.getK().getTip());
+    }
+    
+    public void ucitajKorisnika(){
+        try {
+            sessionKorisnik.getKont().setKorisnik
+            (sessionKorisnik.getKont().vratiKorisnikaPoID(selektovaniID));
+        } catch (SQLException ex) {
+            webUtil.errPoruka("Greška u učitavanju ljubimaca" + ex, "");
+        }
     }
 
     public String pretragaK() {
@@ -125,11 +136,10 @@ public class webKorisnikPogled implements Serializable {
         return null;
     }
 
-    public String azuriranjeKorisnika(int id) throws SQLException {
+    public String azuriranjeKorisnika(Korisnik kor) throws SQLException {
+        System.out.println("kor");
         if (sessionKorisnik.getKont() != null) {
-            sessionKorisnik.getKont().azurirajKorisnika(
-                sessionKorisnik.getKont().vratiKorisnikaPoID(id)
-            );
+            sessionKorisnik.getKont().azurirajKorisnika(kor);
             webUtil.infoPoruka("Uspješno ažuriranje podataka korisnika", "");
             resetPolja();
         }
@@ -179,6 +189,9 @@ public class webKorisnikPogled implements Serializable {
     public void setTipovi(List<String> tipovi) { this.tipovi = tipovi; }
     public boolean isPretrazivanje() { return pretrazivanje; }
     public void setPretrazivanje(boolean pretrazivanje) { this.pretrazivanje = pretrazivanje; }
+    public void setSelektovaniID(int selektovaniID) {this.selektovaniID = selektovaniID;}
+    public int getSelektovaniID() {return selektovaniID;}
+    
     
     
 }

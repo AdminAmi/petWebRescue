@@ -21,6 +21,7 @@
         <cc:attribute name="samoPass" type="java.lang.Boolean" default="true"/>
         <cc:attribute name="jelUpdatePodataka" type="java.lang.Boolean" default="true" />
         <cc:attribute name="jelUpdatePassworda" type="java.lang.Boolean" default="true" />
+        <cc:attribute name="jelPrikazKorisnika" type="java.lang.Boolean" default="true" />
     </cc:interface>
 
     <!-- IMPLEMENTATION -->
@@ -60,7 +61,7 @@
             </ui:fragment>
             <h:commandButton class="btn btn-outline-dark float-end" 
                 value="#{cc.attrs.tekstButt}" onclick="aktivirajValidaciju()"
-                
+                rendered="#{cc.attrs.jelPrikazKorisnika}"
                 action="#{cc.attrs.ButtonAction}" />            
         </div>
     </cc:implementation>
