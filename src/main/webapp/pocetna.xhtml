@@ -7,142 +7,120 @@
       xmlns:ezcomp="jakarta.faces.composite/ezcomp"
       xmlns:ui="jakarta.faces.facelets"
       xmlns:jsf="jakarta.faces">
+    
     <h:head>
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
-        <title>Tutorial</title>
-        <h:outputStylesheet  name="bootstrap.min.css" />
-        <h:outputStylesheet  name="mycss.css" />
-        <h:outputScript  name="bootstrap.bundle.min.js" />
-         <h:outputScript library="js" name="myjs.js"/>
-        <f:metadata>            
+        <title>PetRescue - Administracija Ljubimaca</title>
+        
+        <!-- Resursi: Bootstrap, Custom CSS i JS -->
+        <h:outputStylesheet name="bootstrap.min.css" />
+        <h:outputStylesheet name="mycss.css" />
+        <h:outputScript name="bootstrap.bundle.min.js" />
+        <h:outputScript library="js" name="myjs.js"/>
+        
+        <f:metadata>
+            <!-- Inicijalno učitavanje liste ljubimaca za određenog korisnika -->
             <f:viewAction action="#{ljubimacPogled.ljubimci(korisnikPogled.k.id)}"/>           
         </f:metadata>        
     </h:head>
+
     <h:body>
+        <!-- Sakrivanje standardnih JSF poruka jer se koriste custom toast notifikacije -->
         <h:messages style="display: none"/>           
-        <c:if test="#{korisnikPogled.loged }" >   
+        
+        <!-- Provjera sesije prije iscrtavanja faze -->
+        <f:view beforePhase="#{sessionKorisnikPogled.provjeraPrijave()}">  
+            
+            <!-- Uključivanje zajedničkih dijelova stranice (Navigacija, Poruke) -->
             <ui:include src="resources/parts/nav.xhtml"/>
             <ui:include src="resources/parts/flash.xhtml"/>
             <ui:include src="resources/parts/zaglavlje.xhtml"/>
             <ui:include src="resources/parts/errorMessage.xhtml"/>
-        <div class="container">
-            <c:if test="#{korisnikPogled.kont.korisnik.tip=='ADMINISTRATOR'}">
-                <div class="container" style="margin-top: 10px;">
-                    <!-- Nav tabs -->
-                    <ul class="nav nav-tabs">
-                        <li class="nav-item ">
-                            <a class="nav-link " data-bs-toggle="tab" href="#dostupni">Dostupni ljubimci</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-bs-toggle="tab" href="#rezervisani">Rezervisani ljubimci</a>
-                        </li>
-                          <li class="nav-item">
-                            <a class="nav-link " data-bs-toggle="tab" href="#udomljeni">Udomljeni ljubimci</a>
-                          </li>
-                           <li class="nav-item ">
-                            <a class="nav-link active" data-bs-toggle="tab" href="#pretraga">Pretraga ljubimaca</a>
-                          </li>
+
+            <div class="container">
+                <!-- Prikaz sadržaja samo za korisnike sa rolom ADMINISTRATOR -->
+                <c:if test="#{sessionKorisnikPogled.k.tip == 'ADMINISTRATOR'}">
+                    
+                    <div class="container" style="margin-top: 10px;">
+                        
+                        <!-- Navigacioni Tabovi -->
+                        <ul class="nav nav-tabs" id="petTabs">
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#dostupni">Dostupni ljubimci</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#rezervisani">Rezervisani ljubimci</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#udomljeni">Udomljeni ljubimci</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link active" data-bs-toggle="tab" href="#pretraga">Pretraga ljubimaca</a>
+                            </li>
                         </ul>
-                    <br/>
-                        <!-- Tab panes -->                        
+
+                        <br/>
+
+                        <!-- Sadržaj Tabova (Tab Panes) -->
                         <div class="tab-content">
-                            <div class="tab-pane  fade" id="dostupni">
-                              <ezcomp:tabeleZaljubimceSaIspisom
-                                  ListaZaTabelu="#{ljubimacPogled.ljub}"
-                                  Poruka="Trenutno nema dostupnih ljubimaca"/>
-                          </div>
-                          <div class="tab-pane  fade" id="rezervisani">                              
-                              <ezcomp:tabeleZaljubimceSaIspisom 
-                                  ListaZaTabelu="#{ljubimacPogled.rezervisani}"
-                                  Poruka="Trenutno nema rezervisanih ljubimaca!"/>
-                          </div>
-                          <div class="tab-pane  fade" id="udomljeni">
-                              <ezcomp:tabeleZaljubimceSaIspisom 
-                                  ListaZaTabelu="#{ljubimacPogled.udomljeni}"
-                                  Poruka="Trenutno nema udomljenih ljubimaca!"/>                             
-                          </div>
-                          <div class="tab-pane  active" id="pretraga">
-                              <ui:remove>
-                              <h:form>                                  
-                                  <h:inputText value="#{ljubimacPogled.prLjubimca}" >
-                                      <f:ajax event="keydown" listener="#{ljubimacPogled.pretragaSaTastaturom()}" render="tabeladata" />
-                              </h:inputText>
-                                  <h:dataTable value="#{ljubimacPogled.pretragaLista}" var="ljub" class="table table-bordered align-middle" id="tabeladata" >
-                                <h:column>
-                                    <f:facet name="header">Slika ljubimca</f:facet> 
-                                    <div style="text-align: center">
+                            
+                            <!-- Tab: Dostupni ljubimci -->
+                            <div class="tab-pane fade" id="dostupni">
+                                <ezcomp:tabeleZaljubimceSaIspisom
+                                    ListaZaTabelu="#{ljubimacPogled.ljub}"
+                                    Poruka="Trenutno nema dostupnih ljubimaca"/>
+                            </div>
+
+                            <!-- Tab: Rezervisani ljubimci -->
+                            <div class="tab-pane fade" id="rezervisani">                              
+                                <ezcomp:tabeleZaljubimceSaIspisom 
+                                    ListaZaTabelu="#{ljubimacPogled.rezervisani}"
+                                    Poruka="Trenutno nema rezervisanih ljubimaca!"/>
+                            </div>
+
+                            <!-- Tab: Udomljeni ljubimci -->
+                            <div class="tab-pane fade" id="udomljeni">
+                                <ezcomp:tabeleZaljubimceSaIspisom 
+                                    ListaZaTabelu="#{ljubimacPogled.udomljeni}"
+                                    Poruka="Trenutno nema udomljenih ljubimaca!"/>                             
+                            </div>
+
+                            <!-- Tab: Pretraga (Aktivni tab po defaultu) -->
+                            <div class="tab-pane active" id="pretraga">
+                                <h:form id="formaPretraga"> 
+                                    <div class="input-group mb-3"> 
+                                        <!-- Custom input komponenta za unos imena -->
+                                        <ezcomp:inputTextPopunjen_1 
+                                            cssDIV="form-floating" 
+                                            CSS="form-control" 
+                                            ID="ime"                                                            
+                                            prikaziMarginu="false"
+                                            PHOLDER="Unesite ime ljubimca"
+                                            VALUE="#{ljubimacPogled.prLjubimca}"/>
                                         
-                                        <h:graphicImage value="#{ljub.path}" class="rounded" height="75px"  />
+                                        <h:commandButton value="&#128269; Pretraga" 
+                                                         class="btn btn-outline-secondary" 
+                                                         action="#{ljubimacPogled.pretraga()}"/>
                                     </div>
-                                </h:column>
-                                <h:column>
-                                    <f:facet name="header">Naziv ljubimca</f:facet> 
-                                    <a data-toggle="tooltip" data-placement="left"  title="Manipulacija sa korisnikom" jsf:outcome="ljubimacInfo" > 
-                                    #{ljub.ime} 
-                                    <f:param name="IDLjubimca" value="#{ljub.id}"/>  
-                                    </a>
-                                </h:column>
-                                <h:column>
-                                    <f:facet name="header">Vrsta ljubimca</f:facet> #{ljub.vrsta}
-                                </h:column>
-                                <h:column>
-                                    <f:facet name="header">Starost</f:facet> #{ljub.starost}. god.
-                                </h:column>
-                                <h:column>
-                                    <f:facet name="header">Datum </f:facet>                    
-                                        <h:outputText rendered="#{ljub.status=='REZERVISAN'}" value="Rezervacija: #{ljub.datum}"/>
-                                        <h:outputText rendered="#{ljub.status=='UDOMLJEN'}" value="Udomljenje: #{ljub.datum}"/>
-                                        <h:outputText rendered="#{ljub.status=='SLOBODAN'}" value="Primljen: #{ljub.datum_udomljavanja}"/>
-                                </h:column>
-                                <h:column rendered="#{korisnikPogled.kont.korisnik.tip=='ADMINISTRATOR'}">
-                                    <f:facet name="header">Akcije</f:facet>
-                                    <h:form>
-                                        <h:commandButton action="#{ljubimacPogled.rezervisiLjubimca(ljub.id)}" value="Ukloni " rendered="#{ljub.status=='REZERVISAN'}"/>                                     
-                                        <h:commandButton action="#{ljubimacPogled.ukloniUdomljenje(ljub.id)}" value="ukloni" rendered="#{ljub.status=='UDOMLJEN'}"/>
-                                    </h:form>
-                                </h:column>
-                            </h:dataTable>
-                                     
-                              </h:form>
-                              </ui:remove>
-                              
-                               <h:form id="pretraga"> 
-                                  
-                                <div class="input-group mb-3"> 
-                                   
-                                    <ezcomp:inputTextPopunjen_1 cssDIV="form-floating" 
-                                      CSS="form-control" ID="ime"                                                            
-                                      prikaziMarginu="false"
-                                      PHOLDER="Unesite ime ljubimca"
-                                      
-                                      VALUE="#{ljubimacPogled.prLjubimca}"/>
-                                    <h:commandButton value="&#128269; Pretraga" 
-                                      class="btn btn-outline-secondary" 
-                                                     action="#{ljubimacPogled.pretraga()}"/>
-                                </div>
-                                   <h:panelGroup id="pretraga1" rendered="#{not empty ljubimacPogled.pretragaLista  }">
+
+                                    <!-- Prikaz rezultata pretrage pomoću tabele ako lista nije prazna -->
+                                    <h:panelGroup id="pretragaRezultati" rendered="#{not empty ljubimacPogled.pretragaLista}">
                                         <ezcomp:tabelaLjubimci Zapisi="#{ljubimacPogled.pretragaLista}" />
                                     </h:panelGroup>
-                                    
-
                                 </h:form>
-                          </div>
-                        </div>
-                        
-                    </div>
+                            </div> <!-- Kraj pretrage -->
+                            
+                        </div> <!-- Kraj tab-content -->
+                    </div> <!-- Kraj unutrašnjeg kontejnera -->
                 </c:if>
-                <c:if test="#{korisnikPogled.kont.korisnik.tip=='KORISNIK'}">
+                <c:if test="#{sessionKorisnikPogled.k.tip=='KORISNIK'}">
                     Korisnik preusmjeravam........
                     <script>
                       let url = "ljubimci.xhtml";
                       window.location.href = url;
                     </script>
                 </c:if>   
-            
-        </div>
-        </c:if>
-        <ezcomp:greskaLog/>
-        
-        
+            </div> <!-- Kraj glavnog kontejnera -->
+        </f:view>
     </h:body>
 </html>

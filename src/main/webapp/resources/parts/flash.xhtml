@@ -2,53 +2,70 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="jakarta.faces.html">
+    
     <h:head>
-    <title>Flash Poruke u JSF-u</title>
-    <h:outputStylesheet name="bootstrap.min.css" />
+        <title>Flash Poruke - PetRescue</title>
+        <!-- Uvoz potrebnih resursa -->
+        <h:outputStylesheet name="bootstrap.min.css" />
         <h:outputStylesheet name="mycss.css" />
         <h:outputScript name="bootstrap.bundle.min.js" />
-   
-    
-   
-</h:head>
+    </h:head>
+
     <h:body>
-    <div class="toast-container position-fixed top-0 end-0 p-3" 
-         style="z-index: 1100; #{empty flash.successMessage ? 'display: none;' : ''} ">
-         <!-- Success Message -->
-        <div class="toast  align-items-center text-white border-0 bg-success-light"              
-                     role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="toast-header bg-success" >
-                <strong class="text-white">PetRescue poruka</strong>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" 
-                        style="opacity: 1;" 
-                        data-bs-dismiss="toast" aria-label="Close"></button>
-            </div>
-            <div class="toast-body" style="opacity: 0.85;">
-                <strong >#{flash.successMessage}</strong>                            
-            </div>
-                        
-                    
-        </div>
-    </div>
         
-    <!-- Error Message -->
-    <div class="toast-container position-fixed top-0 end-0 p-3" 
-         style="z-index: 1100; #{empty flash.errorMessage ? 'display: none;' : ''} ">
-        <div class="toast  align-items-center text-white border-0 bg-danger-light" 
-                     role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="toast-header bg-danger" >
-                <strong class="text-white">PetRescue poruka</strong>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" 
-                        style="opacity: 1;" 
-                        data-bs-dismiss="toast" aria-label="Close"></button>
+        <!-- 
+            SUCCESS (USPJEH) PORUKA 
+            Prikazuje se samo ako flash.successMessage nije prazan.
+        -->
+        <div class="toast-container position-fixed top-0 end-0 p-3" 
+             style="z-index: 1100; #{empty flash.successMessage ? 'display: none;' : ''}">
+            
+            <div class="toast show align-items-center text-white border-0 bg-success-light"              
+                 role="alert" aria-live="assertive" aria-atomic="true">
+                
+                <div class="toast-header bg-success">
+                    <strong class="text-white">PetRescue poruka</strong>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" 
+                            style="opacity: 1;" 
+                            data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                
+                <div class="toast-body" style="opacity: 0.85;">
+                    <strong>#{flash.successMessage}</strong>                            
+                </div>
             </div>
-            <div class="toast-body" style="opacity: 0.85;">
-                <strong >#{flash.errorMessage}</strong>                            
-            </div>
-                        
-                    
         </div>
-    </div>
+        
+        <!-- 
+            ERROR (GREŠKA) PORUKA 
+            Prikazuje se samo ako flash.errorMessage nije prazan.
+        -->
+        <div class="toast-container position-fixed top-0 end-0 p-3" 
+             style="z-index: 1100; #{empty flash.errorMessage ? 'display: none;' : ''}">
+            
+            <div class="toast show align-items-center text-white border-0 bg-danger-light" 
+                 role="alert" aria-live="assertive" aria-atomic="true">
+                
+                <div class="toast-header bg-danger">
+                    <strong class="text-white">PetRescue poruka</strong>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" 
+                            style="opacity: 1;" 
+                            data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                
+                <div class="toast-body" style="opacity: 0.85;">
+                    <strong>#{flash.errorMessage}</strong>                            
+                </div>
+            </div>
+        </div>
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                var toastElList = [].slice.call(document.querySelectorAll('.toast.show'));
+                toastElList.map(function (toastEl) {
+                    return new bootstrap.Toast(toastEl, { autohide: true, delay: 5000 }).show();
+                });
+            });
+        </script>
 
     </h:body>
 </html>

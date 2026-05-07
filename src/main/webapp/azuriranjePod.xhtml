@@ -1,5 +1,10 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- 
+    Ažuriranje korisničkih podataka (Update User Data) stranica
+    Ova Facelet stranica omogućuje prijavljenim korisnicima ažuriranje svojih osobnih podataka i lozinke.
+    Koristi JSF komponente i prilagođene kompozitne komponente za obradu obrazaca.
+-->
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="jakarta.faces.html"
       xmlns:f="jakarta.faces.core"
@@ -9,6 +14,7 @@
       xmlns:p="jakarta.faces.passthrough"
       xmlns:ezcomp="jakarta.faces.composite/ezcomp"
 >
+    <!-- Odjeljak glave: Uključuje meta oznake, naslov i veze resursa za Bootstrap CSS i JS -->
     <h:head>
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
         <title>Facelet Title</title>
@@ -18,26 +24,34 @@
     </h:head>
     <h:body>
         
-        <c:if test="#{korisnikPogled.loged }" > 
+        <!-- Provjeri je li korisnik prijavljen; ako da, prikaži obrazac za ažuriranje -->
+         <f:view beforePhase="#{sessionKorisnikPogled.provjeraPrijave()}"> 
+            <!-- Uključi komponentu poruke o grešci -->
             <ui:include src="resources/parts/errorMessage.xhtml"/>       
+            <!-- Uključi komponentu navigacije -->
             <ui:include src="resources/parts/nav.xhtml"/>
         <div class="container" > 
+            <!-- Uključi komponentu zaglavlja -->
             <ui:include src="resources/parts/zaglavlje.xhtml"/> 
+            <!-- Prilagođena komponenta za podnaslov -->
             <ezcomp:podnaslov Podnaslov="Ažuriranje korisničkih podataka"/>            
-            <!--<ui:include src="parts/logAz.xhtml"/> -->
+            <!--<ui:include src="parts/logAz.xhtml"/> --> <!-- Komentirani uključak za logiranje ažuriranja -->
+            <!-- Obrazac za ažuriranje korisničkih podataka -->
             <h:form >                
+                <!-- Prilagođena kompozitna komponenta za unos i ažuriranje korisničkih podataka -->
                 <ezcomp:korisnik 
                     ButtonAction="#{korisnikPogled.azuriranjeKorisnika()}" 
-                    adresa="#{korisnikPogled.kont.korisnik.adresa}"
-                    telefon="#{korisnikPogled.kont.korisnik.telefon}"
-                    imeiprezime="#{korisnikPogled.kont.korisnik.imeIPrezime}" 
+                    adresa="#{sessionKorisnikPogled.k.adresa}"
+                    telefon="#{sessionKorisnikPogled.k.telefon}"
+                    imeiprezime="#{sessionKorisnikPogled.k.imeIPrezime}" 
+                    user="#{sessionKorisnikPogled.k.user}" 
+                    pass="#{sessionKorisnikPogled.k.pass}"
                     samoPass="false" jelUpdatePodataka="false" jelUpdatePassworda="true"
-                    user="#{korisnikPogled.kont.korisnik.user}" pass="#{korisnikPogled.kont.korisnik.pass}"
                     id="korisnik1" tekstButt="Ažuriraj podatke korisnika!"
                     />    
             </h:form>           
         </div>
-        </c:if>
-        <ezcomp:greskaLog/>
+         </f:view>
+        
     </h:body>
 </html>

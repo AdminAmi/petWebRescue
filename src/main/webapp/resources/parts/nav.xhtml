@@ -1,147 +1,132 @@
 <?xml version='1.0' encoding='UTF-8' ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://w3.org">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="jakarta.faces.html"
-      xmlns:jsf="jakarta.faces"          
-      xmlns:ui="jakarta.faces.facelets">
+      xmlns:f="jakarta.faces.core"
+      xmlns:c="jakarta.tags.core"
+      xmlns:ezcomp="jakarta.faces.composite/ezcomp"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:jsf="jakarta.faces">
     <h:head>
         <title>Navigacija</title>
     </h:head>
     <h:body>
-        <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light">
-          <div class="container">
-              <a class="navbar-brand" jsf:outcome="index">PetRescue</a>
-            <button class="navbar-toggler" type="button" 
-                    data-bs-toggle="collapse" 
-                    data-bs-target="#navbarTogglerDemo02" 
-                    aria-controls="navbarTogglerDemo02" 
-                    aria-expanded="false" aria-label="Toggle navigation">
-              <span class="navbar-toggler-icon"></span>
-            </button>
-                
-            <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
-               
-              <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                  <!--
-                  Dio navbara koji trebaju da vide svi gosti korisnici i administratori                  
-                  -->
-                  <li class="nav-item dropdown">                    
-                      <a class="nav-link dropdown-toggle btn btn-light" 
-                         href="#" id="navbarONama" role="button" 
-                         data-bs-toggle="dropdown" aria-expanded="false">
-                         O nama 
-                      </a>
-                      <ul class="dropdown-menu" aria-labelledby="navbarOnama">
-                          <li><a class="dropdown-item" >O nama</a></li>
-                          <li><a class="dropdown-item" >Volontiranje</a></li> 
-                          <li><a class="dropdown-item" >Donacije</a></li>
-                      </ul>
-                  </li>
-                 
-                   <li class="nav-item">
-                        
-                           <a class="nav-link btn btn-light" 
-                              jsf:outcome="ljubimci">
-                               Ljubimci
-                           </a>
-                       
-                   </li>
-                  <!---->
-                <h:panelGroup rendered="#{korisnikPogled.loged}">
-                   
-                <h:panelGroup rendered="#{korisnikPogled.kont.korisnik.tip == 'ADMINISTRATOR'}">
-                    <li class="nav-item">
-                        <a class="nav-link btn btn-light" jsf:outcome="pocetna">Početna</a>
-                      </li>
-                    <li class="nav-item dropdown">                    
-                      <a class="nav-link dropdown-toggle btn btn-light" href="#" 
-                         id="navbarScrollZivotinje" role="button" 
-                         data-bs-toggle="dropdown" aria-expanded="false">
-                          Akcije sa ljubimcem 
-                      </a>
-                      <ul class="dropdown-menu" 
-                          aria-labelledby="navbarScrollZivotinje">
-                          <li>
-                              <a class="dropdown-item" 
-                                 jsf:outcome="unosLjubimca">
-                                  Unos novog ljubimca
-                              </a>
-                          </li>
-                          <li>
-                              <a class="dropdown-item  " 
-                                 jsf:outcome="pretragaLjubimca" >
-                                  Pretraga ljubimca po imenu
-                              </a>
-                          </li>                  
-                      </ul>
-                    </li>
-                    <li class="nav-item dropdown">
-                      <a class="nav-link dropdown-toggle btn btn-light" 
-                         href="#" id="navbarScrollKorisnici" role="button" 
-                         data-bs-toggle="dropdown" aria-expanded="false">
-                          Akcije sa Korisnicima
-                      </a>
-                      <ul class="dropdown-menu" 
-                          aria-labelledby="navbarScrollKorisnici">
-                          <li>
-                              <a class="dropdown-item" 
-                                 jsf:outcome="unosAdministratoraWeb">
-                                  Unos novog administratora
-                              </a>
-                          </li>
-                        <li>
-                            <a class="dropdown-item disabled" href="#">
-                                Pretraga korisnika po imenu
-                            </a>
-                        </li>                    
-                      </ul>
-                    </li>
-                </h:panelGroup>
-                   
-                        <!--
-                      <li class="nav-item">
-                          <a class="nav-link btn btn-light" href="#">Rezervisani ljubimci</a>
-                      </li>
-                    -->
-                    <li class="nav-item dropdown">                    
-                      <a class="nav-link dropdown-toggle btn btn-light" href="#" 
-                         id="navbarPodaci" role="button" 
-                         data-bs-toggle="dropdown" aria-expanded="false">
-                          Promjena podataka korisnika 
-                      </a>
-                      <ul class="dropdown-menu" aria-labelledby="navbarPodaci">
-                          <li class="nav-item">
-                              <a class="dropdown-item" jsf:outcome="azuriranjePod">Promjena korisničkih podataka</a>
-                          </li>
-                          <li class="nav-item">
-                              <a class="dropdown-item" jsf:outcome="azuriranjePass">Promjena lozinke</a>
-                          </li>
-                      </ul>
-                    </li>
-                   </h:panelGroup>
-              </ul>
+        <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light border-bottom">
+            <div class="container">
+                <!-- LOGO -->
+                <a class="navbar-brand fw-bold text-primary" jsf:outcome="index">PetRescue</a>
 
-               <h:panelGroup rendered="#{korisnikPogled.loged == true}"> 
-                  <h:form class="d-flex">                 
-                      <h:commandLink   
-                          value="Odjava #{korisnikPogled.kont.korisnik.imeIPrezime}"
-                          action="#{korisnikPogled.logOff()}" 
-                          class="btn btn-outline-primary float-end"/>
-                  </h:form>
-               </h:panelGroup>
-               <h:panelGroup rendered="#{korisnikPogled.loged == false}">
-                  <h:form class="d-flex "> 
-                    <button type="button" class="btn btn-light  float-end " 
-                            data-bs-toggle="modal" 
-                            data-bs-target="#staticBackdrop"  >
-                            Prijavi se 
-                    </button>
-                      <!--&#10158;  -->
-                  </h:form>
-                   
-               </h:panelGroup>
-                </div>    
-          </div>
-         </nav>
+                <!-- MOBILNI MENU DUGME -->
+                <button class="navbar-toggler" type="button" 
+                        data-bs-toggle="collapse" 
+                        data-bs-target="#navbarMain" 
+                        aria-controls="navbarMain" 
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                
+                <div class="collapse navbar-collapse" id="navbarMain">
+                    
+                    <!-- LIJEVA STRANA: Glavni linkovi i Admin opcije -->
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        
+                        <!-- Javni linkovi -->
+                        <li class="nav-item dropdown">                    
+                            <a class="nav-link dropdown-toggle" href="#" id="navOnama" role="button" 
+                               data-bs-toggle="dropdown" aria-expanded="false">
+                               O nama 
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navOnama">
+                                <li><a class="dropdown-item">O nama</a></li>
+                                <li><a class="dropdown-item">Volontiranje</a></li> 
+                                <li><a class="dropdown-item">Donacije</a></li>
+                            </ul>
+                        </li>
+                        
+                        <li class="nav-item">
+                            <a class="nav-link" jsf:outcome="ljubimci">Ljubimci</a>
+                        </li>
+
+                        <!-- ADMINISTRATORSKE OPCIJE (Vidljive samo adminu) -->
+                        <h:panelGroup rendered="#{sessionKorisnikPogled.loged and sessionKorisnikPogled.k.tip == 'ADMINISTRATOR'}">
+                            <li class="nav-item">
+                                <a class="nav-link" jsf:outcome="pocetna">Početna</a>
+                            </li>
+                            
+                            <!-- Akcije sa ljubimcima -->
+                            <li class="nav-item dropdown">                    
+                                <a class="nav-link dropdown-toggle" href="#" id="navAdminLjub" role="button" 
+                                   data-bs-toggle="dropdown" aria-expanded="false">
+                                    Upravljanje ljubimcima
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="navAdminLjub">
+                                    <li><a class="dropdown-item" jsf:outcome="unosLjubimca">Unos novog ljubimca</a></li>
+                                    <li><a class="dropdown-item" jsf:outcome="pretragaLjubimca">Pretraga ljubimaca</a></li>                  
+                                </ul>
+                            </li>
+
+                            <!-- Akcije sa korisnicima -->
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navAdminKor" role="button" 
+                                   data-bs-toggle="dropdown" aria-expanded="false">
+                                    Upravljanje korisnicima
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="navAdminKor">
+                                    <li><a class="dropdown-item" jsf:outcome="unosAdministratoraWeb">Novi administrator</a></li>
+                                    <li><a class="dropdown-item" jsf:outcome="pretragaKorisnika">Pretraga korisnika</a></li>                    
+                                </ul>
+                            </li>
+                        </h:panelGroup>
+                    </ul>
+
+                    <!-- DESNA STRANA: Profil korisnika ili Login dugme -->
+                    <div class="navbar-nav ms-auto text-start align-items-end">
+                        
+                        <!-- KORISNIČKI DROPDOWN (Prikazan kada je korisnik prijavljen) -->
+                        <h:panelGroup rendered="#{sessionKorisnikPogled.loged}">
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle btn btn-outline-secondary px-3 py-2 ms-lg-2 mt-2 mt-lg-0" 
+                                   href="#" id="userProfileMenu" role="button" 
+                                   data-bs-toggle="dropdown" aria-expanded="false">
+                                    &#128100; #{sessionKorisnikPogled.k.imeIPrezime}
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="userProfileMenu">
+                                    <li class="dropdown-header">Postavke profila</li>
+                                    <li>
+                                        <h:link outcome="azuriranjePod" class="dropdown-item">
+                                            &#9881;️ Promjena podataka
+                                        </h:link>
+                                    </li>
+                                    <li>
+                                        <h:link outcome="azuriranjePass" class="dropdown-item">
+                                            &#128273; Promjena lozinke
+                                        </h:link>
+                                    </li>
+                                    <li><hr class="dropdown-divider"/></li>
+                                    <li class="px-2">
+                                        <h:form>
+                                            <h:commandLink action="#{sessionKorisnikPogled.logOff()}" 
+                                                           class="btn btn-danger btn-sm w-100 text-white py-1">
+                                                Odjavi se
+                                            </h:commandLink>
+                                        </h:form>
+                                    </li>
+                                </ul>
+                            </li>
+                        </h:panelGroup>
+
+                        <!-- LOGIN DUGME (Prikazano kada niko nije prijavljen) -->
+                        <h:panelGroup rendered="#{!sessionKorisnikPogled.loged}">
+                            <button type="button" class="btn btn-primary px-4 shadow-sm" 
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#staticBackdrop">
+                                Prijavi se
+                            </button>
+                        </h:panelGroup>
+                        
+                    </div> <!-- Kraj desne strane -->
+                </div> <!-- Kraj collapse -->
+            </div> <!-- Kraj container -->
+        </nav>
     </h:body>
 </html>

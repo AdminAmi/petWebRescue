@@ -1,11 +1,18 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- 
+    Stranica za unos novog administratora (New Administrator Entry Page)
+    Ova Facelet stranica omogućuje prijavljenim korisnicima unos podataka za novog administratora sustava.
+    Koristi prilagođene komponente za unos korisničkih podataka.
+-->
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="jakarta.faces.html"
       xmlns:c="jakarta.tags.core"
       xmlns:ui="jakarta.faces.facelets"
       xmlns:p="jakarta.faces.passthrough"
-      xmlns:ezcomp="jakarta.faces.composite/ezcomp">
+      xmlns:ezcomp="jakarta.faces.composite/ezcomp"
+      xmlns:f="jakarta.faces.core">
+    <!-- Odjeljak glave: Uključuje meta oznake, naslov i resurse -->
     <h:head>
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
         <title>Facelet Title</title>
@@ -13,30 +20,40 @@
         <h:outputStylesheet name="mycss.css" />
         <h:outputScript name="bootstrap.bundle.min.js" />
     </h:head>
+    <!-- Tijelo stranice: Prikazuje obrazac za unos administratora -->
     <h:body>
+        <!-- Skriveni elementi za poruke -->
         <h:messages style="display: none"/>
-        <c:if test="#{korisnikPogled.loged }" > 
+        <!-- Provjeri je li korisnik prijavljen -->
+        <f:view beforePhase="#{sessionKorisnikPogled.provjeraAdministrator()}"> 
+            <!-- Uključi navigaciju -->
             <ui:include src="resources/parts/nav.xhtml"/>
+            <!-- Uključi poruke o greškama -->
             <ui:include src="resources/parts/errorMessage.xhtml"/>
             <div class="container">
+                <!-- Uključi zaglavlje -->
                 <ui:include src="resources/parts/zaglavlje.xhtml" />
                 <div class="p-0 ">     
+                    <!-- Podnaslov za unos administratora -->
                     <ezcomp:podnaslov Podnaslov="Molimo Vas da unesete podatke za novog administratora "/>
+                    <!-- Obrazac za unos podataka -->
                     <h:form styleClass="needs-validation" p:novalidate="novalidate">               
+                        <!-- Prilagođena komponenta za unos korisničkih podataka -->
                         <ezcomp:korisnik 
-                            ButtonAction="#{korisnikPogled.unosNovogKorisnikaWeb(0)}" 
-                            imeiprezime="#{korisnikPogled.imeIPrezime}"
-                            adresa="#{korisnikPogled.adresa}"
-                            telefon="#{korisnikPogled.telefon}"
-                            user="#{korisnikPogled.korisnickoIme}" 
-                            pass="#{korisnikPogled.korisnickaLozinka}"
+                            ButtonAction="#{webKorisnikPogled.unosNovogKorisnikaWeb(0)}" 
+                            imeiprezime="#{webKorisnikPogled.imeIPrezime}"
+                            adresa="#{webKorisnikPogled.adresa}"
+                            telefon="#{webKorisnikPogled.telefon}"
+                            user="#{webKorisnikPogled.korisnickoIme}" 
+                            pass="#{webKorisnikPogled.korisnickaLozinka}"
                             samoPass="false" trebaLiPass="true"                             
                             id="korisnik1" tekstButt="Unesi novog administratora sistema!"/>              
                     </h:form>
                 </div>            
             </div>
+            <!-- Uključi modal za prijavu -->
             <ui:include src="resources/parts/modalPrijava.xhtml"/>
-        </c:if>
-        <ezcomp:greskaLog/>
+        </f:view>
+        
     </h:body>
 </html>

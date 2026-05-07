@@ -3,81 +3,90 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="jakarta.faces.html"
       xmlns:ui="jakarta.faces.facelets">
+    
     <h:head>
-        <title>Facelet Title</title>
+        <title>PetRescue - Notifikacije</title>
     </h:head>
+
     <h:body>
-       
-       <!-- Kontejner za toaste (obično u gornjem desnom uglu) -->
-       
-        <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1100; ">
+        
+        <!-- 
+            GLAVNI KONTEJNER ZA TOASTOVE 
+            Pozicioniran fiksno u gornjem desnom uglu.
+        -->
+        <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1100;">
             
+            <!-- Iteracija kroz sve JSF poruke iz FacesContext-a -->
             <ui:repeat value="#{facesContext.messageList}" var="msg">
+                
                 <div class="toast show align-items-center text-white border-0 
                             #{msg.severity.ordinal == 0 ? 'bg-success-light' : 
                               (msg.severity.ordinal == 2 ? 'bg-danger-light' : 'bg-warning-light')}" 
-                     role="alert" aria-live="assertive" aria-atomic="true">
+                     role="alert" 
+                     aria-live="assertive" 
+                     aria-atomic="true">
+                    
+                    <!-- Zaglavlje toasta: Boja se mijenja zavisno od ozbiljnosti poruke (Info, Error, Warning) -->
                     <div class="toast-header #{msg.severity.ordinal == 0 ? 'bg-success' : 
-                              (msg.severity.ordinal == 2 ? 'bg-danger' : 'bg-warning')}" >
+                                              (msg.severity.ordinal == 2 ? 'bg-danger' : 'bg-warning')}">
+                        
                         <strong class="text-white">PetRescue poruka</strong>
-                        <button type="button" class="btn-close btn-close-white me-2 m-auto" 
+                        
+                        <button type="button" 
+                                class="btn-close btn-close-white me-2 m-auto" 
                                 style="opacity: 1;" 
-                                data-bs-dismiss="toast" aria-label="Close"></button>
+                                data-bs-dismiss="toast" 
+                                aria-label="Close"></button>
                     </div>
                    
-                        <div class="toast-body" style="opacity: 0.85;">
-                            <strong >#{msg.summary}</strong>
-                            <ui:remove>
-                            <br/>#{msg.detail}
-                            </ui:remove>
-                        </div>
+                    <!-- Tijelo toasta: Prikazuje glavni sadržaj poruke -->
+                    <div class="toast-body" style="opacity: 0.85;">
+                        <strong>#{msg.summary}</strong>
                         
-                    
+                        <ui:remove>
+                            <!-- Detaljan opis poruke je trenutno isključen -->
+                            <br/>#{msg.detail}
+                        </ui:remove>
+                    </div>
                 </div>
+                
             </ui:repeat>
         </div> 
-      
-        
-       
-     
-       <script>
-            // Funkcija koja pronalazi sve tostive i prikazuje ih
-            /*
-            function prikaziTostove() {
-                var toastElList = [].slice.call(document.querySelectorAll('.toast'));
-                var toastList = toastElList.map(function (toastEl) {
-                    var t = new bootstrap.Toast(toastEl, { autohide: true, delay: 5000 });
-                    t.show();
-                    return t;
-                });
-            }
-     
+
+        <!-- 
+            JAVASCRIPT LOGIKA 
+            Upravlja inicijalizacijom i automatskim prikazom Bootstrap toast elemenata.
+        -->
+        <script>
+            /**
+             * Pronalazi sve toast elemente koji imaju sadržaj i aktivira ih.
              */
             function prikaziTostove() {
-    var toastElList = [].slice.call(document.querySelectorAll('.toast'));
-    
-    toastElList.map(function (toastEl) {
-        // Pronađi body toasta da vidiš ima li teksta
-        var toastBody = toastEl.querySelector('.toast-body');
-        var poruka = toastBody ? toastBody.innerText.trim() : "";
+                const toastElList = [].slice.call(document.querySelectorAll('.toast'));
+                
+                toastElList.map(function (toastEl) {
+                    const toastBody = toastEl.querySelector('.toast-body');
+                    const poruka = toastBody ? toastBody.innerText.trim() : "";
 
-        // Ako poruka nije prazna, inicijalizuj i prikaži
-        if (poruka !== "") {
-            var t = new bootstrap.Toast(toastEl, { 
-                autohide: true, 
-                delay: 5000 
-            });
-            t.show();
-            return t;
-        }
-    });
-}
+                    // Inicijalizuj i prikaži toast samo ako sadrži tekstualnu poruku
+                    if (poruka !== "") {
+                        const t = new bootstrap.Toast(toastEl, { 
+                            autohide: true, 
+                            delay: 5000 
+                        });
+                        t.show();
+                        return t;
+                    }
+                });
+            }
 
-
-            // Pokreni pri učitavanju stranice
+            // Pokretanje skripte nakon što se cijela stranica učita
             document.addEventListener("DOMContentLoaded", prikaziTostove);
 
-            // Ako koristiš AJAX (f:ajax), dodaj i ovo da radi nakon svakog klika:
+            /**
+             * JSF AJAX podrška:
+             * Ponovo pokreće prikaz toastova nakon svakog uspješnog AJAX zahtjeva.
+             */
             if (typeof jsf !== 'undefined') {
                 jsf.ajax.addOnEvent(function(data) {
                     if (data.status === 'success') {
@@ -86,11 +95,6 @@
                 });
             }
         </script>
-
-         
-            
-         
-           
+        
     </h:body>
-    
 </html>

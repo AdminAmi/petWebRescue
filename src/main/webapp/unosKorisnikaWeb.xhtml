@@ -1,10 +1,16 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- 
+    Stranica za unos novog korisnika (New User Entry Page)
+    Ova Facelet stranica omogućuje unos podataka za registraciju novog korisnika sustava.
+    Koristi prilagođene komponente za unos korisničkih podataka.
+-->
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="jakarta.faces.html"
       xmlns:ui="jakarta.faces.facelets"
       xmlns:p="jakarta.faces.passthrough"
       xmlns:ezcomp="jakarta.faces.composite/ezcomp">
+    <!-- Odjeljak glave: Uključuje meta oznake, naslov, resurse i JavaScript -->
     <h:head>
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
         <title>Facelet Title</title>
@@ -13,13 +19,20 @@
         <h:outputScript name="bootstrap.bundle.min.js" />
         <h:outputScript library="js" name="myjs.js"/>
     </h:head>
+    <!-- Tijelo stranice: Prikazuje obrazac za unos korisnika -->
     <h:body >
+        <!-- Skriveni elementi za poruke -->
         <h:messages style="display: none"/>
+        <!-- Uključi navigaciju -->
         <ui:include src="resources/parts/nav.xhtml"/>
         <div class="container">
+             <!-- Pozdravna poruka -->
              <p class="fs-2 lead" style="padding-top: 80px;">Dobro došli </p>                
+             <!-- Podnaslov za unos podataka -->
              <ezcomp:podnaslov Podnaslov="Molimo Vas da unesete svoje korisničke podatke:"/>
+             <!-- Obrazac za unos podataka -->
              <h:form styleClass="needs-validation" p:novalidate="novalidate" >
+                <!-- Prilagođena komponenta za unos korisničkih podataka -->
                 <ezcomp:korisnik 
                     ButtonAction="#{korisnikPogled.unosNovogKorisnikaWeb(1)}" 
                     imeiprezime="#{korisnikPogled.imeIPrezime}"
@@ -32,7 +45,9 @@
                     tekstButt="Unesi novog korisnika!"/> 
              </h:form>
          </div>
+        <!-- Uključi modal za prijavu -->
         <ui:include src="resources/parts/modalPrijava.xhtml"/>
+        <!-- Uključi poruke o greškama -->
         <ui:include src="resources/parts/errorMessage.xhtml"/>
     </h:body>
 </html>

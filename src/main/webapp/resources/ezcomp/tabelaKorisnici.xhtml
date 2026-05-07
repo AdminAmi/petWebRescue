@@ -1,0 +1,60 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="jakarta.faces.composite"
+      xmlns:h="jakarta.faces.html"
+      xmlns:jsf="jakarta.faces"      
+      xmlns:f="jakarta.faces.core"
+      xmlns:c="jakarta.tags.core"
+      xmlns:ui="jakarta.faces.facelets">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+        <cc:attribute name="Zapisi" required="true" type="java.util.ArrayList"/>
+        <cc:attribute name="Poruka" required="true" />
+        <cc:attribute name="pretrazivano" type="boolean" required="false" default="false"/>
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <h:panelGroup rendered="#{not empty cc.attrs.Zapisi}"> 
+            <div class="table-responsive">
+            <h:dataTable value="#{cc.attrs.Zapisi}" var="korisnik" 
+                class="small table table-bordered table-sm align-middle table-striped" >
+              
+            <h:column>
+                <f:facet name="header">Ime i prezime korisnika</f:facet> 
+                <a data-toggle="tooltip" data-placement="left"  title="Manipulacija sa korisnikom" jsf:outcome="ljubimacInfo" > 
+                #{korisnik.ime} #{korisnik.prezime}
+                <f:param name="IDkorisnika" value="#{korisnik.id}"/>  
+                </a>
+            </h:column>
+            <h:column>
+                <f:facet name="header">Tip korisnika</f:facet> #{korisnik.tip}
+            </h:column>
+            <h:column>
+                <f:facet name="header">Adresa</f:facet> #{korisnik.adresa} 
+            </h:column>
+                
+            <h:column>
+                <f:facet name="header">Telefon </f:facet> #{korisnik.telefon} 
+            </h:column>
+                    
+            <h:column rendered="#{korisnikPogled.kont.korisnik.tip=='ADMINISTRATOR'}">
+                <f:facet name="header">Akcije</f:facet>
+                <h:form>
+                    <h:commandButton action="#{korisnikPogled.azuriranjeKorisnika(korisnik.id)}" 
+                                     value="Ažuriraj podatke " />                                     
+                   
+                </h:form>
+            </h:column>
+        </h:dataTable>
+        </div>
+        </h:panelGroup>
+        
+        <h:panelGroup 
+            rendered="#{empty cc.attrs.Zapisi and cc.attrs.pretrazivano}">            
+            <div class="alert alert-info">#{cc.attrs.Poruka}</div>
+        </h:panelGroup>
+    </cc:implementation>
+</html>

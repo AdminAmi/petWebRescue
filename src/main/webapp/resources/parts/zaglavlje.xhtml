@@ -1,15 +1,22 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- 
+    Zaglavlje stranice (Page Header)
+    Ova komponenta prikazuje pozdravnu poruku s imenom i prezimenom prijavljenog korisnika.
+-->
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="jakarta.faces.html">
+    <!-- Odjeljak glave: Sadrži naslov -->
     <h:head>
         <title>Facelet Title</title>
     </h:head>
+    <!-- Tijelo: Prikazuje pozdravnu poruku -->
     <h:body>
        
         <div class="container ">
-            <p class=" fs-3 lead text-end " style="padding-top:  80px;padding-bottom: 30px">
-                Dobro došli <i class="text-primary"> #{korisnikPogled.kont.korisnik.ime} #{korisnikPogled.kont.korisnik.prezime}</i>
+            <!-- Pozdravna poruka s imenom korisnika -->
+            <p class=" fs-3 lead text-end " style="padding-top:  120px; padding-bottom: 10px">
+                Dobro došli <i class="text-primary"> #{sessionKorisnikPogled.k.imeIPrezime}</i>
                 
             </p>             
         </div>

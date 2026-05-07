@@ -1,5 +1,10 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- 
+    Stranica za pretragu ljubimaca (Pet Search Page)
+    Ova Facelet stranica omogućuje prijavljenim korisnicima pretragu ljubimaca po imenu.
+    Prikazuje rezultate u tablici ili poruku ako nema rezultata.
+-->
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="jakarta.faces.html"
       xmlns:ui="jakarta.faces.facelets"
@@ -7,6 +12,7 @@
       xmlns:c="jakarta.tags.core"
       xmlns:jsf="http://xmlns.jcp.org/jsf" 
       >
+    <!-- Odjeljak glave: Uključuje meta oznake, naslov i resurse -->
     <h:head>
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
         <title>Tutorial</title>
@@ -14,29 +20,41 @@
         <h:outputStylesheet name="mycss.css" />
         <h:outputScript name="bootstrap.bundle.min.js" />
     </h:head>
+    <!-- Tijelo stranice: Prikazuje obrazac za pretragu i rezultate -->
     <h:body>
+         <!-- Skriveni elementi za poruke -->
          <h:messages style="display: none;"/>
+         <!-- Provjeri je li korisnik prijavljen -->
          <c:if test="#{korisnikPogled.loged }" > 
+             <!-- Uključi navigaciju -->
              <ui:include src="resources/parts/nav.xhtml"/>
         <div class="container " >  
+            <!-- Uključi poruke o greškama -->
             <ui:include src="resources/parts/errorMessage.xhtml"/>
+            <!-- Uključi zaglavlje -->
             <ui:include src="resources/parts/zaglavlje.xhtml"/> 
+            <!-- Podnaslov za pretragu -->
             <ezcomp:podnaslov Podnaslov="Pretraga ljubimaca"/>
             <div style="padding-left: 30px;padding-top: 10px;">
+            <!-- Obrazac za pretragu -->
             <h:form id="pretraga">  
             <div class="input-group mb-3"> 
                 <div class="form-floating ">
+                    <!-- Polje za unos imena ljubimca -->
                     <input type="text" class="form-control" id="drzava" minlength="2"
                            placeholder="Unesite ime klijenta" jsf:value="#{ljubimacPogled.prLjubimca}">
                        
                     </input>
                     <label for="drzava">Unesite ime ljubimca za pretraživanje.</label>
                 </div>
+                <!-- Gumb za pokretanje pretrage -->
                 <h:commandButton value="&#128269; Pretraga" class="btn btn-outline-secondary" action="#{ljubimacPogled.pretraga()}"/>
             </div>
+                <!-- Prikaz rezultata pretrage ako postoje -->
                 <h:panelGroup id="pretraga1" rendered="#{ljubimacPogled.pretragaLista != null }">
                     <ezcomp:tabelaLjubimci Zapisi="#{ljubimacPogled.pretragaLista}" />
                 </h:panelGroup>
+                <!-- Poruka ako nema rezultata -->
                 <h:panelGroup rendered="#{ljubimacPogled.pretragaLista == null or ljubimacPogled.pretragaLista.size() == 0}">
                     Za unešene podatke nema rezultata pretraživanja.
                 </h:panelGroup>
@@ -45,6 +63,7 @@
             </div>
         </div>
         </c:if>
+        <!-- Prilagođena komponenta za zapisivanje grešaka -->
         <ezcomp:greskaLog/>
     </h:body>
 </html>

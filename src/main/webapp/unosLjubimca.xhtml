@@ -1,5 +1,10 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- 
+    Stranica za unos novog ljubimca (New Pet Entry Page)
+    Ova Facelet stranica omogućuje administratorima unos podataka za novog ljubimca.
+    Koristi prilagođene komponente za unos podataka o ljubimcu.
+-->
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="jakarta.faces.html"
       xmlns:f="jakarta.faces.core"
@@ -9,6 +14,7 @@
       xmlns:p="jakarta.faces.passthrough"
       xmlns:ezcomp="jakarta.faces.composite/ezcomp"
 >
+    <!-- Odjeljak glave: Uključuje meta oznake, naslov i resurse -->
     <h:head>
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
         <title>Facelet Title</title>
@@ -16,38 +22,46 @@
         <h:outputStylesheet name="mycss.css" />
         <h:outputScript name="bootstrap.bundle.min.js" />
     </h:head>
+    <!-- Tijelo stranice: Prikazuje obrazac za unos ljubimca ako je administrator -->
     <h:body>
+         <!-- Skriveni elementi za poruke -->
          <h:messages  style="display: none;"/>
-         <c:if test="#{korisnikPogled.kont.korisnik.tip == 'ADMINISTRATOR'}">
+         <!-- Provjeri je li korisnik administrator -->
+         <f:view beforePhase="#{sessionKorisnikPogled.provjeraAdministrator()}"> 
+             <!-- Uključi navigaciju -->
              <ui:include src="resources/parts/nav.xhtml"/>
+             <!-- Uključi poruke o greškama -->
              <ui:include src="resources/parts/errorMessage.xhtml"/>       
             <div class="container"> 
+                <!-- Uključi zaglavlje -->
                 <ui:include src="resources/parts/zaglavlje.xhtml"/>                
+                <!-- Podnaslov za unos ljubimca -->
                 <ezcomp:podnaslov Podnaslov="Molimo Vas da unesete podatke od ljubimca:"/>
+                <!-- Obrazac za unos podataka -->
                 <h:form>  
                     <div style="padding-left: 30px;padding-top: 10px;">
+                        <!-- Polje za ime ljubimca -->
                         <ezcomp:inputTextPopunjen 
                             ID="nazivLjubimca" TIP="text" 
                             VALUE="#{ljubimacPogled.ljubimacK.ljubimac.ime}" 
                             PHOLDER="Naziv ljubimca" REQ="true"/>
+                         <!-- Polje za starost ljubimca -->
                          <ezcomp:inputTextPopunjen 
                             ID="starostLjubimca" TIP="text" 
                             VALUE="#{ljubimacPogled.ljubimacK.ljubimac.starost}" 
                             PHOLDER="Starost ljubimca" REQ="true"/>                       
+                        <!-- Odabir vrste ljubimca -->
                         <ezcomp:inputSelect ID="vrsta" 
                             VALUE="#{ljubimacPogled.ljubimacK.ljubimac.vrsta}" />
+                        <!-- Gumb za spremanje ljubimca -->
                         <h:commandButton class="btn btn-outline-dark float-end" 
                                          value="Unos novog ljubimca" 
                                          action="#{ljubimacPogled.snimiLjubimca()}"  />
                     </div>
                 </h:form>
             </div>
-        </c:if>
-        <!--
-        <ezcomp:grskaP/>
-        -->
-        <c:if test="#{korisnikPogled.kont.korisnik.tip != 'ADMINISTRATOR'}">
-            <ui:include src="resources/parts/greska.xhtml"/>
-        </c:if>
+         </f:view>>
+       
+        
     </h:body>
 </html>

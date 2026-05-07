@@ -1,17 +1,24 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- 
+    Stranica s informacijama o ljubimcu (Pet Information Page)
+    Ova Facelet stranica prikazuje detalje o odabranom ljubimcu, omogućuje ažuriranje podataka administratorima
+    i rezervaciju korisnicima. Koristi JSF komponente za prikaz i interakciju.
+-->
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="jakarta.faces.html"
       xmlns:ui="jakarta.faces.facelets"
       xmlns:ezcomp="jakarta.faces.composite/ezcomp"
       xmlns:c="jakarta.tags.core"
       xmlns:f="jakarta.faces.core">
+    <!-- Odjeljak glave: Uključuje meta oznake, naslov, resurse i metapodatke za učitavanje ljubimca -->
     <h:head>
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
         <title>Facelet Title</title>
         <h:outputStylesheet name="bootstrap.min.css" />
         <h:outputStylesheet name="mycss.css" />
         <h:outputScript name="bootstrap.bundle.min.js" />
+        <!-- Metapodaci za učitavanje podataka o ljubimcu na temelju ID-a iz URL-a -->
         <f:view>
          <f:metadata>
             <f:viewParam name="IDLjubimca" value="#{ljubimacPogled.selektovaniID}"/>            
@@ -19,27 +26,38 @@
          </f:metadata>
         </f:view>
     </h:head>
+    <!-- Tijelo stranice: Prikazuje navigaciju, greške i obrazac s podacima o ljubimcu -->
     <h:body>
+        <!-- Skriveni elementi za poruke -->
         <h:messages style="display: none"/>
+        <!-- Uključi navigaciju -->
         <ui:include src="resources/parts/nav.xhtml"/>
+        <!-- Uključi poruke o greškama -->
         <ui:include src="resources/parts/errorMessage.xhtml"/>       
         <div class="container">   
+            <!-- Uključi zaglavlje -->
             <ui:include src="resources/parts/zaglavlje.xhtml"/>                
+            <!-- Podnaslov za podatke o ljubimcu -->
             <ezcomp:podnaslov Podnaslov="Podaci o ljubimcu:"/>
             <div style="padding-left: 30px;padding-top: 10px;">
                
+                <!-- Obrazac za prikaz i ažuriranje podataka o ljubimcu -->
                 <h:form>                   
+                <!-- Polje za ime ljubimca -->
                 <ezcomp:inputTextPopunjen 
                             ID="nazivLjubimca" TIP="text" 
                             VALUE="#{ljubimacPogled.ljubimacK.ljubimac.ime}" 
                             PHOLDER="Naziv ljubimca" REQ="true"/>
+                         <!-- Polje za starost ljubimca -->
                          <ezcomp:inputTextPopunjen 
                             ID="starostLjubimca" TIP="text" 
                             VALUE="#{ljubimacPogled.ljubimacK.ljubimac.starost}" 
                             PHOLDER="Starost ljubimca" REQ="true"/>                       
+                        <!-- Odabir vrste ljubimca -->
                         <ezcomp:inputSelect ID="vrsta" 
                             VALUE="#{ljubimacPogled.ljubimacK.ljubimac.vrsta}" />
                         <div class="d-flex justify-content-end gap-2">
+                        <!-- Gumb za ažuriranje podataka, vidljiv samo administratorima za slobodne ljubimce -->
                         <c:if test="#{korisnikPogled.kont.korisnik.tip=='ADMINISTRATOR' and 
                               ljubimacPogled.ljubimacK.ljubimac.status=='SLOBODAN'}">
                          <h:commandButton class="btn btn-outline-dark float-end" 
@@ -47,16 +65,18 @@
                           action="#{ljubimacPogled.azurirajLjubimca(ljubimacPogled.ljubimacK.ljubimac)}"
                            />
                         </c:if>
-                        <c:if test="#{korisnikPogled.loged and 
+                        <!-- Gumb za rezervaciju, vidljiv prijavljenim korisnicima za slobodne ljubimce -->
+                        <c:if test="#{sessionKorisnikPogled.loged  and
                               ljubimacPogled.ljubimacK.ljubimac.status=='SLOBODAN'}" >
                             <h:commandButton class="btn btn-outline-dark float-end" 
                               value="Napravi rezervaciju" 
-                              action="#{ljubimacPogled.rezervisiLjubimca(korisnikPogled.kont.korisnik.id,
+                              action="#{ljubimacPogled.rezervisiLjubimca(sessionKorisnikPogled.k.id,
                                         ljubimacPogled.ljubimacK.ljubimac)}"
                                />
                         
                         </c:if>
-                        <c:if test="#{korisnikPogled.kont.korisnik.tip=='ADMINISTRATOR' and 
+                        <!-- Gumbi za udomljenje i uklanjanje rezervacije, vidljivi administratorima za rezervirane ljubimce -->
+                        <c:if test="#{sessionKorisnikPogled.k.tip=='ADMINISTRATOR' and 
                               ljubimacPogled.ljubimacK.ljubimac.status=='REZERVISAN'}">
                             <h:commandButton class="btn btn-outline-dark float-end" 
                               value="Napravi udomljenje" 
@@ -73,6 +93,7 @@
                 </h:form>
             </div>
         </div>
+        <!-- Uključi modal za prijavu -->
         <ui:include src="resources/parts/modalPrijava.xhtml"/>
         
         

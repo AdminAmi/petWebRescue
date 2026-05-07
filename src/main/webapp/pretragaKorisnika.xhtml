@@ -1,0 +1,73 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- 
+    Stranica za pretragu ljubimaca (Pet Search Page)
+    Ova Facelet stranica omogućuje prijavljenim korisnicima pretragu ljubimaca po imenu.
+    Prikazuje rezultate u tablici ili poruku ako nema rezultata.
+-->
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:ezcomp="jakarta.faces.composite/ezcomp"
+      xmlns:c="jakarta.tags.core"
+      xmlns:jsf="http://xmlns.jcp.org/jsf" 
+          
+      xmlns:f="jakarta.faces.core">
+    <!-- Odjeljak glave: Uključuje meta oznake, naslov i resurse -->
+    <h:head>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <title>Tutorial</title>
+        <h:outputStylesheet name="bootstrap.min.css" />
+        <h:outputStylesheet name="mycss.css" />
+        <h:outputScript name="bootstrap.bundle.min.js" />
+    </h:head>
+    <!-- Tijelo stranice: Prikazuje obrazac za pretragu i rezultate -->
+    <h:body>
+        <!-- Skriveni elementi za poruke -->
+        <h:messages style="display: none;"/>
+        <!-- Provjeri je li korisnik prijavljen -->
+         <f:view beforePhase="#{sessionKorisnikPogled.provjeraPrijave()}">  
+            <!-- Uključi navigaciju -->
+            <ui:include src="resources/parts/nav.xhtml"/>
+            <div class="container " >  
+                <!-- Uključi poruke o greškama -->
+                <ui:include src="resources/parts/errorMessage.xhtml"/>
+                <!-- Uključi zaglavlje -->
+                <ui:include src="resources/parts/zaglavlje.xhtml"/> 
+                <!-- Podnaslov za pretragu -->
+                <ezcomp:podnaslov Podnaslov="Pretraga korisnika"/>
+                <div style="padding-left: 30px;padding-top: 10px;">
+                <!-- Obrazac za pretragu -->
+                <h:form id="pretraga">  
+                    <div class="input-group mb-3"> 
+                        <div class="form-floating ">
+                            <!-- Polje za unos imena korisnika -->
+                            <input type="text" class="form-control" 
+                                   id="kor" minlength="2"
+                                   placeholder="Unesite ime korisnika" 
+                                   jsf:value="#{webKorisnikPogled.imeiPrZaPretragu}">
+                            </input>
+                            <label for="kor">
+                                Unesite ime korisnika za pretraživanje.
+                            </label>
+                        </div>
+                        <!-- Gumb za pokretanje pretrage -->
+                        <h:commandButton value="&#128269; Pretraga" 
+                                         class="btn btn-outline-secondary" 
+                                         action="#{webKorisnikPogled.pretragaK()}"/>
+                    </div>
+                    <!-- Prikaz rezultata pretrage ako postoje -->
+                    <h:panelGroup id="pretraga1" 
+                                  rendered="#{webKorisnikPogled.pretragaKorisnika != null }">
+                        <ezcomp:tabelaKorisnici 
+                            Zapisi="#{webKorisnikPogled.pretragaKorisnika}"                                            
+                            Poruka="Za date podatke nemamo registriranih korisnika!"
+                            pretrazivano="#{webKorisnikPogled.pretrazivanje}"/>
+                    </h:panelGroup> 
+                </h:form>
+                </div>
+            </div>
+         </f:view>
+        
+    </h:body>
+</html>

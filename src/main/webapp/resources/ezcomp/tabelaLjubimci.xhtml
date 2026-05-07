@@ -17,7 +17,7 @@
     <cc:implementation>
         <div class="table-responsive">
             <h:dataTable value="#{cc.attrs.Zapisi}" var="ljub" 
-                class="small table table-bordered table-sm align-middle" >
+                class="small table table-bordered table-sm align-middle table-striped" >
                 <ui:remove>
                 <h:column>
                     <f:facet name="header">Slika ljubimca</f:facet> 
@@ -47,21 +47,20 @@
             <h:column>
                 <f:facet name="header">Starost</f:facet> #{ljub.starost}. 
             </h:column>
-                <ui:remove>
+                
             <h:column>
                 <f:facet name="header">Datum </f:facet>                    
                     <h:outputText rendered="#{ljub.status=='REZERVISAN'}" value="Rezervacija: "/>
-                    <h:outputText rendered="#{ljub.status=='UDOMLJEN'}" value="Udomljenje:"/>
-                    
-                    <h:outputText rendered="#{ljub.status=='SLOBODAN'}" value="Primljen: "/>
+                    <h:outputText rendered="#{ljub.status=='UDOMLJEN'}" value="Udomljenje:"/>                    
+                    <h:outputText rendered="#{ljub.status=='SLOBODAN'}" value="Primljen: #{ljub.datumPrijema}"/>
                    
             </h:column>
-                     </ui:remove>
+                    
             <h:column rendered="#{korisnikPogled.kont.korisnik.tip=='ADMINISTRATOR'}">
                 <f:facet name="header">Akcije</f:facet>
                 <h:form>
                     <h:commandButton action="#{ljubimacPogled.rezervisiLjubimca(ljub.id)}" value="Ukloni " rendered="#{ljub.status=='REZERVISAN'}"/>                                     
-                    <h:commandButton action="#{ljubimacPogled.ukloniUdomljenje(ljub.id)}" value="ukloni" rendered="#{ljub.status=='UDOMLJEN'}"/>
+                    <h:commandButton action="#{ljubimacPogled.ukloniUdomljenje(ljub.id)}" value="Ukloni" rendered="#{ljub.status=='UDOMLJEN'}"/>
                 </h:form>
             </h:column>
         </h:dataTable>

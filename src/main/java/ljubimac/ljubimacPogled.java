@@ -100,6 +100,10 @@ public class ljubimacPogled implements Serializable {
         
         this.selektovaniID = idK; // Spremi ID za kasnije
         ucitajMojeRezervacije();
+        ucitajSvePse();
+        ucitajSveMacke();
+        ucitajSveRezervisane();
+        ucitajSveUdomljene();
 //        try { 
             // Dohvatanje slobodnih pasa (opcija 1, status 1)
             //psiSlobodni=(ArrayList<Ljubimac>) LjubimacK.dobaviSveLjubimce(1, "", 1);

@@ -1,18 +1,27 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- 
+    Modal za prijavu korisnika (User Login Modal)
+    Ova komponenta prikazuje modalni dijalog za unos korisničkog imena i lozinke radi prijave.
+-->
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="jakarta.faces.html"          
       xmlns:ezcomp="jakarta.faces.composite/ezcomp">
+    <!-- Odjeljak glave: Sadrži naslov -->
     <h:head>
         <title>Facelet Title</title>
     </h:head>
+    <!-- Tijelo: Prikazuje modal za prijavu -->
     <h:body>
+        <!-- Modalni dijalog za prijavu -->
         <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" 
              data-bs-keyboard="false" tabindex="-1" 
              aria-labelledby="staticBackdropLabel" aria-hidden="true">
+          <!-- Obrazac za prijavu -->
           <h:form>             
             <div class="modal-dialog">
             <div class="modal-content">
+              <!-- Zaglavlje modala -->
               <div class="modal-header">
                 <h5 class="modal-title" id="staticBackdropLabel">
                     Logiranje korisnika
@@ -21,21 +30,25 @@
                     data-bs-dismiss="modal" aria-label="Close">                            
                 </button>
               </div>
+              <!-- Tijelo modala s poljima za unos -->
               <div class="modal-body">                  
+                  <!-- Polje za korisničko ime -->
                   <ezcomp:inputTextPopunjen 
                       TIP="text" 
                       ID="floatingInput"  
-                      VALUE="#{korisnikPogled.korisnickoIme}"                      
+                      VALUE="#{sessionKorisnikPogled.korisnickoIme}"                      
                       PHOLDER="Korisničko ime"/>                 
+                  <!-- Polje za lozinku -->
                   <ezcomp:inputPassPopunjen 
                       ID="floatingPassword" 
-                      VALUE="#{korisnikPogled.korisnickaLozinka}"
+                      VALUE="#{sessionKorisnikPogled.korisnickaLozinka}"
                       PHOLDER="Korisnička lozinka"/>
               </div>
+              <!-- Podnožje modala s gumbom za prijavu -->
               <div class="modal-footer">              
                 <h:commandButton 
                        class="btn btn-outline-dark"                        
-                       action="#{korisnikPogled.registracija()}" 
+                       action="#{sessionKorisnikPogled.registracija()}" 
                        value="&#x2714; Prijava" />
               </div>
             </div>

@@ -26,11 +26,12 @@ public class CRUDKorisnik extends korisni.Kontroler {
     }
     
     /**
-     * Pomoćna metoda (DRY) za mapiranje trenutnog reda ResultSet-a u objekat Korisnik.
-     * 
-     * @param rs ResultSet pozicioniran na red koji treba mapirati.
-     * @return {@link Korisnik} objekat sa popunjenim podacima.
-     * @throws SQLException Ako kolona ne postoji.
+     * Pomoćna metoda za mapiranje trenutnog reda {@link ResultSet}-a u objekat {@link Korisnik}.
+     * Implementira DRY princip – izbjegava dupliciranje koda za mapiranje.
+     *
+     * @param rs {@link ResultSet} pozicioniran na red koji treba mapirati.
+     * @return {@link Korisnik} objekat sa popunjenim podacima iz trenutnog reda.
+     * @throws SQLException Ako neka od kolona ne postoji u result setu.
      */
     private Korisnik mapirajKorisnika(ResultSet rs) throws SQLException {
         Korisnik k = new Korisnik();
@@ -45,9 +46,21 @@ public class CRUDKorisnik extends korisni.Kontroler {
         return k;
     }
 
-    /**
-     * Kreira tabelu 'korisnik' ako ista ne postoji.
-     * @throws SQLException U slučaju SQL greške.
+     /**
+     * Kreira tabelu 'korisnik' u bazi podataka ukoliko ista ne postoji.
+     * Tabela sadrži sljedeće kolone:
+     * <ul>
+     *     <li>id – INTEGER PRIMARY KEY AUTOINCREMENT</li>
+     *     <li>user – TEXT NOT NULL UNIQUE</li>
+     *     <li>pass – TEXT NOT NULL</li>
+     *     <li>ime – TEXT NOT NULL</li>
+     *     <li>prezime – TEXT NOT NULL</li>
+     *     <li>tip – TEXT</li>
+     *     <li>adresa – TEXT</li>
+     *     <li>telefon – TEXT NOT NULL</li>
+     * </ul>
+     *
+     * @throws SQLException U slučaju SQL greške (npr. greška pri izvršavanju naredbe).
      */
     public final void createTable() throws SQLException  {
         String sql = "CREATE TABLE IF NOT EXISTS korisnik (" +
@@ -65,10 +78,12 @@ public class CRUDKorisnik extends korisni.Kontroler {
     }
     
     /**
-     * Unosi novog korisnika koristeći parametrizovani upit (sigurnost).
-     * 
-     * @param k Objekat korisnika za unos.
-     * @throws SQLException Ako korisničko ime već postoji ili baza nije dostupna.
+     * Unosi novog korisnika u bazu podataka koristeći parametrizovani SQL upit.
+     * Na ovaj način se sprječava SQL injection.
+     *
+     * @param k Objekat {@link Korisnik} sa podacima za unos.
+     * @throws SQLException Ako korisničko ime već postoji (zbog UNIQUE constraint-a)
+     *                      ili ako baza nije dostupna.
      */
     public void unesiKorisnika(Korisnik k) throws SQLException {
         String sql = "INSERT INTO korisnik (user, pass, ime, prezime, tip, adresa, telefon) VALUES (?, ?, ?, ?, ?, ?, ?)";
@@ -85,10 +100,13 @@ public class CRUDKorisnik extends korisni.Kontroler {
     }
     
     /**
-     * Ažurira osnovne podatke korisnika na osnovu njegovog ID-a.
-     * 
-     * @param k Objekat sa novim podacima.
-     * @throws SQLException Ako ID nije pronađen ili upit ne uspije.
+     * Ažurira osnovne podatke postojećeg korisnika na osnovu njegovog ID-a.
+     * Metoda ažurira: ime, prezime, adresu i telefon.
+     *
+     * @param k Objekat {@link Korisnik} koji sadrži nove podatke.
+     *          ID korisnika se koristi kao identifikator.
+     * @throws SQLException Ako korisnik sa datim ID-om ne postoji
+     *                      ili ako SQL upit ne uspije.
      */
     public void azurirajKorisnika(Korisnik k) throws SQLException {
         String sql = "UPDATE korisnik SET ime = ?, prezime = ?, adresa = ?, telefon = ? WHERE id = ?";        
@@ -102,12 +120,13 @@ public class CRUDKorisnik extends korisni.Kontroler {
         }
     }
   
-    /**
-     * Postavlja novu lozinku za korisnika.
-     * 
-     * @param k Korisnik čija se lozinka mijenja.
-     * @param novaLozinka Novi tekst lozinke.
-     * @throws SQLException Ako ažuriranje ne uspije.
+   /**
+     * Mijenja lozinku za specificiranog korisnika.     
+     * U produkcijskom okruženju preporučuje se korištenje heširanja.
+     *
+     * @param k            Korisnik čija se lozinka mijenja.
+     * @param novaLozinka  Novi tekst lozinke.
+     * @throws SQLException Ako ažuriranje ne uspije (npr. korisnik ne postoji).
      */
     public void promjenaPassworda(Korisnik k, String novaLozinka) throws SQLException {
         String sql = "UPDATE korisnik SET pass = ? WHERE id = ?";
@@ -119,9 +138,11 @@ public class CRUDKorisnik extends korisni.Kontroler {
     }
     
     /**
-     * Briše korisnika iz baze podataka.
-     * @param id ID korisnika za brisanje.
-     * @throws SQLException Ako brisanje nije moguće.
+     * Briše korisnika iz baze podataka na osnovu njegovog ID-a.
+     *
+     * @param id ID korisnika koji se briše.
+     * @throws SQLException Ako brisanje nije moguće (npr. korisnik ne postoji,
+     *                      ili postoje strani ključevi koji referenciraju ovog korisnika).
      */
     public void obrisiKorisnika(int id) throws SQLException {
         String sql = "DELETE FROM korisnik WHERE id = ?";        
@@ -131,7 +152,13 @@ public class CRUDKorisnik extends korisni.Kontroler {
         }
     } 
    
-    /** @return Vraća korisnika po ID-u ili null ako ne postoji. */
+    /**
+     * Vraća korisnika na osnovu njegovog ID-a.
+     *
+     * @param id ID korisnika koji se traži.
+     * @return {@link Korisnik} objekat ako je pronađen, inače {@code null}.
+     * @throws SQLException U slučaju SQL greške.
+     */
     public Korisnik vratiKorisnikaPoID(int id) throws SQLException {
         String sql = "SELECT * FROM korisnik WHERE id = ?";
         try (Connection kon = getKone(); PreparedStatement pstmt = kon.prepareStatement(sql)) {        
@@ -144,11 +171,14 @@ public class CRUDKorisnik extends korisni.Kontroler {
     }
 
     /**
-     * Provjerava kredencijale i popunjava lokalni objekat 'korisnik' ako je uspješno.
-     * 
+     * Provjerava kredencijale korisnika (korisničko ime i lozinka).
+     * U slučaju uspješnog logina, popunjava interni atribut {@link #korisnik}
+     * sa podacima prijavljenog korisnika.
+     *
      * @param user Korisničko ime.
-     * @param pass Lozinka.
-     * @return true ako su podaci ispravni, inače false.
+     * @param pass Lozinka (otvoreni tekst).
+     * @return {@code true} ako su kredencijali ispravni, inače {@code false}.
+     * @throws SQLException Ako dođe do greške pri radu sa bazom.
      */
     public boolean login(String user, String pass) throws SQLException {        
         String sql = "SELECT * FROM korisnik WHERE user = ? AND pass = ?";
@@ -166,7 +196,13 @@ public class CRUDKorisnik extends korisni.Kontroler {
         return false;
     }
 
-    /** @return Lista svih korisnika u bazi. */
+    /**
+     * Vraća listu svih korisnika iz baze podataka.
+     *
+     * @return {@link List} svih {@link Korisnik} objekata.
+     *         Ukoliko nema korisnika, vraća praznu listu.
+     * @throws SQLException U slučaju SQL greške.
+     */
     public List<Korisnik> vratiSve() throws SQLException {        
         List<Korisnik> rezultat = new ArrayList<>();        
         String sql = "SELECT * FROM korisnik";  
@@ -178,12 +214,14 @@ public class CRUDKorisnik extends korisni.Kontroler {
         return rezultat;
     }
     
-        /**
+    /**
      * Pretražuje korisnike čije ime počinje zadanim nizom karaktera.
-     * Koristi 'LIKE' operator sa parametrizovanim upitom radi sigurnosti.
-     * 
-     * @param uvjet Početna slova imena za pretragu.
-     * @return Lista korisnika koji zadovoljavaju kriterij.
+     * Koristi SQL 'LIKE' operator sa džoker znakom (%) na kraju šablona.
+     * Parametrizovani upit osigurava zaštitu od SQL injection-a.
+     *
+     * @param uvjet Početna slova imena za pretragu (case-sensitive zavisi od baze).
+     * @return {@link ArrayList} korisnika koji zadovoljavaju kriterij.
+     *         Ukoliko nema rezultata, vraća praznu listu.
      * @throws SQLException U slučaju greške u radu sa bazom.
      */
     public ArrayList<Korisnik> vratiKojiZadovoljavajuUvjet(String uvjet) throws SQLException {
@@ -207,9 +245,17 @@ public class CRUDKorisnik extends korisni.Kontroler {
     }
 
 
-    /** @return Trenutno učitani korisnik. */
+    /**
+     * Vraća trenutno učitani (prijavljeni) objekat korisnika.
+     *
+     * @return {@link Korisnik} trenutno aktivnog korisnika.
+     */
     public Korisnik getKorisnik() { return korisnik; }
     
-    /** @param k Postavlja trenutnog korisnika. */
+    /**
+     * Postavlja trenutno aktivnog korisnika.
+     *
+     * @param k Novi aktivni korisnik.
+     */
     public void setKorisnik(Korisnik k) { this.korisnik = k; }
 }
