@@ -39,15 +39,30 @@
             <h:column>
                 <f:facet name="header">Telefon </f:facet> #{korisnik.telefon} 
             </h:column>
-                    
-            <h:column rendered="#{korisnikPogled.kont.korisnik.tip=='ADMINISTRATOR'}">
-                <f:facet name="header">Akcije</f:facet>
-                <h:form>
-                    <h:commandButton action="#{korisnikPogled.azuriranjeKorisnika(korisnik.id)}" 
-                                     value="Ažuriraj podatke " />                                     
                    
-                </h:form>
+            <h:column rendered="#{sessionKorisnikPogled.k.tip=='ADMINISTRATOR'}">
+                <div style="text-align: center">   
+                <f:facet name="header" >
+                    <div style="text-align: center; width: 100%;">
+                        Akcije
+                    </div>
+                </f:facet>
+                <a data-toggle="tooltip" data-placement="left"  
+                    title="Manipulacija sa korisnikom" 
+                    jsf:outcome="korisnickiPodaci" > 
+                Ažuriranje podataka
+                <f:param name="IDKorisnika" value="#{korisnik.id}"/>
+                 </a> | 
+                
+                 <a data-toggle="tooltip" data-placement="left"  
+                    title="Manipulacija sa korisnikom" 
+                    jsf:outcome="korisnickiPassword" > 
+                Ažuriranje passworda
+                <f:param name="IDKorisnika" value="#{korisnik.id}"/> 
+                </a>
+                 </div>
             </h:column>
+               
         </h:dataTable>
         </div>
         </h:panelGroup>

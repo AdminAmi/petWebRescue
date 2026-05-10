@@ -22,7 +22,10 @@ public enum StanjeLjubimca {
     VRACEN("VRACEN"),
     
     /** Ljubimac je zaprimljen u sklonište  */
-    ZAPRIMLJEN("ZAPRIMLJEN");
+    ZAPRIMLJEN("ZAPRIMLJEN"),
+    
+    /** Ukoliko je istekla rezervacija */
+    ISTEKLO("ISTEKLO");  // Dodaj ovo
     
     /** Kratki opis stanja ljubimca. */
     private final String opis;

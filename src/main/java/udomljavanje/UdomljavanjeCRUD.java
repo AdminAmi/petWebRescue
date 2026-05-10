@@ -5,172 +5,27 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import ljubimac.LjubimacCRUD;
-import korisnik.CRUDKorisnik;
+import ljubimac.StanjeLjubimca;
+import korisnik.Korisnik;
 
 /**
  * Kontroler klasa koja upravlja veznom tabelom 'udomljavanje'.
- * Realizuje M:N relaciju, prati statuse udomljenja/rezervacija i 
- * upravlja historijom vraćanja ljubimaca.
+ * Optimizovana verzija sa JOIN-ovima za eliminaciju N+1 problema.
  * 
  * @author Amel Džanić
- * @version 1.2
+ * @version 2.0
  */
+
 public class UdomljavanjeCRUD extends korisni.Kontroler {
-    /** Servis za rad sa klijentima. */
-    private final CRUDKorisnik kk = new CRUDKorisnik();
-    /** Servis za rad sa ljubimcima. */
-    private final LjubimacCRUD lk = new LjubimacCRUD();
-    /** Standardni format za spašavanje datuma u SQLite bazu. */
-    private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");   
-    /**
-     * Konstruktor koji osigurava postojanje tabele udomljavanje.
-     * 
-     * @throws SQLException U slučaju greške pri inicijalizaciji baze.
-     */
+    
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    
     public UdomljavanjeCRUD() throws SQLException {
-        createTable();       
+        createTable();
     }
-
+    
     /**
-     * Mapira red iz baze u objekat klase {@link Udomljen}.
-     * Vrši parsiranje datuma iz String formata u {@link java.util.Date}.
-     * 
-     * @param rs ResultSet pozicioniran na odgovarajući red.
-     * @return {@link Udomljen} model.
-     * @throws SQLException Ako format datuma nije ispravan ili kolone nedostaju.
-     */
-    private Udomljen mapirajUdomljavanje(ResultSet rs) throws SQLException {
-        try {
-            Udomljen u = new Udomljen(
-                rs.getInt("idKlijenti"),
-                rs.getInt("idLjubimac"),
-                dateFormat.parse(rs.getString("datumUdomljavanja"))
-            );
-            // Opcionalno: u.setStatus(rs.getString("status"));
-            return u;
-        } catch (ParseException e) {
-            throw new SQLException("Greška u formatu datuma baze: " + e.getMessage());
-        }
-    }
-    /**
-     * Dodaje novi zapis o udomljavanju ili rezervaciji u bazu.
-     * 
-     * @param u Objekat koji sadrži ID-ove klijenta, ljubimca i datum.
-     * @throws SQLException Ako upit ne uspije.
-     */
-    public void dodajRelaciju(Udomljen u) throws SQLException {
-        String sql = "INSERT INTO udomljavanje (idKlijenti, idLjubimac, datumUdomljavanja, status) VALUES (?, ?, ?, ?)";
-        try (Connection kon = getKone(); PreparedStatement pstmt = kon.prepareStatement(sql)) {
-            pstmt.setInt(1, u.getIdKlijenti());
-            pstmt.setInt(2, u.getIdLjubimac());
-            pstmt.setString(3, dateFormat.format(u.getDatumUdomljavanja()));
-            pstmt.setString(4, u.getStatus());
-            pstmt.executeUpdate();
-        }
-    }
-    /**
-     * Dobavlja listu svih završenih udomljavanja (isključuje rezervacije).
-     * 
-     * @return Lista realizovanih udomljenja.
-     * @throws SQLException Greška pri čitanju podataka.
-     */
-    public List<Udomljen> dobaviSvaUdomljavanja() throws SQLException {
-        return dobaviListu("SELECT * FROM udomljavanje WHERE status != 'REZERVISAN'");
-    }
-    /**
-     * Dobavlja listu svih aktivnih rezervacija.
-     * 
-     * @return Lista rezervisala.
-     * @throws SQLException Greška u SQL upitu.
-     */
-    public List<Udomljen> dobaviSveRezervacije() throws SQLException {
-        return dobaviListu("SELECT * FROM udomljavanje WHERE status = 'REZERVISAN'");
-    }
-    /**
-     * Pomoćna metoda koja izvršava upit i popunjava listu objektima.
-     * Automatski učitava povezane objekte Klijent i Ljubimac.
-     * 
-     * @param sql SQL upit za filtriranje.
-     * @return Popunjena lista udomljenja.
-     * @throws SQLException Greška pri mapiranju ili dohvatu.
-     */
-    private List<Udomljen> dobaviListu(String sql) throws SQLException {
-        List<Udomljen> lista = new ArrayList<>();
-        try (Connection kon = getKone(); 
-             Statement st = kon.createStatement(); 
-             ResultSet rs = st.executeQuery(sql)) {
-            while (rs.next()) {
-                Udomljen u = mapirajUdomljavanje(rs);
-                // Popunjavanje objekata podacima iz drugih tabela
-                u.setKlijent(kk.vratiKorisnikaPoID(u.getIdKlijenti()));
-                u.setLjub(lk.dobaviLjubimcaPoId(u.getIdLjubimac()));
-                lista.add(u);
-            }
-        }
-        return lista;
-    }
-    /**
-     * Dobavlja specifičnu relaciju na osnovu primarnog ključa (Klijent-Ljubimac).
-     * 
-     * @param idKlijenti ID udomitelja.
-     * @param idLjubimac ID životinje.
-     * @return {@link Udomljen} objekat ili {@code null}.
-     * @throws SQLException Greška pri dohvatu.
-     */
-    public Udomljen dobaviRelaciju(int idKlijenti, int idLjubimac) throws SQLException {
-        String sql = "SELECT * FROM udomljavanje WHERE idKlijenti = ? AND idLjubimac = ?";
-        try (Connection kon = getKone(); PreparedStatement pstmt = kon.prepareStatement(sql)) {
-            pstmt.setInt(1, idKlijenti);
-            pstmt.setInt(2, idLjubimac);
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    Udomljen u = mapirajUdomljavanje(rs);
-                    u.setKlijent(kk.vratiKorisnikaPoID(u.getIdKlijenti()));
-                    u.setLjub(lk.dobaviLjubimcaPoId(u.getIdLjubimac()));
-                    return u;
-                }
-            }
-        }
-        return null;
-    }
-    /**
-     * Ažurira status ili datum postojećeg udomljavanja.
-     * 
-     * @param u Objekat sa novim podacima.
-     * @throws SQLException Greška pri ažuriranju.
-     */
-    public void azurirajUdomljavanje(Udomljen u) throws SQLException {
-        String sql = "UPDATE udomljavanje SET datumUdomljavanja = ?, status = ? WHERE idKlijenti = ? AND idLjubimac = ?";
-        try (Connection kon = getKone(); PreparedStatement pstmt = kon.prepareStatement(sql)) {
-            pstmt.setString(1, dateFormat.format(u.getDatumUdomljavanja()));
-            pstmt.setString(2, u.getStatus());
-            pstmt.setInt(3, u.getIdKlijenti());
-            pstmt.setInt(4, u.getIdLjubimac());
-            pstmt.executeUpdate();
-        }
-    }
-   
-    //Ne koristiti
-    public void obrisiUdomljavanje(int idKlijenti, int idLjubimac) throws SQLException {
-        String sql = "DELETE FROM udomljavanje WHERE idKlijenti = ? AND idLjubimac = ?";
-        
-        // Prvo oslobađamo ljubimce (postavljamo status na SLOBODAN/NE)
-        ArrayList<Integer> ljubimciIds = vratiIdLjubimaca(idKlijenti);
-        for (Integer ljId : ljubimciIds) {
-            lk.ukloniUdomljavanje(lk.dobaviLjubimcaPoId(ljId));
-        }
-
-        try (Connection kon = getKone(); PreparedStatement pstmt = kon.prepareStatement(sql)) {
-            pstmt.setInt(1, idKlijenti);
-            pstmt.setInt(2, idLjubimac);
-            pstmt.executeUpdate();
-        }
-    }
-    /**
-     * Kreira veznu tabelu 'udomljavanje' sa stranim ključevima.
-     * 
-     * @throws SQLException Greška pri definisanju šeme baze.
+     * Kreira veznu tabelu sa stranim ključevima.
      */
     public final void createTable() throws SQLException {
         String sql = "CREATE TABLE IF NOT EXISTS udomljavanje (" +
@@ -178,135 +33,385 @@ public class UdomljavanjeCRUD extends korisni.Kontroler {
                      "idLjubimac INTEGER NOT NULL, " +
                      "datumUdomljavanja TEXT NOT NULL, " +
                      "status TEXT, " +
-                     "PRIMARY KEY (idKlijenti, idLjubimac), " +
-                     "FOREIGN KEY (idKlijenti) REFERENCES klijent(id) ON DELETE CASCADE, " + // Dodano CASCADE
-                     "FOREIGN KEY (idLjubimac) REFERENCES ljubimac(id) ON DELETE CASCADE"   + // Dodano CASCADE
+                     "PRIMARY KEY (idKlijenti, idLjubimac, datumUdomljavanja), " + // Promijenjen PK zbog historije
+                     "FOREIGN KEY (idKlijenti) REFERENCES korisnik(id) ON DELETE CASCADE, " +
+                     "FOREIGN KEY (idLjubimac) REFERENCES ljubimac(id) ON DELETE CASCADE" +
                      ")";
         try (Connection kon = getKone(); Statement st = kon.createStatement()) {
             st.execute(sql);
         }
     }
-
-    /** @return Lista ID-ova klijenata povezanih sa ljubimcem. */   
-    public ArrayList<Integer> vratiIdKlijenata(int idLjubimac) {
-        return vratiListuId("SELECT idKlijenti FROM udomljavanje WHERE idLjubimac = ?", idLjubimac);
-    }
-    /** @return Lista ID-ova ljubimaca povezanih sa klijentom. */   
-    public ArrayList<Integer> vratiIdLjubimaca(int idKlijenti) {
-        return vratiListuId("SELECT idLjubimac FROM udomljavanje WHERE idKlijenti = ?", idKlijenti);
-    }
-
+    
+    // ==================== MAPIRANJE SA JOIN-OVIMA ====================
+    
     /**
-     * Pomoćna metoda za dohvaćanje liste cijelih brojeva (ID-ova) iz baze.
-     * 
-     * @param sql SQL upit.
-     * @param id  ID za filtriranje.
-     * @return Lista rezultujućih ID-ova.
+     * Mapira kompletan red iz JOIN upita u Udomljen objekat.
+     * Očekuje da ResultSet sadrži kolone iz sve tri tabele.
      */
-    private ArrayList<Integer> vratiListuId(String sql, int id) {
-        ArrayList<Integer> lista = new ArrayList<>();
-        try (Connection kon = getKone(); PreparedStatement pstmt = kon.prepareStatement(sql)) {
-            pstmt.setInt(1, id);
-            try (ResultSet rs = pstmt.executeQuery()) {
-                while (rs.next()) lista.add(rs.getInt(1));
+    private Udomljen mapirajSaJoinom(ResultSet rs) throws SQLException, ParseException {
+        // Podaci iz udomljavanje tabele
+        Udomljen u = new Udomljen(
+            rs.getInt("u_idKlijenti"),
+            rs.getInt("u_idLjubimac"),
+            rs.getString("u_datumUdomljavanja")
+        );
+        
+        // Mapiranje statusa
+        String statusStr = rs.getString("u_status");
+        if (statusStr != null) {
+            switch (statusStr) {
+                case "SLOBODAN" -> u.setStatus(StanjeLjubimca.SLOBODAN.toString());
+                case "REZERVISAN" -> u.setStatus(StanjeLjubimca.REZERVISAN.toString());
+                case "UDOMLJEN" -> u.setStatus(StanjeLjubimca.UDOMLJEN.toString());
+                case "VRACEN" -> u.setStatus(StanjeLjubimca.VRACEN.toString());
+                case "ISTEKLO" -> u.setStatus(StanjeLjubimca.ISTEKLO.toString());
+                default -> u.setStatus(StanjeLjubimca.ZAPRIMLJEN.toString());
             }
-        } catch (SQLException e) {
-            System.err.println("Greška kod dohvata ID-ova: " + e.getMessage());
         }
-        return lista;
+        
+        // Mapiranje klijenta iz JOIN-a (bez dodatnog upita)
+        Korisnik klijent = new Korisnik();
+        klijent.setId(rs.getInt("k_id"));
+        klijent.setIme(rs.getString("k_ime"));
+        klijent.setPrezime(rs.getString("k_prezime"));        
+        klijent.setTelefon(rs.getString("k_telefon"));
+        klijent.setAdresa(rs.getString("k_adresa"));
+        u.setKlijent(klijent);
+        
+        // Mapiranje ljubimca iz JOIN-a (bez dodatnog upita)
+        ljubimac.Ljubimac ljubimac = new ljubimac.Ljubimac();
+        ljubimac.setId(rs.getInt("l_id"));
+        ljubimac.setIme(rs.getString("l_ime"));
+        ljubimac.setVrsta(rs.getString("l_vrsta"));        
+        ljubimac.setStarost(rs.getString("l_starost"));
+        
+        
+        String statusLjubimca = rs.getString("l_status");
+        if (statusLjubimca != null) {
+            switch (statusLjubimca) {
+                case "SLOBODAN" -> ljubimac.setStatus(StanjeLjubimca.SLOBODAN.toString());
+                case "REZERVISAN" -> ljubimac.setStatus(StanjeLjubimca.REZERVISAN.toString());
+                case "UDOMLJEN" -> ljubimac.setStatus(StanjeLjubimca.UDOMLJEN.toString());
+                case "VRACEN" -> ljubimac.setStatus(StanjeLjubimca.VRACEN.toString());
+                case "ISTEKLO" -> ljubimac.setStatus(StanjeLjubimca.ISTEKLO.toString());
+                default -> ljubimac.setStatus(StanjeLjubimca.ZAPRIMLJEN.toString());
+            }
+        }
+        
+        u.setLjub(ljubimac);
+        return u;
+    }
+    
+    // ==================== OPTIMIZOVANE METODE ====================
+    
+    /**
+     * Dohvata sva udomljavanja sa svim podacima (jedan upit!).
+     */
+    public List<Udomljen> dobaviSvaUdomljavanja() throws SQLException {
+        String sql = "SELECT "+aliasi()+" FROM udomljavanje u " +
+                     "JOIN korisnik k ON u.idKlijenti = k.id " +
+                     "JOIN ljubimac l ON u.idLjubimac = l.id " +
+                     "WHERE u.status = '" +StanjeLjubimca.UDOMLJEN.toString()+"' "+
+                     "ORDER BY u.datumUdomljavanja DESC";
+        
+        return izvrsiJoinUpit(sql);
+    }
+    
+    private String aliasi(){
+        return  "u.idKlijenti AS u_idKlijenti, " +
+                 "u.idLjubimac AS u_idLjubimac, " +
+                 "u.datumUdomljavanja AS u_datumUdomljavanja, " +
+                 "u.status AS u_status, " +
+                 // Klijent kolone
+                 "k.id AS k_id, " +
+                 "k.ime AS k_ime, " +
+                 "k.prezime AS k_prezime, " +                
+                 "k.telefon AS k_telefon, " +
+                 "k.adresa AS k_adresa, " +
+                 // Ljubimac kolone
+                 "l.id AS l_id, " +
+                 "l.ime AS l_ime, " +
+                 "l.vrsta AS l_vrsta, " +                 
+                 "l.starost AS l_starost, " +                
+                 "l.status AS l_status " ;
     }
     
     /**
-     * Vraća kompletnu historiju udomljavanja za određenog ljubimca.
-     * Uključuje sve klijente koji su ikada imali interakciju sa ljubimcem (rezervacije, 
-     * trenutna udomljenja, vraćene životinje). Rezultati su sortirani po datumu, 
-     * od najnovijeg ka starijem.
-     * 
-     * @param idLjubimca Identifikator ljubimca za kojeg se traži historija.
-     * @return Lista {@link Udomljen} objekata sa popunjenim podacima o klijentima.
-     * @throws SQLException Ako dođe do greške pri čitanju iz baze.
+     * Dohvata sve aktivne rezervacije (jedan upit!).
      */
-    public List<Udomljen> dobaviHistorijuLjubimca(int idLjubimca) throws SQLException {
-        List<Udomljen> historija = new ArrayList<>();
-        String sql = "SELECT * FROM udomljavanje WHERE idLjubimac = ? ORDER BY datumUdomljavanja DESC";
-
+    public List<Udomljen> dobaviSveRezervacije() throws SQLException {
+        String sql = "SELECT " + aliasi() + "FROM udomljavanje u " +
+                 "JOIN korisnik k ON u.idKlijenti = k.id " +
+                 "JOIN ljubimac l ON u.idLjubimac = l.id " +
+                 "WHERE u.status = 'REZERVISAN' " +
+                 "ORDER BY u.datumUdomljavanja DESC";
+        return izvrsiJoinUpit(sql);
+    }
+    
+    /**
+     * Dohvata sve aktivne rezervacije (jedan upit!).
+     */
+    public List<Udomljen> dobaviSveRezervacijeZaKorisnika(int idK) throws SQLException {
+        String sql = "SELECT " + aliasi() + "FROM udomljavanje u " +
+                 "JOIN korisnik k ON u.idKlijenti = k.id " +
+                 "JOIN ljubimac l ON u.idLjubimac = l.id " +
+                 "WHERE u.status = 'REZERVISAN' AND u.idKlijenti = " + String.valueOf(idK) +
+                 " ORDER BY u.datumUdomljavanja DESC";
+        return izvrsiJoinUpit(sql);
+    }
+    
+    /**
+     * Dohvata specifičnu relaciju sa svim podacima.
+     */
+    public Udomljen dobaviRelaciju(int idKlijenti, int idLjubimac) throws SQLException {
+        String sql = "SELECT "+aliasi()+" FROM udomljavanje u " +
+                     "JOIN korisnik k ON u.idKlijenti = k.id " +
+                     "JOIN ljubimac l ON u.idLjubimac = l.id " +
+                     "WHERE u.idKlijenti = ? AND u.idLjubimac = ? " +
+                     "ORDER BY u.datumUdomljavanja DESC LIMIT 1";
+        
         try (Connection kon = getKone(); 
              PreparedStatement pstmt = kon.prepareStatement(sql)) {
-
-            pstmt.setInt(1, idLjubimca);
-
+            
+            pstmt.setInt(1, idKlijenti);
+            pstmt.setInt(2, idLjubimac);
+            
             try (ResultSet rs = pstmt.executeQuery()) {
-                while (rs.next()) {
-                    Udomljen u = mapirajUdomljavanje(rs);
-                    // Punimo podatke o klijentu da znamo IME osobe u historiji
-                    u.setKlijent(kk.vratiKorisnikaPoID(u.getIdKlijenti()));
-                    historija.add(u);
+                if (rs.next()) {
+                    return mapirajSaJoinom(rs);
                 }
             }
+        } catch (ParseException e) {
+            throw new SQLException("Greška pri parsiranju datuma: " + e.getMessage());
         }
-        return historija;
+        return null;
     }
+    
     /**
-     * Vraća kompletnu historiju udomljavanja za određenog klijenta.
-     * Uključuje sve ljubimce koji su ikada imali interakciju sa klijentom (rezervacije, 
-     * trenutna udomljenja, vraćene životinje). Rezultati su sortirani po datumu, 
-     * od najnovijeg ka starijem.
+     * Dohvata najnoviju aktivnu rezervaciju za datog klijenta i ljubimca.
+     * Aktivna znači: status = REZERVISAN i datum nije stariji od 3 dana.
+     * Ako postoji više rezervacija, vraća se ona sa najsvježijim datumom.
      * 
-     * @param idKlijenta Identifikator klijenta za kojeg se traži historija.
-     * @return Lista {@link Udomljen} objekata sa popunjenim podacima o ljubimcima.
-     * @throws SQLException Ako dođe do greške pri čitanju iz baze.
+     * @param idKlijenti ID klijenta
+     * @param idLjubimac ID ljubimca
+     * @return Udomljen objekat ako postoji aktivna rezervacija, inače null
+     * @throws SQLException ako dođe do greške pri čitanju
+     */
+    public Udomljen dohvatiNajnovijuAktivnuRezervaciju(int idKlijenti, int idLjubimac) throws SQLException {
+        String sql = "SELECT "+aliasi()+"FROM udomljavanje u " +
+                     "JOIN korisnik k ON u.idKlijenti = k.id " +
+                     "JOIN ljubimac l ON u.idLjubimac = l.id " +
+                     "WHERE u.idKlijenti = ? AND u.idLjubimac = ? " +
+                     "AND u.status = ? " +
+                     "ORDER BY u.datumUdomljavanja DESC LIMIT 1";
+        
+        try (Connection kon = getKone(); 
+             PreparedStatement pstmt = kon.prepareStatement(sql)) {
+            
+            pstmt.setInt(1, idKlijenti);
+            pstmt.setInt(2, idLjubimac);
+            pstmt.setString(3, StanjeLjubimca.REZERVISAN.toString());
+            
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    Udomljen u = mapirajSaJoinom(rs);
+                    
+                    // Provjera da li je istekla (3 dana)
+                    if (!jeRezervacijaIstekla(dateFormat.parse(u.getDatumUdomljavanja()))) {
+                        return u;
+                    }
+                }
+            }
+        } catch (ParseException e) {
+            throw new SQLException("Greška pri parsiranju datuma: " + e.getMessage());
+        }
+        return null;
+    }
+    
+    /**
+     * Dohvata kompletnu historiju ljubimca (jedan upit!).
+     */
+    public List<Udomljen> dobaviHistorijuLjubimca(int idLjubimca) throws SQLException {
+        String sql = "SELECT "+aliasi()+" FROM udomljavanje u " +
+                     "JOIN korisnik k ON u.idKlijenti = k.id " +
+                     "JOIN ljubimac l ON u.idLjubimac = l.id " +
+                     "WHERE u.idLjubimac = ? " +
+                     "ORDER BY u.datumUdomljavanja DESC";
+        
+        try (Connection kon = getKone(); 
+             PreparedStatement pstmt = kon.prepareStatement(sql)) {
+            
+            pstmt.setInt(1, idLjubimca);
+            return izvrsiJoinUpit(pstmt);
+        }
+    }
+    
+    /**
+     * Dohvata kompletnu historiju klijenta (jedan upit!).
      */
     public List<Udomljen> dobaviHistorijuKlijenta(int idKlijenta) throws SQLException {
-        List<Udomljen> lista = new ArrayList<>();
-        String sql = "SELECT * FROM udomljavanje WHERE idKlijenti = ? ORDER BY datumUdomljavanja DESC";
-
-        try (Connection kon = getKone(); PreparedStatement pstmt = kon.prepareStatement(sql)) {
+        String sql = "SELECT "+aliasi()+" FROM udomljavanje u " +
+                     "JOIN korisnik k ON u.idKlijenti = k.id " +
+                     "JOIN ljubimac l ON u.idLjubimac = l.id " +
+                     "WHERE u.idKlijenti = ? " +
+                     "ORDER BY u.datumUdomljavanja DESC";
+        
+        try (Connection kon = getKone(); 
+             PreparedStatement pstmt = kon.prepareStatement(sql)) {
+            
             pstmt.setInt(1, idKlijenta);
-            try (ResultSet rs = pstmt.executeQuery()) {
-                while (rs.next()) {
-                    Udomljen u = mapirajUdomljavanje(rs);
-                    // Punimo podatke o ljubimcu da znamo IME životinje
-                    u.setLjub(lk.dobaviLjubimcaPoId(u.getIdLjubimac()));
-                    lista.add(u);
+            return izvrsiJoinUpit(pstmt);
+        }
+    }
+    
+    /**
+     * Dohvata kompletnu historiju rezervacija klijenta za jednog ljubimca.
+     */
+    public List<Udomljen> dohvatiHistorijuRezervacijaKlijentaZaLjubimca(
+            int idKlijenti, int idLjubimac) throws SQLException {
+        
+        String sql = "SELECT "+aliasi()+" FROM udomljavanje u " +
+                     "JOIN korisnik k ON u.idKlijenti = k.id " +
+                     "JOIN ljubimac l ON u.idLjubimac = l.id " +
+                     "WHERE u.idKlijenti = ? AND u.idLjubimac = ? " +
+                     "ORDER BY u.datumUdomljavanja DESC";
+        
+        try (Connection kon = getKone(); 
+             PreparedStatement pstmt = kon.prepareStatement(sql)) {
+            
+            pstmt.setInt(1, idKlijenti);
+            pstmt.setInt(2, idLjubimac);
+            return izvrsiJoinUpit(pstmt);
+        }
+    }
+    
+    // ==================== POMOĆNE METODE ====================
+    
+    /**
+     * Izvršava JOIN upit i vraća listu Udomljen objekata.
+     */
+    private List<Udomljen> izvrsiJoinUpit(String sql) throws SQLException {
+        List<Udomljen> lista = new ArrayList<>();
+        
+        try (Connection kon = getKone();
+             Statement st = kon.createStatement();
+             ResultSet rs = st.executeQuery(sql)) {
+            
+            while (rs.next()) {
+                try {
+                    lista.add(mapirajSaJoinom(rs));
+                } catch (ParseException e) {
+                    throw new SQLException("Greška pri parsiranju datuma: " + e.getMessage());
                 }
             }
         }
         return lista;
     }
     
-     /**
-     * Proces vraćanja ljubimca u sklonište. 
-     * Koristi transakciju kako bi osigurao da se status promijeni u obje tabele istovremeno.
-     * 
-     * @param idKlijenti ID klijenta koji vraća ljubimca.
-     * @param idLjubimac ID ljubimca koji se vraća.
-     * @throws SQLException U slučaju greške, transakcija se vraća (rollback).
+    /**
+     * Izvršava PreparedStatement JOIN upit i vraća listu Udomljen objekata.
      */
-    
-    public void vratiLjubimcaSaUdomljavanja(int idKlijenti, int idLjubimac) throws SQLException {
-        // 1. SQL za promjenu statusa u relaciji (udomljavanje postaje historija)
-        String sqlUdomljavanje = "UPDATE udomljavanje SET status = 'VRACEN' " +
-                                 "WHERE idKlijenti = ? AND idLjubimac = ? AND status != 'VRACEN'";
-
-        try (Connection kon = getKone()) {
-            // Isključujemo auto-commit za transakciju (sigurnost)
-            kon.setAutoCommit(false);
-
-            try (PreparedStatement pstmt = kon.prepareStatement(sqlUdomljavanje)) {
-                pstmt.setInt(1, idKlijenti);
-                pstmt.setInt(2, idLjubimac);
-                int redova = pstmt.executeUpdate();
-
-                // 2. Ako je status uspješno promijenjen, oslobađamo ljubimca u tabeli ljubimac
-                if (redova > 0) {
-                    ljubimac.Ljubimac lj = lk.dobaviLjubimcaPoId(idLjubimac);
-                    if (lj != null) {
-                        lk.ukloniUdomljavanje(lj); // Ova metoda u LjubimacCRUD postavlja status na 'SLOBODAN' ili 'NE'
-                    }
-                    kon.commit(); // Potvrdi promjene u obje tabele
-                } else {
-                    kon.rollback(); // Ako ništa nije promijenjeno, vrati na staro
+    private List<Udomljen> izvrsiJoinUpit(PreparedStatement pstmt) throws SQLException {
+        List<Udomljen> lista = new ArrayList<>();
+        
+        try (ResultSet rs = pstmt.executeQuery()) {
+            while (rs.next()) {
+                try {
+                    lista.add(mapirajSaJoinom(rs));
+                } catch (ParseException e) {
+                    throw new SQLException("Greška pri parsiranju datuma: " + e.getMessage());
                 }
+            }
+        }
+        return lista;
+    }
+    
+    /**
+     * Provjerava da li je rezervacija starija od 3 dana.
+     */
+    private boolean jeRezervacijaIstekla(java.util.Date datumRezervacije) {
+        long triDanaUMilis = 3L * 24 * 60 * 60 * 1000;
+        long trenutno = System.currentTimeMillis();
+        long datumRez = datumRezervacije.getTime();
+        return (trenutno - datumRez) > triDanaUMilis;
+    }
+    
+    // ==================== CRUD OPERACIJE ====================
+    
+    /**
+     * Dodaje novu rezervaciju/udomljavanje.
+     */
+    public void dodajRelaciju(Udomljen u) throws SQLException {
+        String sql = "INSERT INTO udomljavanje (idKlijenti, idLjubimac, datumUdomljavanja, status) " +
+                     "VALUES (?, ?, ?, ?)";
+        
+        try (Connection kon = getKone(); 
+             PreparedStatement pstmt = kon.prepareStatement(sql)) {
+            
+            pstmt.setInt(1, u.getIdKlijenti());
+            pstmt.setInt(2, u.getIdLjubimac());
+            pstmt.setString(3, u.getDatumUdomljavanja());
+            pstmt.setString(4, u.getStatus() != null ? u.getStatus() : StanjeLjubimca.REZERVISAN.toString());
+            pstmt.executeUpdate();
+        }
+    }
+    
+    /**
+     * Dodaje rezervaciju samo ako ne postoji aktivna.
+     */
+    public boolean dodajRezervacijuAkoNePostojiAktivna(Udomljen u) throws SQLException {
+        Udomljen postojeca = dohvatiNajnovijuAktivnuRezervaciju(
+            u.getIdKlijenti(), 
+            u.getIdLjubimac()
+        );
+        
+        if (postojeca != null) {
+            return false;
+        }
+        
+        u.setStatus(StanjeLjubimca.REZERVISAN.toString());
+        dodajRelaciju(u);
+        return true;
+    }
+    
+    /**
+     * Otkazuje aktivnu rezervaciju.
+     */
+    public boolean otkaziAktivnuRezervaciju(int idKlijenti, int idLjubimac) throws SQLException {
+        Udomljen aktivnaRez = dohvatiNajnovijuAktivnuRezervaciju(idKlijenti, idLjubimac);
+        
+        if (aktivnaRez == null) {
+            return false;
+        }
+        
+        String sqlRezervacija = "UPDATE udomljavanje SET status = ? " +
+                                "WHERE idKlijenti = ? AND idLjubimac = ? AND status = ?";
+        
+        String sqlLjubimac = "UPDATE ljubimac SET status = ? WHERE id = ?";
+        
+        try (Connection kon = getKone()) {
+            kon.setAutoCommit(false);
+            
+            try {
+                // Ažuriraj rezervaciju
+                try (PreparedStatement pstmt1 = kon.prepareStatement(sqlRezervacija)) {
+                    pstmt1.setString(1, "ISTEKLO");
+                    pstmt1.setInt(2, idKlijenti);
+                    pstmt1.setInt(3, idLjubimac);
+                    pstmt1.setString(4, StanjeLjubimca.REZERVISAN.toString());
+                    pstmt1.executeUpdate();
+                }
+                
+                // Oslobodi ljubimca
+                try (PreparedStatement pstmt2 = kon.prepareStatement(sqlLjubimac)) {
+                    pstmt2.setString(1, StanjeLjubimca.SLOBODAN.toString());
+                    pstmt2.setInt(2, idLjubimac);
+                    pstmt2.executeUpdate();
+                }
+                
+                kon.commit();
+                return true;
+                
             } catch (SQLException e) {
                 kon.rollback();
                 throw e;
@@ -315,108 +420,31 @@ public class UdomljavanjeCRUD extends korisni.Kontroler {
             }
         }
     }
+    
+    
     /**
-     * Automatski pronalazi i poništava rezervacije starije od 3 dana.
-     * Proces se odvija u dva koraka: identifikacija isteklih rezervacija i 
-     * grupno ažuriranje statusa unutar jedne transakcije.
-     * 
-     * @throws SQLException U slučaju greške pri radu sa bazom ili prekida transakcije.
+     * Vraća ljubimca sa udomljavanja.
      */
-    public void ponistiIstekleRezervacije() throws SQLException {
-        String sqlRezervacije = "SELECT idKlijenti, idLjubimac, datumUdomljavanja FROM udomljavanje WHERE status = 'REZERVISAN'";
-        List<int[]> zaPonistiti = new ArrayList<>();
-
-        long triDanaUMilis = 3L * 24 * 60 * 60 * 1000;
-        long trenutno = System.currentTimeMillis();
-
-        // 1. KORAK: Samo čitanje (Zatvaramo RS odmah nakon čitanja)
-        try (Connection kon = getKone();
-             Statement st = kon.createStatement();
-             ResultSet rs = st.executeQuery(sqlRezervacije)) {
-
-            while (rs.next()) {
-                try {
-                    long datumRez = dateFormat.parse(rs.getString("datumUdomljavanja")).getTime();
-                    if (trenutno - datumRez > triDanaUMilis) {
-                        zaPonistiti.add(new int[]{rs.getInt("idKlijenti"), rs.getInt("idLjubimac")});
-                    }
-                } catch (ParseException e) { e.printStackTrace(); }
-            }
-        }
-
-        // 2. KORAK: Ažuriranje (Nova konekcija nakon što je prva zatvorena)
-        if (!zaPonistiti.isEmpty()) {
-            try (Connection kon = getKone()) {
-                kon.setAutoCommit(false); // Transakcija
-                try {
-                    for (int[] par : zaPonistiti) {
-                        izvrsiOslobadjanje(kon, par[0], par[1]);
-                    }
-                    kon.commit();
-                } catch (SQLException e) {
-                    kon.rollback();
-                    throw e;
-                }
-            }
-        }
-    }
-    /**
-     * Pomoćna metoda za oslobađanje ljubimca unutar postojeće transakcije.
-     * Postavlja status udomljavanja na 'ISTEKLO' i vraća status ljubimca na 'SLOBODAN'.
-     * 
-     * @param kon Aktivna SQL konekcija.
-     * @param idK ID klijenta čija rezervacija ističe.
-     * @param idLj ID ljubimca koji se oslobađa.
-     * @throws SQLException Ako bilo koji od dva povezana upita ne uspije.
-     */
-    private void izvrsiOslobadjanje(Connection kon, int idK, int idLj) throws SQLException {
-        // 1. Prvo ažuriraj ljubimca (on je "nezavisan" u ovoj relaciji)
-        String sqlLjubimac = "UPDATE ljubimac SET status = 'SLOBODAN' WHERE id = ?";
-        try (PreparedStatement p1 = kon.prepareStatement(sqlLjubimac)) {
-            p1.setInt(1, idLj);
-            p1.executeUpdate();
-        }
-
-        // 2. Zatim ažuriraj udomljavanje
-        // VAŽNO: Koristi tačan naziv kolone statusa. 
-        // Ako primarni ključ ostaje isti (idK i idLj), UPDATE ne bi smio bacati FK grešku.
-        String sqlUdomljavanje = "UPDATE udomljavanje SET status = 'ISTEKLO' " +
-                                 "WHERE idKlijenti = ? AND idLjubimac = ? AND status = 'REZERVISAN'";
-        try (PreparedStatement p2 = kon.prepareStatement(sqlUdomljavanje)) {
-            p2.setInt(1, idK);
-            p2.setInt(2, idLj);
-            p2.executeUpdate();
-        }
-    }
-    /**
-     * Poništava relaciju udomljavanja ili rezervacije.
-     * 
-     * @param idKlijenti ID klijenta.
-     * @param idLjubimac ID ljubimca.
-     * @param opcija 1 za otkazivanje REZERVACIJE (status ide u SLOBODAN), 
-     *               2 za povrat sa UDOMLJAVANJA (status ide u VRACEN).
-     * @throws SQLException 
-     */
-    public void procesuirajPovrat(int idKlijenti, int idLjubimac, int opcija) throws SQLException {
-        // Definisanje statusa na osnovu opcije
-        String noviStatusRelacije = (opcija == 1) ? "SLOBODAN" : "VRACEN";
-
-        String sqlRelacija = "UPDATE udomljavanje SET status = ? " +
-                             "WHERE idKlijenti = ? AND idLjubimac = ? AND status != 'VRACEN'";
-
+    public void vratiLjubimcaSaUdomljavanja(int idKlijenti, int idLjubimac) throws SQLException {
+        String sqlUdomljavanje = "UPDATE udomljavanje SET status = ? " +
+                                 "WHERE idKlijenti = ? AND idLjubimac = ? AND status = ?";
+        
         try (Connection kon = getKone()) {
             kon.setAutoCommit(false);
-            try (PreparedStatement pstmt = kon.prepareStatement(sqlRelacija)) {
-                pstmt.setString(1, noviStatusRelacije);
+            
+            try (PreparedStatement pstmt = kon.prepareStatement(sqlUdomljavanje)) {
+                pstmt.setString(1, StanjeLjubimca.VRACEN.toString());
                 pstmt.setInt(2, idKlijenti);
                 pstmt.setInt(3, idLjubimac);
+                pstmt.setString(4, StanjeLjubimca.UDOMLJEN.toString());
+                
                 int redova = pstmt.executeUpdate();
-
+                
                 if (redova > 0) {
-                    // Ljubimac u bazi uvijek postaje ponovo SLOBODAN za nove udomitelje
-                    String sqlLjubimac = "UPDATE ljubimac SET status = 'SLOBODAN' WHERE id = ?";
+                    String sqlLjubimac = "UPDATE ljubimac SET status = ? WHERE id = ?";
                     try (PreparedStatement pstmt2 = kon.prepareStatement(sqlLjubimac)) {
-                        pstmt2.setInt(1, idLjubimac);
+                        pstmt2.setString(1, StanjeLjubimca.SLOBODAN.toString());
+                        pstmt2.setInt(2, idLjubimac);
                         pstmt2.executeUpdate();
                     }
                     kon.commit();
@@ -431,5 +459,264 @@ public class UdomljavanjeCRUD extends korisni.Kontroler {
             }
         }
     }
+    
+    /**
+     * Ažurira postojeću relaciju.
+     */
+    public void azurirajUdomljavanje(Udomljen u) throws SQLException {
+        String sql = "UPDATE udomljavanje SET datumUdomljavanja = ?, status = ? " +
+                     "WHERE idKlijenti = ? AND idLjubimac = ?";
+        
+        try (Connection kon = getKone(); 
+             PreparedStatement pstmt = kon.prepareStatement(sql)) {
+            
+            pstmt.setString(1, dateFormat.format(u.getDatumUdomljavanja()));
+            pstmt.setString(2, u.getStatus());
+            pstmt.setInt(3, u.getIdKlijenti());
+            pstmt.setInt(4, u.getIdLjubimac());
+            pstmt.executeUpdate();
+        }
+    }
+    
+    // ==================== POMOĆNE METODE ZA ID-OVE ====================
+    
+    public ArrayList<Integer> vratiIdKlijenata(int idLjubimac) {
+        return vratiListuId("SELECT idKlijenti FROM udomljavanje WHERE idLjubimac = ?", idLjubimac);
+    }
+    
+    public ArrayList<Integer> vratiIdLjubimaca(int idKlijenti) {
+        return vratiListuId("SELECT idLjubimac FROM udomljavanje WHERE idKlijenti = ?", idKlijenti);
+    }
+    
+    private ArrayList<Integer> vratiListuId(String sql, int id) {
+        ArrayList<Integer> lista = new ArrayList<>();
+        try (Connection kon = getKone(); 
+             PreparedStatement pstmt = kon.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) lista.add(rs.getInt(1));
+            }
+        } catch (SQLException e) {
+            System.err.println("Greška kod dohvata ID-ova: " + e.getMessage());
+        }
+        return lista;
+    }
+    
+    /**
+     * Provjerava da li klijent ima makar jednu aktivnu rezervaciju.
+     * 
+     * @param idKlijenti ID klijenta
+     * @return true ako ima barem jednu aktivnu rezervaciju
+     */
+    public boolean imaLiKlijentAktivnuRezervaciju(int idKlijenti) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM udomljavanje " +
+                     "WHERE idKlijenti = ? AND status = ?";
 
+        try (Connection kon = getKone(); 
+             PreparedStatement pstmt = kon.prepareStatement(sql)) {
+
+            pstmt.setInt(1, idKlijenti);
+            pstmt.setString(2, StanjeLjubimca.REZERVISAN.toString());
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        }
+        return false;
+    }
+    /**
+     * Automatski pronalazi i poništava rezervacije starije od 3 dana.
+     * Proces se odvija u dva koraka: 
+     * 1. Identifikacija isteklih rezervacija
+     * 2. Grupno ažuriranje statusa unutar transakcije
+     * 
+     * @return Broj poništenih (isteklih) rezervacija
+     * @throws SQLException U slučaju greške pri radu sa bazom
+     */
+    public int ponistiIstekleRezervacije() throws SQLException {
+        // 1. KORAK: Pronađi sve istekle rezervacije
+        List<int[]> zaPonistiti = new ArrayList<>();
+
+        String sqlRezervacije = "SELECT idKlijenti, idLjubimac, datumUdomljavanja " +
+                                "FROM udomljavanje " +
+                                "WHERE status = ?";
+
+        try (Connection kon = getKone();
+             PreparedStatement pstmt = kon.prepareStatement(sqlRezervacije)) {
+
+            pstmt.setString(1, StanjeLjubimca.REZERVISAN.toString());
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    try {
+                        java.util.Date datumRez = dateFormat.parse(rs.getString("datumUdomljavanja"));
+                        if (jeRezervacijaIstekla(datumRez)) {
+                            zaPonistiti.add(new int[]{
+                                rs.getInt("idKlijenti"), 
+                                rs.getInt("idLjubimac")
+                            });
+                        }
+                    } catch (ParseException e) {
+                        System.err.println("Greška pri parsiranju datuma: " + e.getMessage());
+                    }
+                }
+            }
+        }
+
+        // 2. KORAK: Poništi sve istekle rezervacije u transakciji
+        if (zaPonistiti.isEmpty()) {
+            return 0;
+        }
+
+        int brojPonistenih = 0;
+
+        try (Connection kon = getKone()) {
+            kon.setAutoCommit(false);
+
+            try {
+                for (int[] par : zaPonistiti) {
+                    if (izvrsiPonistavanjeRezervacije(kon, par[0], par[1])) {
+                        brojPonistenih++;
+                    }
+                }
+                kon.commit();
+                System.out.println("Poništeno " + brojPonistenih + " isteklih rezervacija.");
+            } catch (SQLException e) {
+                kon.rollback();
+                throw e;
+            } finally {
+                kon.setAutoCommit(true);
+            }
+        }
+
+        return brojPonistenih;
+    }
+
+    /**
+     * Pomoćna metoda za poništavanje jedne istekle rezervacije unutar transakcije.
+     * 
+     * @param kon Aktivna SQL konekcija
+     * @param idKlijenti ID klijenta
+     * @param idLjubimac ID ljubimca
+     * @return true ako je rezervacija poništena, false ako nije bilo promjene
+     * @throws SQLException Ako upit ne uspije
+     */
+    private boolean izvrsiPonistavanjeRezervacije(Connection kon, int idKlijenti, int idLjubimac) 
+            throws SQLException {
+
+        // 1. Ažuriraj status rezervacije u ISTEKLO
+        String sqlRezervacija = "UPDATE udomljavanje SET status = ? " +
+                                "WHERE idKlijenti = ? AND idLjubimac = ? " +
+                                "AND status = ?";
+
+        try (PreparedStatement pstmt1 = kon.prepareStatement(sqlRezervacija)) {
+            pstmt1.setString(1, StanjeLjubimca.ISTEKLO.toString());
+            pstmt1.setInt(2, idKlijenti);
+            pstmt1.setInt(3, idLjubimac);
+            pstmt1.setString(4, StanjeLjubimca.REZERVISAN.toString());
+
+            int redova = pstmt1.executeUpdate();
+
+            if (redova > 0) {
+                // 2. Oslobodi ljubimca (vrati ga u status SLOBODAN)
+                String sqlLjubimac = "UPDATE ljubimac SET status = ? WHERE id = ?";
+
+                try (PreparedStatement pstmt2 = kon.prepareStatement(sqlLjubimac)) {
+                    pstmt2.setString(1, StanjeLjubimca.SLOBODAN.toString());
+                    pstmt2.setInt(2, idLjubimac);
+                    pstmt2.executeUpdate();
+                }
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Poništava sve istekle rezervacije za određenog klijenta.
+     * 
+     * @param idKlijenti ID klijenta
+     * @return Broj poništenih rezervacija
+     * @throws SQLException Ako dođe do greške
+     */
+    public int ponistiIstekleRezervacijeZaKlijenta(int idKlijenti) throws SQLException {
+        List<int[]> zaPonistiti = new ArrayList<>();
+
+        String sql = "SELECT idLjubimac, datumUdomljavanja FROM udomljavanje " +
+                     "WHERE idKlijenti = ? AND status = ?";
+
+        try (Connection kon = getKone();
+             PreparedStatement pstmt = kon.prepareStatement(sql)) {
+
+            pstmt.setInt(1, idKlijenti);
+            pstmt.setString(2, StanjeLjubimca.REZERVISAN.toString());
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    try {
+                        java.util.Date datumRez = dateFormat.parse(rs.getString("datumUdomljavanja"));
+                        if (jeRezervacijaIstekla(datumRez)) {
+                            zaPonistiti.add(new int[]{idKlijenti, rs.getInt("idLjubimac")});
+                        }
+                    } catch (ParseException e) {
+                        System.err.println("Greška pri parsiranju datuma: " + e.getMessage());
+                    }
+                }
+            }
+        }
+
+        if (zaPonistiti.isEmpty()) {
+            return 0;
+        }
+
+        int brojPonistenih = 0;
+
+        try (Connection kon = getKone()) {
+            kon.setAutoCommit(false);
+
+            try {
+                for (int[] par : zaPonistiti) {
+                    if (izvrsiPonistavanjeRezervacije(kon, par[0], par[1])) {
+                        brojPonistenih++;
+                    }
+                }
+                kon.commit();
+            } catch (SQLException e) {
+                kon.rollback();
+                throw e;
+            } finally {
+                kon.setAutoCommit(true);
+            }
+        }
+
+        return brojPonistenih;
+    }
+
+    /**
+     * Poništava jednu specifičnu rezervaciju (bez obzira na datum).
+     * 
+     * @param idKlijenti ID klijenta
+     * @param idLjubimac ID ljubimca
+     * @return true ako je rezervacija poništena
+     * @throws SQLException Ako dođe do greške
+     */
+    public boolean ponistiRezervaciju(int idKlijenti, int idLjubimac) throws SQLException {
+        try (Connection kon = getKone()) {
+            kon.setAutoCommit(false);
+
+            try {
+                boolean uspjeh = izvrsiPonistavanjeRezervacije(kon, idKlijenti, idLjubimac);
+                kon.commit();
+                return uspjeh;
+            } catch (SQLException e) {
+                kon.rollback();
+                throw e;
+            } finally {
+                kon.setAutoCommit(true);
+            }
+        }
+    }
 }

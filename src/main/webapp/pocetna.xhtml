@@ -41,13 +41,15 @@
                 <!-- Prikaz sadržaja samo za korisnike sa rolom ADMINISTRATOR -->
                 <c:if test="#{sessionKorisnikPogled.k.tip == 'ADMINISTRATOR'}">
                     
-                    <div class="container" style="margin-top: 10px;">
+                    <div class="container" >
                         
                         <!-- Navigacioni Tabovi -->
-                        <ul class="nav nav-tabs" id="petTabs">
+                        <ul class="nav nav-tabs" id="petTabs" >
+                            <ui:remove>
                             <li class="nav-item">
                                 <a class="nav-link" data-bs-toggle="tab" href="#dostupni">Dostupni ljubimci</a>
                             </li>
+                            </ui:remove>
                             <li class="nav-item">
                                 <a class="nav-link" data-bs-toggle="tab" href="#rezervisani">Rezervisani ljubimci</a>
                             </li>
@@ -58,35 +60,36 @@
                                 <a class="nav-link active" data-bs-toggle="tab" href="#pretraga">Pretraga ljubimaca</a>
                             </li>
                         </ul>
+                        
 
                         <br/>
 
                         <!-- Sadržaj Tabova (Tab Panes) -->
                         <div class="tab-content">
-                            
+                            <ui:remove>
                             <!-- Tab: Dostupni ljubimci -->
                             <div class="tab-pane fade" id="dostupni">
                                 <ezcomp:tabeleZaljubimceSaIspisom
                                     ListaZaTabelu="#{ljubimacPogled.ljub}"
                                     Poruka="Trenutno nema dostupnih ljubimaca"/>
                             </div>
-
+                            </ui:remove>
                             <!-- Tab: Rezervisani ljubimci -->
                             <div class="tab-pane fade" id="rezervisani">                              
-                                <ezcomp:tabeleZaljubimceSaIspisom 
-                                    ListaZaTabelu="#{ljubimacPogled.rezervisani}"
-                                    Poruka="Trenutno nema rezervisanih ljubimaca!"/>
+                                <ezcomp:tabelaLjubimciUdomljenje
+                                    Zapisi="#{ljubimacPogled.rezervisani}" 
+                                    Poruka="Nema rezervisanih ljubimaca!"/>
                             </div>
 
                             <!-- Tab: Udomljeni ljubimci -->
                             <div class="tab-pane fade" id="udomljeni">
-                                <ezcomp:tabeleZaljubimceSaIspisom 
-                                    ListaZaTabelu="#{ljubimacPogled.udomljeni}"
+                                <ezcomp:tabelaLjubimciUdomljenje
+                                    Zapisi="#{ljubimacPogled.udomljeni}"
                                     Poruka="Trenutno nema udomljenih ljubimaca!"/>                             
                             </div>
 
                             <!-- Tab: Pretraga (Aktivni tab po defaultu) -->
-                            <div class="tab-pane active" id="pretraga">
+                            <div class="tab-pane active" id="pretraga" >
                                 <h:form id="formaPretraga"> 
                                     <div class="input-group mb-3"> 
                                         <!-- Custom input komponenta za unos imena -->

@@ -19,7 +19,7 @@ public class Udomljen {
     /** Identifikator ljubimca koji se udomljava ili rezerviše. */
     private int idLjubimac;
     /** Datum kada je proces udomljavanja iniciran ili izvršen. */
-    private Date datumUdomljavanja;
+    private String datumUdomljavanja;
     /** Referenca na objekat {@link Ljubimac}. */
     private Ljubimac ljub;
     /** Referenca na objekat {@link Klijent}. */
@@ -44,7 +44,7 @@ public class Udomljen {
      * @param idLjubimac        ID ljubimca.
      * @param datumUdomljavanja Datum udomljavanja.
      */
-    public Udomljen(int idKlijenti, int idLjubimac, Date datumUdomljavanja) {
+    public Udomljen(int idKlijenti, int idLjubimac, String datumUdomljavanja) {
         this.idKlijenti = idKlijenti;
         this.idLjubimac = idLjubimac;
         this.datumUdomljavanja = datumUdomljavanja;
@@ -59,7 +59,7 @@ public class Udomljen {
      * @param ljubi             Instanca objekta {@link Ljubimac}.
      * @param korisnik          Instanca objekta {@link Klijent}.
      */
-    public Udomljen(int idKlijenti, int idLjubimac, Date datumUdomljavanja,
+    public Udomljen(int idKlijenti, int idLjubimac, String datumUdomljavanja,
             ljubimac.Ljubimac ljubi, Korisnik korisnik) {
         this.idKlijenti = idKlijenti;
         this.idLjubimac = idLjubimac;
@@ -81,9 +81,9 @@ public class Udomljen {
     /** @param idLjubimac Postavlja ID ljubimca. */
     public void setIdLjubimac(int idLjubimac) {this.idLjubimac = idLjubimac;}
     /** @return Vraća datum udomljavanja. */
-    public Date getDatumUdomljavanja() {return datumUdomljavanja;}
+    public String getDatumUdomljavanja() {return datumUdomljavanja;}
     /** @param datumUdomljavanja Postavlja datum udomljavanja. */
-    public void setDatumUdomljavanja(Date datumUdomljavanja) {this.datumUdomljavanja = datumUdomljavanja;}
+    public void setDatumUdomljavanja(String datumUdomljavanja) {this.datumUdomljavanja = datumUdomljavanja;}
     /** @return Vraća referencu na klijenta. */
     public Korisnik getKlijent() {return klijent;}
     /** @return Vraća referencu na ljubimca. */

@@ -14,17 +14,15 @@
     <!-- Odjeljak glave: Uključuje meta oznake, naslov, resurse i JavaScript -->
     <h:head>
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
-        <title>Facelet Title</title>
+        <title>Moj profil</title>
         <h:outputStylesheet name="bootstrap.min.css" />
         <h:outputStylesheet name="mycss.css" />
         <h:outputScript name="bootstrap.bundle.min.js" />
         <h:outputScript library="js" name="myjs.js"/>
-        <f:view>
-         <f:metadata>
-             <f:viewParam name="IDKorisnika" value="#{webKorisnikPogled.selektovaniID}"/>            
-             <f:viewAction action="#{webKorisnikPogled.ucitajKorisnika()}"/> 
-         </f:metadata>
-        </f:view>
+        <f:metadata>
+            <f:viewAction action="#{webKorisnikPogled.ucitajKorisnika()}"/>
+        </f:metadata>
+       
     </h:head>
     <!-- Tijelo stranice: Prikazuje obrazac za unos korisnika -->
     <h:body >
@@ -32,39 +30,47 @@
         <h:messages style="display: none"/>
         <!-- Uključi navigaciju -->
         <ui:include src="resources/parts/nav.xhtml"/>
-        <ui:include src="resources/parts/zaglavlje.xhtml"/>
+        
         <!-- Provjera sesije prije iscrtavanja faze i da li je korisnik administrator -->
-        <f:view beforePhase="#{sessionKorisnikPogled.provjeraAdministrator()}"> 
-        <div class="container">
+        <f:view beforePhase="#{sessionKorisnikPogled.provjeraPrijave()}"> 
+            <div class="container" style="padding-top: 80px">
             
              
              <!-- Podnaslov za unos podataka -->
-             <ezcomp:podnaslov Podnaslov="Podaci o korisniku: #{sessionKorisnikPogled.kont.korisnik.imeIPrezime},
-              tip korisnika: #{sessionKorisnikPogled.kont.korisnik.tip}   "/>
+             <ezcomp:podnaslov Podnaslov="Podaci o korisniku: #{sessionKorisnikPogled.k.imeIPrezime},
+              tip korisnika: #{sessionKorisnikPogled.k.tip}   "/>
              
              <!-- Obrazac za unos podataka -->
              <h:form styleClass="needs-validation" p:novalidate="novalidate" >
                 <!-- Prilagođena komponenta za korisničke podatake -->
                 <ezcomp:korisnik                      
-                    imeiprezime="#{sessionKorisnikPogled.kont.korisnik.imeIPrezime}"
-                    user="#{sessionKorisnikPogled.kont.korisnik.user}" 
-                    pass="#{sessionKorisnikPogled.kont.korisnik.pass}"
-                    adresa="#{sessionKorisnikPogled.kont.korisnik.adresa}"
-                    telefon="#{sessionKorisnikPogled.kont.korisnik.telefon}"
+                    imeiprezime="#{sessionKorisnikPogled.k.imeIPrezime}"
+                    user="#{sessionKorisnikPogled.k.user}" 
+                    pass="#{sessionKorisnikPogled.k.pass}"
+                    adresa="#{sessionKorisnikPogled.k.adresa}"
+                    telefon="#{sessionKorisnikPogled.k.telefon}"
                     id="korisnik1" 
                     samoPass="false" trebaLiPass="false"
                     jelPrikazKorisnika="false"
                     /> 
-                <h:commandButton class="btn btn-outline-dark float-end" 
-                    value="Ažuriraj podatke korisnika."                 
-                    action="#{webKorisnikPogled.azuriranjeKorisnika
-                              (sessionKorisnikPogled.kont.korisnik)}" />  
+                 
                 
              </h:form>
+             <!-- Podnaslov za unos podataka -->
+             <ezcomp:podnaslov Podnaslov="Rezervisani ljubimaci korisnika"/>
+             <div style="padding-left: 30px;padding-top: 10px;">
+             <ezcomp:tabelaLjubimciUdomljenje
+                 Zapisi="#{webKorisnikPogled.trenutnaRezervacija}" 
+                 Poruka="Nema rezervacija klijenta"/>
+             </div>
+             <ezcomp:podnaslov Podnaslov="Aktivnosti korisnika"/>
+             <div style="padding-left: 30px;padding-top: 10px;">
+             <ezcomp:tabelaLjubimciUdomljenje
+                 Zapisi="#{webKorisnikPogled.udomljeni}" 
+                 Poruka="Korisnik do sada nije imao aktivnosti na sistemu"/>
+             </div>
          </div>
-        </f:view>
-        <!-- Uključi modal za prijavu -->
-        <ui:include src="resources/parts/modalPrijava.xhtml"/>
+        </f:view>        
         <!-- Uključi poruke o greškama -->
         <ui:include src="resources/parts/errorMessage.xhtml"/>
     </h:body>

@@ -12,8 +12,10 @@ import java.util.ArrayList;
 import korisnik.Korisnik;
 import java.sql.SQLException;
 import java.util.Date;
+import korisni.DebugUtils;
 import korisni.webUtil;
 import udomljavanje.UdomljavanjeCRUD;
+
 import udomljavanje.Udomljen;
 
 /**
@@ -27,15 +29,17 @@ import udomljavanje.Udomljen;
 public class ljubimacPogled implements Serializable {
     private LjubimacCRUD LjubimacK ;
     private ArrayList<Ljubimac> ljub=new ArrayList<>();
-    private ArrayList<Ljubimac> rezervisani = new ArrayList<>();
-    private ArrayList<Ljubimac> udomljeni = new ArrayList<>();
+    private ArrayList<Udomljen> rezervisani = new ArrayList<>();
+    private ArrayList<Udomljen> udomljeni = new ArrayList<>();
     private ArrayList<Ljubimac> psiSlobodni = new ArrayList<>();
     private ArrayList<Ljubimac> mackeSlobodne = new ArrayList<>();
     private ArrayList<Ljubimac> rezervisaniOdKorisnika = new ArrayList<>();
     private ArrayList<Ljubimac> pretragaLista = new ArrayList<>();
     private String prLjubimca;
     private Korisnik koris = new Korisnik();
+    
     private int selektovaniID;
+    private int selektovaniIDk;
     private Part datoteka;
 
     public ljubimacPogled() { 
@@ -96,32 +100,13 @@ public class ljubimacPogled implements Serializable {
      * 
      * @param idK Jedinstveni identifikator klijenta (korisnika) za kojeg se dohvataju personalizovane rezervacije.
      */
-    public void ljubimci(int idK){ 
-        
+    public void ljubimci(int idK){         
         this.selektovaniID = idK; // Spremi ID za kasnije
-        ucitajMojeRezervacije();
-        ucitajSvePse();
-        ucitajSveMacke();
+//        ucitajMojeRezervacije();
+        getLjub();
         ucitajSveRezervisane();
         ucitajSveUdomljene();
-//        try { 
-            // Dohvatanje slobodnih pasa (opcija 1, status 1)
-            //psiSlobodni=(ArrayList<Ljubimac>) LjubimacK.dobaviSveLjubimce(1, "", 1);
-            // Dohvatanje slobodnih mačaka (opcija 2, status 1)
-           // mackeSlobodne=(ArrayList<Ljubimac>) LjubimacK.dobaviSveLjubimce(2, "", 1);
-            // Dohvatanje ljubimaca koje je rezervisao konkretan korisnik
-            //rezervisaniOdKorisnika=(ArrayList<Ljubimac>) LjubimacK.dobaviSveLjubimceKorisnika(idK);
-            // Dohvatanje svih rezervacija u sistemu (status 2)
-            //rezervisani=(ArrayList<Ljubimac>) LjubimacK.dobaviSveLjubimce(0, "", 2);
-            // Dohvatanje svih udomljenih ljubimaca (status 3)
-            //udomljeni = (ArrayList<Ljubimac>) LjubimacK.dobaviSveLjubimce(0, "", 3);
-            // Objedinjavanje svih slobodnih ljubimaca u jednu listu
-            //ljub.clear();
-            //ljub.addAll(psiSlobodni);
-            //ljub.addAll(mackeSlobodne);           
-//        } catch (SQLException ex) {
-//            webUtil.infoPoruka(ex.getMessage(), "");
-//        }
+//      
     }  
    
     /**
@@ -160,18 +145,21 @@ public class ljubimacPogled implements Serializable {
     public String rezervisiLjubimca(long idK, Ljubimac temp){        
         try {
             udomljavanje.UdomljavanjeCRUD rezervisi = new UdomljavanjeCRUD();
-            udomljavanje.Udomljen trenutni= new Udomljen();
-            trenutni.setIdKlijenti((int) idK);
-            trenutni.setIdLjubimac(selektovaniID);
-            trenutni.setDatumUdomljavanja(new Date());
-            trenutni.setStatus(ljubimac.StanjeLjubimca.REZERVISAN.toString());
-            rezervisi.dodajRelaciju(trenutni);
-            temp.setStatus(ljubimac.StanjeLjubimca.REZERVISAN.toString());
-            LjubimacK.azurirajLjubimca(temp);
-            webUtil.infoPoruka("Uspješno ažuriranje ljubimca", "");
-            psiSlobodni.clear();
-            mackeSlobodne.clear();
-            rezervisaniOdKorisnika.clear();
+            if(!rezervisi.imaLiKlijentAktivnuRezervaciju(selektovaniID)){
+                udomljavanje.Udomljen trenutni= new Udomljen();
+                trenutni.setIdKlijenti((int) idK);
+                trenutni.setIdLjubimac(selektovaniID);
+                trenutni.setDatumUdomljavanja(webUtil.trenutniDatum());
+                trenutni.setStatus(ljubimac.StanjeLjubimca.REZERVISAN.toString());
+                rezervisi.dodajRelaciju(trenutni);
+                temp.setStatus(ljubimac.StanjeLjubimca.REZERVISAN.toString());
+                LjubimacK.azurirajLjubimca(temp);
+                webUtil.infoPoruka("Uspješno ažuriranje ljubimca", "");
+                psiSlobodni.clear();
+                mackeSlobodne.clear();
+                rezervisaniOdKorisnika.clear();
+            }
+            webUtil.infoPoruka("Imate aktivnu rezervaciju. Nemožete rezervirati više ljubimaca.", "");
         } catch (SQLException ex) {
             webUtil.errPoruka("Greška u rezervisanju ljubimaca" + ex, "");
         }
@@ -224,7 +212,8 @@ public class ljubimacPogled implements Serializable {
      * @param idLJ ID ljubimca.
      * @return Rezultat izvršavanja interne metode.
      */
-    public String ukloniRezervaciju(int idK, int idLJ) {        
+    public String ukloniRezervaciju(int idK, int idLJ) { 
+        DebugUtils.debugPrint(idK,idLJ);        
         return izvrsiUklanjanje(idK, idLJ, 1);
     }
 
@@ -237,19 +226,26 @@ public class ljubimacPogled implements Serializable {
      * @param opcija Logički ključ (1 za otkaz rezervacije, 2 za povrat udomljenja).
      * @return null (ostaje na istoj stranici).
      */
-    private String izvrsiUklanjanje(int idK, int idLJ, int opcija) {
+    private String izvrsiUklanjanje (int idK, int idLJ, int opcija) {
         try {
             UdomljavanjeCRUD uc = new UdomljavanjeCRUD();
-            uc.procesuirajPovrat(idK, idLJ, opcija);
+            if (opcija==1 ) 
+            {
+                if(uc.otkaziAktivnuRezervaciju(idK, idLJ)){
+                     webUtil.infoPoruka("Rezervacija otkazana.", "");
+                     ljubimci(selektovaniID);
+                }
+            }
+            else uc.vratiLjubimcaSaUdomljavanja(idLJ, idLJ);
 
-            String poruka = (opcija == 1) ? "Rezervacija otkazana." : "Ljubimac uspješno vraćen.";
-            webUtil.infoPoruka(poruka, "");
+            //String poruka = (opcija == 1) ? "Rezervacija otkazana." : "Ljubimac uspješno vraćen.";
+            
 
-            ljubimci(idK); // Osvježavanje listi na UI
+            //ljubimci(idK); // Osvježavanje listi na UI
         } catch (SQLException ex) {
             webUtil.errPoruka("Greška: " + ex.getMessage());
         }
-        return null;
+        return  "ljubimci?faces-redirect=true";
     }
     
     
@@ -284,8 +280,18 @@ public class ljubimacPogled implements Serializable {
      */
     public void ucitajSveRezervisane() {
         try {
-            System.out.println("AJAX - Učitavanje rezervisanih...");
-            rezervisani = (ArrayList<Ljubimac>) LjubimacK.dobaviSveLjubimce(0, "", 2);
+            rezervisani.clear();
+            UdomljavanjeCRUD uc = new UdomljavanjeCRUD();
+            rezervisani = (ArrayList<Udomljen>) uc.dobaviSveRezervacije();
+        } catch (SQLException ex) {
+            webUtil.errPoruka("Greška pri učitavanju rezervisanih: " + ex.getMessage());
+        }
+    }
+     public void ucitajSveRezervisaneZaKorisnika(int idK) {
+        try {
+            rezervisani.clear();
+            UdomljavanjeCRUD uc = new UdomljavanjeCRUD();
+            rezervisani = (ArrayList<Udomljen>) uc.dobaviSveRezervacijeZaKorisnika(idK);
         } catch (SQLException ex) {
             webUtil.errPoruka("Greška pri učitavanju rezervisanih: " + ex.getMessage());
         }
@@ -297,7 +303,8 @@ public class ljubimacPogled implements Serializable {
     public void ucitajSveUdomljene() {
         try {
             System.out.println("AJAX - Učitavanje udomljenih...");
-            udomljeni = (ArrayList<Ljubimac>) LjubimacK.dobaviSveLjubimce(0, "", 3);
+            UdomljavanjeCRUD uc = new UdomljavanjeCRUD();
+            udomljeni = (ArrayList<Udomljen>) uc.dobaviSvaUdomljavanja();
         } catch (SQLException ex) {
             webUtil.errPoruka("Greška pri učitavanju udomljenih: " + ex.getMessage());
         }
@@ -370,50 +377,17 @@ public class ljubimacPogled implements Serializable {
      *
      * @return
      */
-    public ArrayList<Ljubimac> getRezervisani() {
+    public ArrayList<Udomljen> getRezervisani() {
         
         
         return rezervisani;
-    }
-
-    /**
-     * Postavlja listu rezervisanih ljubimaca
-     * @param rezervisani lista rezervisanih ljubimaca
-     */
-    public void setRezervisani(ArrayList<Ljubimac> rezervisani) {
-        this.rezervisani = rezervisani;
-    }
-
-    public ArrayList<Ljubimac> getUdomljeni() {
-        
-        return udomljeni;
-    }
-
-    public void setUdomljeni(ArrayList<Ljubimac> udomljeni) {
-        this.udomljeni = udomljeni;
-    }
-    /**
-     * Lazy loading getter za slobodne pse.
-     * Puni se samo ako je lista prazna i ako JSF treba da prikaže tab sa psima.
-     */
-    public ArrayList<Ljubimac> getPsiSlobodni() {
-       
-    
-    return psiSlobodni;
-    }
-
-    public void setPsiSlobodni(ArrayList<Ljubimac> psiSlobodni) {
-        this.psiSlobodni = psiSlobodni;
-    }
-
-    /**
-     * Lazy loading getter za slobodne mačke.
-     * Puni se tek kada korisnik klikne na tab "Dostupni ljubimci - mačke".
-     */
-    public ArrayList<Ljubimac> getMackeSlobodne() {
-       
-        return mackeSlobodne;
-    }
+    }  
+    public void setRezervisani(ArrayList<Udomljen> rezervisani) {this.rezervisani = rezervisani;}
+    public ArrayList<Udomljen> getUdomljeni() {return udomljeni;}
+    public void setUdomljeni(ArrayList<Udomljen> udomljeni) {this.udomljeni = udomljeni;}    
+    public ArrayList<Ljubimac> getPsiSlobodni() {return psiSlobodni;}
+    public void setPsiSlobodni(ArrayList<Ljubimac> psiSlobodni) {this.psiSlobodni = psiSlobodni;}
+    public ArrayList<Ljubimac> getMackeSlobodne() {return mackeSlobodne;}
 
     public void setMackeSlobodne(ArrayList<Ljubimac> mackeSlobodne) {
         this.mackeSlobodne = mackeSlobodne;
@@ -473,7 +447,16 @@ public class ljubimacPogled implements Serializable {
 
     public void setDatoteka(Part datoteka) {
         this.datoteka = datoteka;
-    }  
+    } 
+
+    public int getSelektovaniIDk() {
+        return selektovaniIDk;
+    }
+
+    public void setSelektovaniIDk(int selektovaniIDk) {
+        this.selektovaniIDk = selektovaniIDk;
+    }
+    
 
    
 }

@@ -19,3 +19,6 @@
                 <div class="tab-pane  fade" id="udomljeni"><p/><ezcomp:tabelaLjubimci Zapisi="#{ljubimacPogled.rezervisaniOdKorisnika}"/> </div>
             </div>
             </div>    
+
+
+style="padding-left: 30px;padding-top: 10px;"

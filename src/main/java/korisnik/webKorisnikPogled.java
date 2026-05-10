@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import korisni.webUtil;
+import udomljavanje.UdomljavanjeCRUD;
+import udomljavanje.Udomljen;
 
 @Named(value = "webKorisnikPogled")
 @ViewScoped
@@ -27,6 +29,8 @@ public class webKorisnikPogled implements Serializable {
     private ArrayList<Korisnik> pretragaKorisnika = new ArrayList<>();
     private List<String> tipovi = new ArrayList<>();
     private boolean pretrazivanje = false;
+    private ArrayList<Udomljen> udomljeni = new ArrayList<>();
+    private ArrayList<Udomljen> trenutnaRezervacija = new ArrayList<>();;
     
     // Session bean (injektiran)
     private SessionKorisnikPogled sessionKorisnik;
@@ -58,6 +62,9 @@ public class webKorisnikPogled implements Serializable {
         try {
             sessionKorisnik.getKont().setKorisnik
             (sessionKorisnik.getKont().vratiKorisnikaPoID(selektovaniID));
+            udomljavanje.UdomljavanjeCRUD uc = new UdomljavanjeCRUD();
+            setUdomljeni((ArrayList<Udomljen>) uc.dobaviHistorijuKlijenta(sessionKorisnik.getK().getId()));
+            setTrenutnaRezervacija((ArrayList<Udomljen>) uc.dobaviSveRezervacijeZaKorisnika(sessionKorisnik.getK().getId()));
         } catch (SQLException ex) {
             webUtil.errPoruka("Greška u učitavanju ljubimaca" + ex, "");
         }
@@ -152,7 +159,17 @@ public class webKorisnikPogled implements Serializable {
                 sessionKorisnik.getK(), 
                 sessionKorisnik.getK().getPass()
             );
-            webUtil.infoPoruka("Uspješno ažuriranje podataka korisnika", "");
+            webUtil.infoPoruka("Uspješno ažuriranje passworda korisnika", "");
+        }
+        return null;
+    }
+    public String azuriranjePassworda(Korisnik kor) throws SQLException {
+        if ( sessionKorisnik.getKont() != null) {
+            sessionKorisnik.getKont().promjenaPassworda(
+                kor, 
+                korisnickaLozinka
+            );
+            webUtil.infoPoruka("Uspješno ažuriranje passworda korisnika", "");
         }
         return null;
     }
@@ -191,6 +208,12 @@ public class webKorisnikPogled implements Serializable {
     public void setPretrazivanje(boolean pretrazivanje) { this.pretrazivanje = pretrazivanje; }
     public void setSelektovaniID(int selektovaniID) {this.selektovaniID = selektovaniID;}
     public int getSelektovaniID() {return selektovaniID;}
+    public ArrayList<Udomljen> getUdomljeni() {return udomljeni;}
+    public void setUdomljeni(ArrayList<Udomljen> udomljeni) {this.udomljeni = udomljeni;}
+    public void setTrenutnaRezervacija(ArrayList<Udomljen> trenutnaRezervacija) {this.trenutnaRezervacija = trenutnaRezervacija;}
+    public ArrayList<Udomljen> getTrenutnaRezervacija() {return trenutnaRezervacija;}
+    
+    
     
     
     

@@ -22,7 +22,8 @@
         <f:view>
          <f:metadata>
             <f:viewParam name="IDLjubimca" value="#{ljubimacPogled.selektovaniID}"/>            
-            <f:viewAction action="#{ljubimacPogled.ucitajLjubimca()}"/> 
+            <f:viewAction action="#{ljubimacPogled.ucitajLjubimca()}"/>
+            <f:viewParam name="IDKlijenta" value="#{ljubimacPogled.selektovaniIDk}"/>
          </f:metadata>
         </f:view>
     </h:head>
@@ -85,7 +86,9 @@
                             
                             <h:commandButton class="btn btn-outline-dark float-end" 
                               value="Ukloni rezervaciju" 
-                              
+                              action="#{ljubimacPogled.ukloniRezervaciju
+                                        (ljubimacPogled.selektovaniIDk, 
+                                        ljubimacPogled.selektovaniID)}"
                                />
                             
                         </c:if>

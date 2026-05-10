@@ -24,7 +24,7 @@ public abstract class Kontroler {
     
      public Kontroler() {
         try {            
-           // System.out.println(dbPath + "\nU kontroleru sam");
+           System.out.println(dbPath + "\nU kontroleru sam");
             Class.forName("org.sqlite.JDBC");       
         } catch (ClassNotFoundException ex) {
             //Ispisati grešku da nema dobrog drivera za bazu

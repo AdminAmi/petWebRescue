@@ -93,6 +93,12 @@
                                 <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="userProfileMenu">
                                     <li class="dropdown-header">Postavke profila</li>
                                     <li>
+                                        <h:link outcome="mojProfil" class="dropdown-item">
+                                            &#128100; ️Moji podaci
+                                            <f:param name="IDKorisnika" value="#{sessionKorisnikPogled.k.id}"/>
+                                        </h:link>
+                                    </li>
+                                    <li>
                                         <h:link outcome="azuriranjePod" class="dropdown-item">
                                             &#9881;️ Promjena podataka
                                         </h:link>
