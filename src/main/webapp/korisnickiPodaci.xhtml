@@ -20,49 +20,94 @@
         <h:outputScript name="bootstrap.bundle.min.js" />
         <h:outputScript library="js" name="myjs.js"/>
         <f:view>
-         <f:metadata>
-             <f:viewParam name="IDKorisnika" value="#{webKorisnikPogled.selektovaniID}"/>            
-             <f:viewAction action="#{webKorisnikPogled.ucitajKorisnika()}"/> 
-         </f:metadata>
+            <f:metadata>
+                <f:viewParam name="IDKorisnika" value="#{webKorisnikPogled.selektovaniID}"/>            
+                <f:viewAction action="#{webKorisnikPogled.ucitajKorisnika()}"/> 
+            </f:metadata>
         </f:view>
+        <style>
+            /* Opcionalno: malo stila za accordion */
+            .accordion-button:not(.collapsed) {
+                background-color: #e7f1ff;
+            }
+        </style>
     </h:head>
     <!-- Tijelo stranice: Prikazuje obrazac za unos korisnika -->
-    <h:body >
+    <h:body>
         <!-- Skriveni elementi za poruke -->
         <h:messages style="display: none"/>
         <!-- Uključi navigaciju -->
         <ui:include src="resources/parts/nav.xhtml"/>
         <ui:include src="resources/parts/zaglavlje.xhtml"/>
+        
         <!-- Provjera sesije prije iscrtavanja faze i da li je korisnik administrator -->
         <f:view beforePhase="#{sessionKorisnikPogled.provjeraAdministrator()}"> 
-        <div class="container">
-            
-             
-             <!-- Podnaslov za unos podataka -->
-             <ezcomp:podnaslov Podnaslov="Podaci o korisniku: #{sessionKorisnikPogled.kont.korisnik.imeIPrezime},
-              tip korisnika: #{sessionKorisnikPogled.kont.korisnik.tip}   "/>
-             
-             <!-- Obrazac za unos podataka -->
-             <h:form styleClass="needs-validation" p:novalidate="novalidate" >
-                <!-- Prilagođena komponenta za korisničke podatake -->
-                <ezcomp:korisnik                      
-                    imeiprezime="#{sessionKorisnikPogled.kont.korisnik.imeIPrezime}"
-                    user="#{sessionKorisnikPogled.kont.korisnik.user}" 
-                    pass="#{sessionKorisnikPogled.kont.korisnik.pass}"
-                    adresa="#{sessionKorisnikPogled.kont.korisnik.adresa}"
-                    telefon="#{sessionKorisnikPogled.kont.korisnik.telefon}"
-                    id="korisnik1" 
-                    samoPass="false" trebaLiPass="false"
-                    jelPrikazKorisnika="false"
-                    /> 
-                <h:commandButton class="btn btn-outline-dark float-end" 
-                    value="Ažuriraj podatke korisnika."                 
-                    action="#{webKorisnikPogled.azuriranjeKorisnika
-                              (sessionKorisnikPogled.kont.korisnik)}" />  
+            <div class="container">
                 
-             </h:form>
-         </div>
+                <!-- ============ BOOTSTRAP ACCORDION ============ -->
+                <div class="accordion" id="adminAccordion">
+                    
+                    <!-- Accordion stavka 1: Podaci o korisniku (otvoren po defaultu) -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingPodaci">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" 
+                                    data-bs-target="#collapsePodaci" aria-expanded="true" 
+                                    aria-controls="collapsePodaci">
+                                &#128100; Podaci o korisniku
+                            </button>
+                        </h2>
+                        <div id="collapsePodaci" class="accordion-collapse collapse show" 
+                             aria-labelledby="headingPodaci" data-bs-parent="#adminAccordion">
+                            <div class="accordion-body">
+                                <!-- Obrazac za unos podataka -->
+                                <h:form styleClass="needs-validation" p:novalidate="novalidate">
+                                    <!-- Prilagođena komponenta za korisničke podatake -->
+                                    <ezcomp:korisnik                      
+                                        imeiprezime="#{sessionKorisnikPogled.kont.korisnik.imeIPrezime}"
+                                        user="#{sessionKorisnikPogled.kont.korisnik.user}" 
+                                        pass="#{sessionKorisnikPogled.kont.korisnik.pass}"
+                                        adresa="#{sessionKorisnikPogled.kont.korisnik.adresa}"
+                                        telefon="#{sessionKorisnikPogled.kont.korisnik.telefon}"
+                                        id="korisnik1" 
+                                        samoPass="false" 
+                                        trebaLiPass="false"
+                                        jelPrikazKorisnika="false"
+                                    /> 
+                                    <div class="d-flex justify-content-end mt-3">
+                                        <h:commandButton class="btn btn-outline-dark" 
+                                            value="Ažuriraj podatke korisnika"                 
+                                            action="#{webKorisnikPogled.azuriranjeKorisnika(sessionKorisnikPogled.kont.korisnik)}" />
+                                    </div>
+                                </h:form>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Accordion stavka 2: Aktivnosti korisnika / Udomljeni ljubimci (zatvoren po defaultu) -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingAktivnosti">
+                            <button class="accordion-button collapsed" type="button" 
+                                    data-bs-toggle="collapse" data-bs-target="#collapseAktivnosti" 
+                                    aria-expanded="false" aria-controls="collapseAktivnosti">
+                                &#128203; Aktivnosti korisnika / Udomljeni ljubimci
+                            </button>
+                        </h2>
+                        <div id="collapseAktivnosti" class="accordion-collapse collapse" 
+                             aria-labelledby="headingAktivnosti" data-bs-parent="#adminAccordion">
+                            <div class="accordion-body">
+                                <ezcomp:tabelaLjubimciUdomljenje
+                                    Zapisi="#{webKorisnikPogled.udomljeni}" 
+                                    Poruka="Korisnik do sada nije imao aktivnosti na sistemu"/>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+                <!-- ============ KRAJ ACCORDIONA ============ -->
+                
+            </div>
         </f:view>
+        
         <!-- Uključi modal za prijavu -->
         <ui:include src="resources/parts/modalPrijava.xhtml"/>
         <!-- Uključi poruke o greškama -->

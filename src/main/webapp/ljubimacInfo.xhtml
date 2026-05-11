@@ -20,12 +20,21 @@
         <h:outputScript name="bootstrap.bundle.min.js" />
         <!-- Metapodaci za učitavanje podataka o ljubimcu na temelju ID-a iz URL-a -->
         <f:view>
-         <f:metadata>
-            <f:viewParam name="IDLjubimca" value="#{ljubimacPogled.selektovaniID}"/>            
-            <f:viewAction action="#{ljubimacPogled.ucitajLjubimca()}"/>
-            <f:viewParam name="IDKlijenta" value="#{ljubimacPogled.selektovaniIDk}"/>
-         </f:metadata>
+            <f:metadata>
+                <f:viewParam name="IDLjubimca" value="#{ljubimacPogled.selektovaniID}"/>            
+                <f:viewAction action="#{ljubimacPogled.ucitajLjubimca()}"/>
+                <f:viewParam name="IDKlijenta" value="#{ljubimacPogled.selektovaniIDk}"/>
+            </f:metadata>
         </f:view>
+        <style>
+            .accordion-button:not(.collapsed) {
+                background-color: #e7f1ff;
+            }
+            .status-badge {
+                font-size: 0.8rem;
+                margin-left: 10px;
+            }
+        </style>
     </h:head>
     <!-- Tijelo stranice: Prikazuje navigaciju, greške i obrazac s podacima o ljubimcu -->
     <h:body>
@@ -38,67 +47,104 @@
         <div class="container">   
             <!-- Uključi zaglavlje -->
             <ui:include src="resources/parts/zaglavlje.xhtml"/>                
-            <!-- Podnaslov za podatke o ljubimcu -->
-            <ezcomp:podnaslov Podnaslov="Podaci o ljubimcu:"/>
-            <div style="padding-left: 30px;padding-top: 10px;">
-               
-                <!-- Obrazac za prikaz i ažuriranje podataka o ljubimcu -->
-                <h:form>                   
-                <!-- Polje za ime ljubimca -->
-                <ezcomp:inputTextPopunjen 
-                            ID="nazivLjubimca" TIP="text" 
-                            VALUE="#{ljubimacPogled.ljubimacK.ljubimac.ime}" 
-                            PHOLDER="Naziv ljubimca" REQ="true"/>
-                         <!-- Polje za starost ljubimca -->
-                         <ezcomp:inputTextPopunjen 
-                            ID="starostLjubimca" TIP="text" 
-                            VALUE="#{ljubimacPogled.ljubimacK.ljubimac.starost}" 
-                            PHOLDER="Starost ljubimca" REQ="true"/>                       
-                        <!-- Odabir vrste ljubimca -->
-                        <ezcomp:inputSelect ID="vrsta" 
-                            VALUE="#{ljubimacPogled.ljubimacK.ljubimac.vrsta}" />
-                        <div class="d-flex justify-content-end gap-2">
-                        <!-- Gumb za ažuriranje podataka, vidljiv samo administratorima za slobodne ljubimce -->
-                        <c:if test="#{korisnikPogled.kont.korisnik.tip=='ADMINISTRATOR' and 
-                              ljubimacPogled.ljubimacK.ljubimac.status=='SLOBODAN'}">
-                         <h:commandButton class="btn btn-outline-dark float-end" 
-                          value="Ažuriraj podatke od ljubimca." 
-                          action="#{ljubimacPogled.azurirajLjubimca(ljubimacPogled.ljubimacK.ljubimac)}"
-                           />
-                        </c:if>
-                        <!-- Gumb za rezervaciju, vidljiv prijavljenim korisnicima za slobodne ljubimce -->
-                        <c:if test="#{sessionKorisnikPogled.loged  and
-                              ljubimacPogled.ljubimacK.ljubimac.status=='SLOBODAN'}" >
-                            <h:commandButton class="btn btn-outline-dark float-end" 
-                              value="Napravi rezervaciju" 
-                              action="#{ljubimacPogled.rezervisiLjubimca(sessionKorisnikPogled.k.id,
-                                        ljubimacPogled.ljubimacK.ljubimac)}"
-                               />
-                        
-                        </c:if>
-                        <!-- Gumbi za udomljenje i uklanjanje rezervacije, vidljivi administratorima za rezervirane ljubimce -->
-                        <c:if test="#{sessionKorisnikPogled.k.tip=='ADMINISTRATOR' and 
-                              ljubimacPogled.ljubimacK.ljubimac.status=='REZERVISAN'}">
-                            <h:commandButton class="btn btn-outline-dark float-end" 
-                              value="Napravi udomljenje" 
-                              
-                               />
-                            
-                            <h:commandButton class="btn btn-outline-dark float-end" 
-                              value="Ukloni rezervaciju" 
-                              action="#{ljubimacPogled.ukloniRezervaciju
-                                        (ljubimacPogled.selektovaniIDk, 
-                                        ljubimacPogled.selektovaniID)}"
-                               />
-                            
-                        </c:if>
+            
+            <!-- ============ BOOTSTRAP ACCORDION ============ -->
+            <div class="accordion" id="ljubimacAccordion">
+                
+                <!-- Accordion stavka 1: Podaci o ljubimcu (otvoren po defaultu) -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingPodaci">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" 
+                                data-bs-target="#collapsePodaci" aria-expanded="true" 
+                                aria-controls="collapsePodaci">
+                            &#128062; Podaci o ljubimcu #{ljubimacPogled.ljubimacK.ljubimac.ime}
+                            <span class="status-badge badge bg-#{ljubimacPogled.ljubimacK.ljubimac.status == 'SLOBODAN' ? 'success' : (ljubimacPogled.ljubimacK.ljubimac.status == 'REZERVISAN' ? 'warning' : 'secondary')} ms-2">
+                                #{ljubimacPogled.ljubimacK.ljubimac.status}
+                            </span>
+                        </button>
+                    </h2>
+                    <div id="collapsePodaci" class="accordion-collapse collapse show" 
+                         aria-labelledby="headingPodaci" data-bs-parent="#ljubimacAccordion">
+                        <div class="accordion-body">
+                            <!-- Obrazac za prikaz i ažuriranje podataka o ljubimcu -->
+                            <h:form>                   
+                                <!-- Polje za ime ljubimca -->
+                                <ezcomp:inputTextPopunjen 
+                                    ID="nazivLjubimca" TIP="text" 
+                                    VALUE="#{ljubimacPogled.ljubimacK.ljubimac.ime}" 
+                                    PHOLDER="Naziv ljubimca" REQ="true"/>
+                                
+                                <!-- Polje za starost ljubimca -->
+                                <ezcomp:inputTextPopunjen 
+                                    ID="starostLjubimca" TIP="text" 
+                                    VALUE="#{ljubimacPogled.ljubimacK.ljubimac.starost}" 
+                                    PHOLDER="Starost ljubimca" REQ="true"/>                       
+                                
+                                <!-- Odabir vrste ljubimca -->
+                                <ezcomp:inputSelect ID="vrsta" 
+                                    VALUE="#{ljubimacPogled.ljubimacK.ljubimac.vrsta}" />
+                                
+                                <div class="d-flex justify-content-end gap-2 mt-3">
+                                    <!-- Gumb za ažuriranje podataka, vidljiv samo administratorima za slobodne ljubimce -->
+                                    <c:if test="#{korisnikPogled.kont.korisnik.tip=='ADMINISTRATOR' and 
+                                          ljubimacPogled.ljubimacK.ljubimac.status=='SLOBODAN'}">
+                                        <h:commandButton class="btn btn-outline-dark" 
+                                            value="Ažuriraj podatke od ljubimca" 
+                                            action="#{ljubimacPogled.azurirajLjubimca(ljubimacPogled.ljubimacK.ljubimac)}"/>
+                                    </c:if>
+                                    
+                                    <!-- Gumb za rezervaciju, vidljiv prijavljenim korisnicima za slobodne ljubimce -->
+                                    <c:if test="#{sessionKorisnikPogled.loged and
+                                          ljubimacPogled.ljubimacK.ljubimac.status=='SLOBODAN'}" >
+                                        <h:commandButton class="btn btn-outline-dark" 
+                                            rendered="#{sessionKorisnikPogled.k.tip!='ADMINISTRATOR'}"
+                                            value="Napravi rezervaciju" 
+                                            action="#{ljubimacPogled.rezervisiLjubimca(sessionKorisnikPogled.k.id,
+                                                      ljubimacPogled.ljubimacK.ljubimac)}"/>
+                                    </c:if>
+                                    
+                                    <!-- Gumbi za udomljenje i uklanjanje rezervacije, vidljivi administratorima za rezervirane ljubimce -->
+                                    <c:if test="#{sessionKorisnikPogled.k.tip=='ADMINISTRATOR' and 
+                                          ljubimacPogled.ljubimacK.ljubimac.status=='REZERVISAN'}">
+                                        <h:commandButton class="btn btn-outline-success" 
+                                            value="Napravi udomljenje" 
+                                            action="#{ljubimacPogled.udomiLjubimca(ljubimacPogled.selektovaniIDk, ljubimacPogled.selektovaniID)}"/>
+                                        
+                                        <h:commandButton class="btn btn-outline-danger" 
+                                            value="Ukloni rezervaciju" 
+                                            action="#{ljubimacPogled.ukloniRezervaciju(ljubimacPogled.selektovaniIDk, ljubimacPogled.selektovaniID)}"/>
+                                    </c:if>
+                                </div>
+                            </h:form>
                         </div>
-                </h:form>
+                    </div>
+                </div>
+                
+                <!-- Accordion stavka 2: Historija aktivnosti ljubimca (zatvoren po defaultu) -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingHistorija">
+                        <button class="accordion-button collapsed" type="button" 
+                                data-bs-toggle="collapse" data-bs-target="#collapseHistorija" 
+                                aria-expanded="false" aria-controls="collapseHistorija">
+                            &#128203; Historija aktivnosti ljubimca
+                        </button>
+                    </h2>
+                    <div id="collapseHistorija" class="accordion-collapse collapse" 
+                         aria-labelledby="headingHistorija" data-bs-parent="#ljubimacAccordion">
+                        <div class="accordion-body">
+                            <ezcomp:tabelaLjubimciUdomljenje 
+                                Zapisi="#{ljubimacPogled.historijaAktivnosti}"
+                                Poruka="Ljubimac nema historije u sistemu!"/>
+                        </div>
+                    </div>
+                </div>
+                
             </div>
+            <!-- ============ KRAJ ACCORDIONA ============ -->
+            
         </div>
         <!-- Uključi modal za prijavu -->
         <ui:include src="resources/parts/modalPrijava.xhtml"/>
-        
         
     </h:body>
 </html>

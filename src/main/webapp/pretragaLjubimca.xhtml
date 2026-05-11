@@ -25,7 +25,7 @@
          <!-- Skriveni elementi za poruke -->
          <h:messages style="display: none;"/>
          <!-- Provjeri je li korisnik prijavljen -->
-         <c:if test="#{korisnikPogled.loged }" > 
+         <c:if test="#{sessionKorisnikPogled.loged }" > 
              <!-- Uključi navigaciju -->
              <ui:include src="resources/parts/nav.xhtml"/>
         <div class="container " >  
@@ -64,6 +64,6 @@
         </div>
         </c:if>
         <!-- Prilagođena komponenta za zapisivanje grešaka -->
-        <ezcomp:greskaLog/>
+       
     </h:body>
 </html>

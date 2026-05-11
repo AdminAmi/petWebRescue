@@ -69,7 +69,7 @@
                     <h:commandButton 
                         action="#{ljubimacPogled.ukloniRezervaciju(ljubi.klijent.id,ljubi.ljub.id)}"
                         value="Ukloni rezervaciju" 
-                        rendered="#{ljubi.ljub.status=='REZERVISAN'}"/>                                     
+                        rendered="#{ljubi.status=='REZERVISAN'}"/>                                     
                     
                 </h:form>
             </h:column>

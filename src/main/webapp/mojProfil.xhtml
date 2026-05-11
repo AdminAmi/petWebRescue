@@ -1,77 +1,105 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<!-- 
-    Stranica za unos novog korisnika (New User Entry Page)
-    Ova Facelet stranica omogućuje unos podataka za registraciju novog korisnika sustava.
-    Koristi prilagođene komponente za unos korisničkih podataka.
--->
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="jakarta.faces.html"
       xmlns:ui="jakarta.faces.facelets"
       xmlns:p="jakarta.faces.passthrough"
       xmlns:ezcomp="jakarta.faces.composite/ezcomp"
       xmlns:f="jakarta.faces.core">
-    <!-- Odjeljak glave: Uključuje meta oznake, naslov, resurse i JavaScript -->
     <h:head>
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <meta charset="UTF-8"/>
         <title>Moj profil</title>
         <h:outputStylesheet name="bootstrap.min.css" />
         <h:outputStylesheet name="mycss.css" />
         <h:outputScript name="bootstrap.bundle.min.js" />
         <h:outputScript library="js" name="myjs.js"/>
         <f:metadata>
+            <f:viewParam name="IDKorisnika" value="#{webKorisnikPogled.selektovaniID}"/> 
             <f:viewAction action="#{webKorisnikPogled.ucitajKorisnika()}"/>
         </f:metadata>
-       
     </h:head>
-    <!-- Tijelo stranice: Prikazuje obrazac za unos korisnika -->
-    <h:body >
-        <!-- Skriveni elementi za poruke -->
+    <h:body>
         <h:messages style="display: none"/>
-        <!-- Uključi navigaciju -->
         <ui:include src="resources/parts/nav.xhtml"/>
         
-        <!-- Provjera sesije prije iscrtavanja faze i da li je korisnik administrator -->
         <f:view beforePhase="#{sessionKorisnikPogled.provjeraPrijave()}"> 
             <div class="container" style="padding-top: 80px">
-            
-             
-             <!-- Podnaslov za unos podataka -->
-             <ezcomp:podnaslov Podnaslov="Podaci o korisniku: #{sessionKorisnikPogled.k.imeIPrezime},
-              tip korisnika: #{sessionKorisnikPogled.k.tip}   "/>
-             
-             <!-- Obrazac za unos podataka -->
-             <h:form styleClass="needs-validation" p:novalidate="novalidate" >
-                <!-- Prilagođena komponenta za korisničke podatake -->
-                <ezcomp:korisnik                      
-                    imeiprezime="#{sessionKorisnikPogled.k.imeIPrezime}"
-                    user="#{sessionKorisnikPogled.k.user}" 
-                    pass="#{sessionKorisnikPogled.k.pass}"
-                    adresa="#{sessionKorisnikPogled.k.adresa}"
-                    telefon="#{sessionKorisnikPogled.k.telefon}"
-                    id="korisnik1" 
-                    samoPass="false" trebaLiPass="false"
-                    jelPrikazKorisnika="false"
-                    /> 
-                 
                 
-             </h:form>
-             <!-- Podnaslov za unos podataka -->
-             <ezcomp:podnaslov Podnaslov="Rezervisani ljubimaci korisnika"/>
-             <div style="padding-left: 30px;padding-top: 10px;">
-             <ezcomp:tabelaLjubimciUdomljenje
-                 Zapisi="#{webKorisnikPogled.trenutnaRezervacija}" 
-                 Poruka="Nema rezervacija klijenta"/>
-             </div>
-             <ezcomp:podnaslov Podnaslov="Aktivnosti korisnika"/>
-             <div style="padding-left: 30px;padding-top: 10px;">
-             <ezcomp:tabelaLjubimciUdomljenje
-                 Zapisi="#{webKorisnikPogled.udomljeni}" 
-                 Poruka="Korisnik do sada nije imao aktivnosti na sistemu"/>
-             </div>
-         </div>
+                <!-- ============ BOOTSTRAP ACCORDION - SVI PODNASLOVI ============ -->
+                <div class="accordion" id="korisnikAccordion">
+                    
+                    <!-- Accordion stavka 1: Podaci o korisniku -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingPodaci">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" 
+                                    data-bs-target="#collapsePodaci" aria-expanded="true" 
+                                    aria-controls="collapsePodaci">
+                                &#128100; Podaci o korisniku: #{sessionKorisnikPogled.k.imeIPrezime}, tip korisnika: #{sessionKorisnikPogled.k.tip}
+                            </button>
+                        </h2>
+                        <div id="collapsePodaci" class="accordion-collapse collapse show" 
+                             aria-labelledby="headingPodaci" data-bs-parent="#korisnikAccordion">
+                            <div class="accordion-body">
+                                <h:form styleClass="needs-validation" p:novalidate="novalidate" >
+                                    <ezcomp:korisnik                      
+                                        imeiprezime="#{sessionKorisnikPogled.k.imeIPrezime}"
+                                        user="#{sessionKorisnikPogled.k.user}" 
+                                        pass="#{sessionKorisnikPogled.k.pass}"
+                                        adresa="#{sessionKorisnikPogled.k.adresa}"
+                                        telefon="#{sessionKorisnikPogled.k.telefon}"
+                                        id="korisnik1" 
+                                        samoPass="false" trebaLiPass="false"
+                                        jelPrikazKorisnika="false"
+                                    /> 
+                                </h:form>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Accordion stavka 2: Rezervisani ljubimci -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingRezervacije">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
+                                    data-bs-target="#collapseRezervacije" aria-expanded="false" 
+                                    aria-controls="collapseRezervacije">
+                                &#128062; Rezervisani ljubimci korisnika
+                            </button>
+                        </h2>
+                        <div id="collapseRezervacije" class="accordion-collapse collapse" 
+                             aria-labelledby="headingRezervacije" data-bs-parent="#korisnikAccordion">
+                            <div class="accordion-body">
+                                <ezcomp:tabelaLjubimciUdomljenje
+                                    Zapisi="#{webKorisnikPogled.trenutnaRezervacija}" 
+                                    Poruka="Nema rezervacija klijenta"/>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Accordion stavka 3: Aktivnosti korisnika -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingAktivnosti">
+                            <button class="accordion-button collapsed" type="button" 
+                                    data-bs-toggle="collapse" data-bs-target="#collapseAktivnosti" 
+                                    aria-expanded="false" aria-controls="collapseAktivnosti">
+                                &#128203; Aktivnosti korisnika
+                            </button>
+                        </h2>
+                        <div id="collapseAktivnosti" class="accordion-collapse collapse" 
+                             aria-labelledby="headingAktivnosti" data-bs-parent="#korisnikAccordion">
+                            <div class="accordion-body">
+                                <ezcomp:tabelaLjubimciUdomljenje
+                                    Zapisi="#{webKorisnikPogled.udomljeni}" 
+                                    Poruka="Korisnik do sada nije imao aktivnosti na sistemu"/>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+                <!-- ============ KRAJ ACCORDIONA ============ -->
+                
+            </div>
         </f:view>        
-        <!-- Uključi poruke o greškama -->
         <ui:include src="resources/parts/errorMessage.xhtml"/>
     </h:body>
 </html>

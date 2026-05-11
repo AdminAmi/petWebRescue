@@ -63,8 +63,8 @@ public class webKorisnikPogled implements Serializable {
             sessionKorisnik.getKont().setKorisnik
             (sessionKorisnik.getKont().vratiKorisnikaPoID(selektovaniID));
             udomljavanje.UdomljavanjeCRUD uc = new UdomljavanjeCRUD();
-            setUdomljeni((ArrayList<Udomljen>) uc.dobaviHistorijuKlijenta(sessionKorisnik.getK().getId()));
-            setTrenutnaRezervacija((ArrayList<Udomljen>) uc.dobaviSveRezervacijeZaKorisnika(sessionKorisnik.getK().getId()));
+            setUdomljeni((ArrayList<Udomljen>) uc.dobaviHistorijuKlijenta(selektovaniID));
+            setTrenutnaRezervacija((ArrayList<Udomljen>) uc.dobaviSveRezervacijeZaKorisnika(selektovaniID));
         } catch (SQLException ex) {
             webUtil.errPoruka("Greška u učitavanju ljubimaca" + ex, "");
         }

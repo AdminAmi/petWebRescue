@@ -31,6 +31,7 @@ public class ljubimacPogled implements Serializable {
     private ArrayList<Ljubimac> ljub=new ArrayList<>();
     private ArrayList<Udomljen> rezervisani = new ArrayList<>();
     private ArrayList<Udomljen> udomljeni = new ArrayList<>();
+    private ArrayList<Udomljen> historijaAktivnosti = new ArrayList<>();
     private ArrayList<Ljubimac> psiSlobodni = new ArrayList<>();
     private ArrayList<Ljubimac> mackeSlobodne = new ArrayList<>();
     private ArrayList<Ljubimac> rezervisaniOdKorisnika = new ArrayList<>();
@@ -116,7 +117,9 @@ public class ljubimacPogled implements Serializable {
      */
     public void ucitajLjubimca(){
         try {
-            LjubimacK.setLjubimac(LjubimacK.dobaviLjubimcaPoId(selektovaniID));            
+            LjubimacK.setLjubimac(LjubimacK.dobaviLjubimcaPoId(selektovaniID)); 
+            UdomljavanjeCRUD uc = new UdomljavanjeCRUD();
+            historijaAktivnosti=(ArrayList<Udomljen>) uc.dobaviHistorijuLjubimca(selektovaniID);
             } catch (SQLException ex) {
             webUtil.errPoruka("Greška u učitavanju ljubimaca" + ex, "");
         }
@@ -145,7 +148,7 @@ public class ljubimacPogled implements Serializable {
     public String rezervisiLjubimca(long idK, Ljubimac temp){        
         try {
             udomljavanje.UdomljavanjeCRUD rezervisi = new UdomljavanjeCRUD();
-            if(!rezervisi.imaLiKlijentAktivnuRezervaciju(selektovaniID)){
+            if(!rezervisi.imaLiKlijentAktivnuRezervaciju(selektovaniIDk)){
                 udomljavanje.Udomljen trenutni= new Udomljen();
                 trenutni.setIdKlijenti((int) idK);
                 trenutni.setIdLjubimac(selektovaniID);
@@ -456,6 +459,17 @@ public class ljubimacPogled implements Serializable {
     public void setSelektovaniIDk(int selektovaniIDk) {
         this.selektovaniIDk = selektovaniIDk;
     }
+
+    public void setHistorijaAktivnosti(ArrayList<Udomljen> historijaAktivnosti) {
+        this.historijaAktivnosti = historijaAktivnosti;
+    }
+    
+    
+
+    public ArrayList<Udomljen> getHistorijaAktivnosti() {
+        return historijaAktivnosti;
+    }
+    
     
 
    
