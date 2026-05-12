@@ -22,12 +22,13 @@
     <h:body>
         <h:messages style="display: none"/>
         <ui:include src="resources/parts/nav.xhtml"/>
+        <ui:include src="resources/parts/zaglavlje.xhtml"/>
         
         <f:view beforePhase="#{sessionKorisnikPogled.provjeraPrijave()}"> 
-            <div class="container" style="padding-top: 80px">
-                
+            <div class="container" >
+                <ezcomp:podnaslov Podnaslov="Pregled korisničkih podataka"/>
                 <!-- ============ BOOTSTRAP ACCORDION - SVI PODNASLOVI ============ -->
-                <div class="accordion" id="korisnikAccordion">
+                <div class="accordion" id="korisnikAccordion" style="padding-left: 30px;">
                     
                     <!-- Accordion stavka 1: Podaci o korisniku -->
                     <div class="accordion-item">

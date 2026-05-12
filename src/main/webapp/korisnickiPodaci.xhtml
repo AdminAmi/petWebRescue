@@ -43,9 +43,9 @@
         <!-- Provjera sesije prije iscrtavanja faze i da li je korisnik administrator -->
         <f:view beforePhase="#{sessionKorisnikPogled.provjeraAdministrator()}"> 
             <div class="container">
-                
+                <ezcomp:podnaslov Podnaslov="Korisnički podaci"/>
                 <!-- ============ BOOTSTRAP ACCORDION ============ -->
-                <div class="accordion" id="adminAccordion">
+                <div class="accordion" id="adminAccordion" style="padding-left: 30px;">
                     
                     <!-- Accordion stavka 1: Podaci o korisniku (otvoren po defaultu) -->
                     <div class="accordion-item">
