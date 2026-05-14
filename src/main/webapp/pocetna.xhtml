@@ -6,7 +6,8 @@
       xmlns:c="jakarta.tags.core"
       xmlns:ezcomp="jakarta.faces.composite/ezcomp"
       xmlns:ui="jakarta.faces.facelets"
-      xmlns:jsf="jakarta.faces">
+      xmlns:jsf="jakarta.faces"
+      lang="bs">
     
     <h:head>
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -51,13 +52,13 @@
                             </li>
                             </ui:remove>
                             <li class="nav-item">
-                                <a class="nav-link" data-bs-toggle="tab" href="#rezervisani">Rezervisani ljubimci</a>
+                                <a class="nav-link" data-bs-toggle="tab" href="#rezervisani">&#128197; Rezervisani ljubimci</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" data-bs-toggle="tab" href="#udomljeni">Udomljeni ljubimci</a>
+                                <a class="nav-link" data-bs-toggle="tab" href="#udomljeni">&#127968; Udomljeni ljubimci</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link active" data-bs-toggle="tab" href="#pretraga">Pretraga ljubimaca</a>
+                                <a class="nav-link active" data-bs-toggle="tab" href="#pretraga">&#10133; Pretraga ljubimaca</a>
                             </li>
                         </ul>
                         
@@ -93,7 +94,8 @@
                                 <h:form id="formaPretraga"> 
                                     <div class="input-group mb-3"> 
                                         <!-- Custom input komponenta za unos imena -->
-                                        <ezcomp:inputTextPopunjen_1 
+                                        <ezcomp:inputTextPopunjen
+                                            VALIDATE="false"
                                             cssDIV="form-floating" 
                                             CSS="form-control" 
                                             ID="ime"                                                            
@@ -107,9 +109,10 @@
                                     </div>
 
                                     <!-- Prikaz rezultata pretrage pomoću tabele ako lista nije prazna -->
-                                    <h:panelGroup id="pretragaRezultati" rendered="#{not empty ljubimacPogled.pretragaLista}">
-                                        <ezcomp:tabelaLjubimci Zapisi="#{ljubimacPogled.pretragaLista}" />
-                                    </h:panelGroup>
+                                   
+                                    <ezcomp:tabelaLjubimci Zapisi="#{ljubimacPogled.pretragaLista}"
+                                       Poruka="Nema tražnih" pretrazivano="#{ljubimacPogled.pretrazivanje}"/>
+                                    
                                 </h:form>
                             </div> <!-- Kraj pretrage -->
                             

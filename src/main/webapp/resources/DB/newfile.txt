@@ -125,3 +125,67 @@
                 });
             }
         </script>
+
+<Zadanja forma za validaciju polja
+
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="jakarta.faces.composite"
+      xmlns:jsf="jakarta.faces"          
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:f="jakarta.faces.core">
+    <cc:interface>
+        <cc:attribute name="cssDIV"/> <!-- css string za DIV tag-->
+        <cc:attribute name="ID"/> <!-- id od input taga-->
+        <cc:attribute name="TIP"/> <!-- tip - type od input taga-->
+        <cc:attribute name="CSS"/> <!-- css za input tag-->
+        <cc:attribute name="PHOLDER"/><!-- placeholder string za input tag-->
+        <cc:attribute name="VALUE"/><!-- vrijednost iz beana za input-->
+        <cc:attribute name="REQ"/> <!--vrijednosat atributa required input taga-->
+        <cc:attribute name="REQWHO"/> <!--Objašnjenje koje polje mora biti popunjeno-->
+        <cc:attribute name="DISABLED"/><!-- vrijednost atributa disabled input taga-->
+        <cc:attribute name="prikaziMarginu" type="java.lang.Boolean" default="true" />
+        
+        <cc:attribute name="VISIBLE" type="java.lang.Boolean" default="true" />
+        <cc:attribute name="VALIDATE" type="java.lang.Boolean" default="false" />
+    </cc:interface>
+     <!-- IMPLEMENTATION -->
+   <cc:implementation>
+    <div class="form-floating #{cc.attrs.prikaziMarginu ? 'mb-3' : ''} #{cc.attrs.cssDIV}">
+        <input jsf:id="#{cc.attrs.ID}" 
+               jsf:value="#{cc.attrs.VALUE}"
+               type="#{cc.attrs.TIP}"
+               jsf:required="#{cc.attrs.REQ}" 
+               jsf:requiredMessage="#{cc.attrs.REQWHO}"
+               placeholder="#{cc.attrs.PHOLDER}"
+               disabled="#{cc.attrs.DISABLED}"
+               class="form-control #{facesContext.getMessageList(cc.clientId.concat(':').concat(cc.attrs.ID)).size() gt 0 ? 'is-invalid' : 
+                                     (facesContext.getMessageList(cc.clientId.concat(':').concat(cc.attrs.ID)).size() eq 0
+                                and not empty cc.attrs.VALUE  ? 'is-valid' : '')} #{cc.attrs.CSS}">
+            <f:ajax event="blur" render="@this" execute="@this" />
+        </input>
+        
+        <label jsf:for="#{cc.attrs.ID}">
+            #{cc.attrs.PHOLDER}
+        </label>
+
+        <!-- Poruka za grešku -->
+        <ui:fragment rendered="#{facesContext.getMessageList(cc.clientId.concat(':').concat(cc.attrs.ID)).size() gt 0}">
+            <div class="invalid-feedback" style="display: block;">
+                #{cc.attrs.REQWHO}
+            </div>
+        </ui:fragment>
+        
+        <!-- Poruka za uspjeh -->
+        <ui:fragment rendered="#{ facesContext.getMessageList(cc.clientId.concat(':').concat(cc.attrs.ID)).size() eq 0
+                                and not empty cc.attrs.VALUE }">
+            <div class="valid-feedback" style="display: block;">
+                Izgleda dobro!
+            </div>
+        </ui:fragment>
+    </div>
+</cc:implementation>
+
+
+</html>

@@ -36,7 +36,7 @@
                         VALUE="#{cc.attrs.imeiprezime}" 
                         PHOLDER="Ime i prezime korisnika"/>
                     <ezcomp:inputTextPopunjen 
-                        ID="telefon" TIP="text" REQ="true" cssDIV="col-md"
+                        ID="telefon" TIP="text" REQ="true" cssDIV="col-md" 
                         REQWHO="Vrijednost za polje telefon mora biti ispunjena!!!"
                         VALUE="#{cc.attrs.telefon}" PHOLDER="Korisnički telefon" />               
                 </div>
@@ -47,7 +47,7 @@
             <ui:fragment rendered="#{cc.attrs.jelUpdatePodataka}">
             <div class="row g-2">                        
                 <ezcomp:inputTextPopunjen
-                    ID="user" TIP="text" REQ="#{cc.attrs.trebaLiPass}" cssDIV="col-md"
+                    ID="user" TIP="text" REQ="#{cc.attrs.trebaLiPass}" cssDIV="col-md" 
                     REQWHO="Vrijednost za polje korisničkog imena mora biti ispunjena!!!"
                     VALUE="#{cc.attrs.user}" 
                     PHOLDER="Korisničko ime" 

@@ -108,11 +108,11 @@
                                           ljubimacPogled.ljubimacK.ljubimac.status=='REZERVISAN'}">
                                         <h:commandButton class="btn btn-outline-success" 
                                             value="Napravi udomljenje" 
-                                            action="#{ljubimacPogled.udomiLjubimca(ljubimacPogled.selektovaniIDk, ljubimacPogled.selektovaniID)}"/>
+                                            action="#{ljubimacPogled.udomiLjubimca(ljubimacPogled.selektovaniIDk, ljubimacPogled.ljubimacK.ljubimac)}"/>
                                         
                                         <h:commandButton class="btn btn-outline-danger" 
                                             value="Ukloni rezervaciju" 
-                                            action="#{ljubimacPogled.ukloniRezervaciju(ljubimacPogled.selektovaniIDk, ljubimacPogled.selektovaniID)}"/>
+                                            action="#{ljubimacPogled.ukloniRezervaciju(ljubimacPogled.selektovaniIDk, ljubimacPogled.ljubimacK.ljubimac)}"/>
                                     </c:if>
                                 </div>
                             </h:form>

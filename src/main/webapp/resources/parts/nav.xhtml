@@ -11,6 +11,12 @@
         <title>Navigacija</title>
     </h:head>
     <h:body>
+        <style>
+            .navbar-nav .nav-link:hover {
+    color: black !important;  /* crvena na hover */
+    background-color: #f0f0f0;  /* opcionalno - pozadina */
+    }
+        </style>
         <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light border-bottom">
             <div class="container">
                 <!-- LOGO -->
@@ -50,7 +56,7 @@
                         <!-- ADMINISTRATORSKE OPCIJE (Vidljive samo adminu) -->
                         <h:panelGroup rendered="#{sessionKorisnikPogled.loged and sessionKorisnikPogled.k.tip == 'ADMINISTRATOR'}">
                             <li class="nav-item">
-                                <a class="nav-link" jsf:outcome="pocetna">Početna</a>
+                                <a class="nav-link" jsf:outcome="pocetna">&#10158; Početna</a>
                             </li>
                             
                             <!-- Akcije sa ljubimcima -->
@@ -60,8 +66,8 @@
                                     &#128062; Upravljanje ljubimcima
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="navAdminLjub">
-                                    <li><a class="dropdown-item" jsf:outcome="unosLjubimca">Unos novog ljubimca</a></li>
-                                    <li><a class="dropdown-item" jsf:outcome="pretragaLjubimca">Pretraga ljubimaca</a></li>                  
+                                    <li><a class="dropdown-item" jsf:outcome="unosLjubimca">&#10133; Unos novog ljubimca</a></li>
+                                    <li><a class="dropdown-item" jsf:outcome="pretragaLjubimca">&#128269; Pretraga ljubimaca</a></li>                  
                                 </ul>
                             </li>
 
@@ -72,8 +78,8 @@
                                    &#128100; Upravljanje korisnicima
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="navAdminKor">
-                                    <li><a class="dropdown-item" jsf:outcome="unosAdministratoraWeb">Novi administrator</a></li>
-                                    <li><a class="dropdown-item" jsf:outcome="pretragaKorisnika">Pretraga korisnika</a></li>                    
+                                    <li><a class="dropdown-item" jsf:outcome="unosAdministratoraWeb">&#10133; Novi administrator</a></li>
+                                    <li><a class="dropdown-item" jsf:outcome="pretragaKorisnika">&#128269; Pretraga korisnika</a></li>                    
                                 </ul>
                             </li>
                         </h:panelGroup>

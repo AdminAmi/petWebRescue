@@ -152,6 +152,7 @@ public class UdomljavanjeCRUD extends korisni.Kontroler {
      * Dohvata sve aktivne rezervacije (jedan upit!).
      */
     public List<Udomljen> dobaviSveRezervacijeZaKorisnika(int idK) throws SQLException {
+        System.out.println(idK);
         String sql = "SELECT " + aliasi() + "FROM udomljavanje u " +
                  "JOIN korisnik k ON u.idKlijenti = k.id " +
                  "JOIN ljubimac l ON u.idLjubimac = l.id " +
@@ -466,11 +467,13 @@ public class UdomljavanjeCRUD extends korisni.Kontroler {
     public void azurirajUdomljavanje(Udomljen u) throws SQLException {
         String sql = "UPDATE udomljavanje SET datumUdomljavanja = ?, status = ? " +
                      "WHERE idKlijenti = ? AND idLjubimac = ?";
+        java.util.Date d = new java.util.Date();
+        
         
         try (Connection kon = getKone(); 
              PreparedStatement pstmt = kon.prepareStatement(sql)) {
             
-            pstmt.setString(1, dateFormat.format(u.getDatumUdomljavanja()));
+            pstmt.setString(1, dateFormat.format(d));
             pstmt.setString(2, u.getStatus());
             pstmt.setInt(3, u.getIdKlijenti());
             pstmt.setInt(4, u.getIdLjubimac());

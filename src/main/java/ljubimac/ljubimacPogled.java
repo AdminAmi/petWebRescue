@@ -34,7 +34,7 @@ public class ljubimacPogled implements Serializable {
     private ArrayList<Udomljen> historijaAktivnosti = new ArrayList<>();
     private ArrayList<Ljubimac> psiSlobodni = new ArrayList<>();
     private ArrayList<Ljubimac> mackeSlobodne = new ArrayList<>();
-    private ArrayList<Ljubimac> rezervisaniOdKorisnika = new ArrayList<>();
+    private ArrayList<Udomljen> rezervisaniOdKorisnika = new ArrayList<>();
     private ArrayList<Ljubimac> pretragaLista = new ArrayList<>();
     private String prLjubimca;
     private Korisnik koris = new Korisnik();
@@ -42,6 +42,8 @@ public class ljubimacPogled implements Serializable {
     private int selektovaniID;
     private int selektovaniIDk;
     private Part datoteka;
+    
+    private boolean pretrazivanje;
 
     public ljubimacPogled() { 
         try {
@@ -84,10 +86,8 @@ public class ljubimacPogled implements Serializable {
             if (prLjubimca == null || prLjubimca.isEmpty()) {
                 webUtil.infoPoruka("Unesite barem jedno slovo za pretraživanje", "");                                
             } else {
-                pretragaLista = (ArrayList<Ljubimac>) LjubimacK.dobaviSveLjubimce(0, prLjubimca, 0);
-                if (pretragaLista.isEmpty()) {
-                    webUtil.testErr("Za unešene podatke nema rezultata!");
-                }
+                pretragaLista = (ArrayList<Ljubimac>) LjubimacK.dobaviSveLjubimce(0, prLjubimca, 0);                
+                pretrazivanje = true;
             }
         } catch (SQLException ex) {
              webUtil.errPoruka("Greška u pretraživanju: " + ex.getMessage(), "");
@@ -106,6 +106,7 @@ public class ljubimacPogled implements Serializable {
 //        ucitajMojeRezervacije();
         getLjub();
         ucitajSveRezervisane();
+        ucitajSveRezervisaneZaKorisnika(idK);
         ucitajSveUdomljene();
 //      
     }  
@@ -292,9 +293,9 @@ public class ljubimacPogled implements Serializable {
     }
      public void ucitajSveRezervisaneZaKorisnika(int idK) {
         try {
-            rezervisani.clear();
+            rezervisaniOdKorisnika.clear();
             UdomljavanjeCRUD uc = new UdomljavanjeCRUD();
-            rezervisani = (ArrayList<Udomljen>) uc.dobaviSveRezervacijeZaKorisnika(idK);
+            rezervisaniOdKorisnika= (ArrayList<Udomljen>) uc.dobaviSveRezervacijeZaKorisnika(idK);
         } catch (SQLException ex) {
             webUtil.errPoruka("Greška pri učitavanju rezervisanih: " + ex.getMessage());
         }
@@ -313,19 +314,7 @@ public class ljubimacPogled implements Serializable {
         }
     }
 
-    /**
-     * Učitava rezervacije trenutnog korisnika
-     */
-    public void ucitajMojeRezervacije() {
-        if (selektovaniID > 0) {
-            try {
-                System.out.println("AJAX - Učitavanje mojih rezervacija za ID: " + selektovaniID);
-                rezervisaniOdKorisnika = (ArrayList<Ljubimac>) LjubimacK.dobaviSveLjubimceKorisnika(selektovaniID);
-            } catch (SQLException ex) {
-                webUtil.errPoruka("Greška pri učitavanju rezervacija: " + ex.getMessage());
-            }
-        }
-    }
+    
 
     // OPCIONO: Metoda za resetovanje svih listi (ako želiš da osvježiš podatke nakon akcije)
     public void resetujListe() {
@@ -402,13 +391,13 @@ public class ljubimacPogled implements Serializable {
  
  * @return Lista rezervisanih ljubimaca klijenta.
  */
-    public ArrayList<Ljubimac> getRezervisaniOdKorisnika() {       
+    public ArrayList<Udomljen> getRezervisaniOdKorisnika() {       
 
         return rezervisaniOdKorisnika;
     }
 
 
-    public void setRezervisaniOdKorisnika(ArrayList<Ljubimac> rezervisaniOdKorisnika) {
+    public void setRezervisaniOdKorisnika(ArrayList<Udomljen> rezervisaniOdKorisnika) {
         this.rezervisaniOdKorisnika = rezervisaniOdKorisnika;
     }
 
@@ -468,6 +457,14 @@ public class ljubimacPogled implements Serializable {
 
     public ArrayList<Udomljen> getHistorijaAktivnosti() {
         return historijaAktivnosti;
+    }
+
+    public boolean isPretrazivanje() {
+        return pretrazivanje;
+    }
+
+    public void setPretrazivanje(boolean pretrazivanje) {
+        this.pretrazivanje = pretrazivanje;
     }
     
     

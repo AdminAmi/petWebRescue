@@ -18,22 +18,23 @@
         <cc:attribute name="prikaziMarginu" type="java.lang.Boolean" default="true" />
         
         <cc:attribute name="VISIBLE" type="java.lang.Boolean" default="true" />
-        <cc:attribute name="VALIDATE" type="java.lang.Boolean" default="false" />
+        <cc:attribute name="VALIDATE" type="java.lang.Boolean" default="true" />
     </cc:interface>
      <!-- IMPLEMENTATION -->
    <cc:implementation>
-    <div class="form-floating #{cc.attrs.prikaziMarginu ? 'mb-3' : ''} #{cc.attrs.cssDIV}">
+    <div class="form-floating #{cc.attrs.prikaziMarginu ? 'mb-3' : ''} #{cc.attrs.cssDIV}" 
+         jsf:rendered="#{cc.attrs.VISIBLE}">
         <input jsf:id="#{cc.attrs.ID}" 
                jsf:value="#{cc.attrs.VALUE}"
                type="#{cc.attrs.TIP}"
-               jsf:required="#{cc.attrs.REQ}" 
-               jsf:requiredMessage="#{cc.attrs.REQWHO}"
+               jsf:required="#{cc.attrs.VALIDATE and cc.attrs.REQ}" 
+               jsf:requiredMessage="#{cc.attrs.VALIDATE ? cc.attrs.REQWHO : ''}"
                placeholder="#{cc.attrs.PHOLDER}"
                disabled="#{cc.attrs.DISABLED}"
-               class="form-control #{facesContext.getMessageList(cc.clientId.concat(':').concat(cc.attrs.ID)).size() gt 0 ? 'is-invalid' : 
+               class="form-control #{cc.attrs.VALIDATE ? (facesContext.getMessageList(cc.clientId.concat(':').concat(cc.attrs.ID)).size() gt 0 ? 'is-invalid' : 
                                      (facesContext.getMessageList(cc.clientId.concat(':').concat(cc.attrs.ID)).size() eq 0
-                                and not empty cc.attrs.VALUE  ? 'is-valid' : '')} #{cc.attrs.CSS}">
-            <f:ajax event="blur" render="@this" execute="@this" />
+                                and not empty cc.attrs.VALUE  ? 'is-valid' : '')) : ''} #{cc.attrs.CSS}">
+            <f:ajax event="blur" render="@this" execute="@this" disabled="#{not cc.attrs.VALIDATE}" />
         </input>
         
         <label jsf:for="#{cc.attrs.ID}">
@@ -41,21 +42,19 @@
         </label>
 
         <!-- Poruka za grešku -->
-        <ui:fragment rendered="#{facesContext.getMessageList(cc.clientId.concat(':').concat(cc.attrs.ID)).size() gt 0}">
+        <ui:fragment rendered="#{cc.attrs.VALIDATE and facesContext.getMessageList(cc.clientId.concat(':').concat(cc.attrs.ID)).size() gt 0}">
             <div class="invalid-feedback" style="display: block;">
                 #{cc.attrs.REQWHO}
             </div>
         </ui:fragment>
         
         <!-- Poruka za uspjeh -->
-        <ui:fragment rendered="#{ facesContext.getMessageList(cc.clientId.concat(':').concat(cc.attrs.ID)).size() eq 0
-                                and not empty cc.attrs.VALUE }">
+        <ui:fragment rendered="#{cc.attrs.VALIDATE and facesContext.getMessageList(cc.clientId.concat(':').concat(cc.attrs.ID)).size() eq 0
+                                and not empty cc.attrs.VALUE}">
             <div class="valid-feedback" style="display: block;">
                 Izgleda dobro!
             </div>
         </ui:fragment>
     </div>
 </cc:implementation>
-
-
 </html>

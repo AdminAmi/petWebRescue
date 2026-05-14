@@ -13,7 +13,9 @@
     <!-- IMPLEMENTATION -->
     <cc:implementation>
         <h:panelGroup rendered="#{not empty cc.attrs.ListaZaTabelu}">              
-            <ezcomp:tabelaLjubimci Zapisi="#{cc.attrs.ListaZaTabelu}"/>
+            <ezcomp:tabelaLjubimci Zapisi="#{cc.attrs.ListaZaTabelu}"
+                                   Poruka=""/>
+            
         </h:panelGroup>
         <h:panelGroup 
             rendered="#{empty cc.attrs.ListaZaTabelu}">            

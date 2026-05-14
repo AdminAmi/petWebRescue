@@ -51,13 +51,12 @@
                 <h:commandButton value="&#128269; Pretraga" class="btn btn-outline-secondary" action="#{ljubimacPogled.pretraga()}"/>
             </div>
                 <!-- Prikaz rezultata pretrage ako postoje -->
-                <h:panelGroup id="pretraga1" rendered="#{ljubimacPogled.pretragaLista != null }">
-                    <ezcomp:tabelaLjubimci Zapisi="#{ljubimacPogled.pretragaLista}" />
-                </h:panelGroup>
-                <!-- Poruka ako nema rezultata -->
-                <h:panelGroup rendered="#{ljubimacPogled.pretragaLista == null or ljubimacPogled.pretragaLista.size() == 0}">
-                    Za unešene podatke nema rezultata pretraživanja.
-                </h:panelGroup>
+                
+            <ezcomp:tabelaLjubimci Zapisi="#{ljubimacPogled.pretragaLista}" 
+                   Poruka="&#128204; Za unešene podatke nema rezultata pretraživanja."
+                   pretrazivano="#{ljubimacPogled.pretrazivanje}"/>
+                
+                
                 
             </h:form>
             </div>

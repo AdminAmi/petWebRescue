@@ -35,7 +35,7 @@
               <li class="nav-item">
                 <a class="nav-link" data-bs-toggle="tab" href="#rezervisani">Dostupni ljubimci - mačke</a>
               </li>
-              <c:if test="#{korisnikPogled.loged}">
+                 <c:if test="#{sessionKorisnikPogled.loged}">
               <li class="nav-item">
                 <a class="nav-link" data-bs-toggle="tab" href="#udomljeni">Moji rezervisani ljubimci</a>
               </li>
@@ -47,13 +47,14 @@
                 <div class="tab-pane   active " id="dostupni"><p/>
                     <ezcomp:tabeleZaljubimceSaIspisom 
                         ListaZaTabelu="#{ljubimacPogled.psiSlobodni}" 
-                        Poruka="Nema slobodnih pasa u udomilištu!"/></div>
+                        Poruka="&#128204; Nema slobodnih pasa u udomilištu!"/></div>
                 <div class="tab-pane  fade" id="rezervisani"><p/>
                     <ezcomp:tabeleZaljubimceSaIspisom 
                         ListaZaTabelu="#{ljubimacPogled.mackeSlobodne}" 
-                        Poruka="Nema slobodnih mačaka u udomilištu!"/> </div>
-                <div class="tab-pane  fade" id="udomljeni"><p/><ezcomp:tabelaLjubimci 
-                        Zapisi="#{ljubimacPogled.rezervisaniOdKorisnika}"/> </div>
+                        Poruka="&#128204; Nema slobodnih mačaka u udomilištu!"/> </div>
+                <div class="tab-pane  fade" id="udomljeni"><p/><ezcomp:tabelaLjubimciUdomljenje 
+                        Zapisi="#{ljubimacPogled.rezervisani}"
+                        Poruka="&#128204; Nemate rezrvisanih ljubimaca."/> </div>
             </div>
             </div>              
                

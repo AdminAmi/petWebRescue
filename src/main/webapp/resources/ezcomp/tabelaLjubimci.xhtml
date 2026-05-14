@@ -11,11 +11,14 @@
     <!-- INTERFACE -->
     <cc:interface>
         <cc:attribute name="Zapisi" required="true" type="java.util.ArrayList"/>
+        <cc:attribute name="Poruka" required="true" />
+        <cc:attribute name="pretrazivano" type="boolean" required="false" default="false"/>
     </cc:interface>
 
     <!-- IMPLEMENTATION -->
     <cc:implementation>
         <div class="table-responsive" >
+            <h:panelGroup rendered="#{not empty cc.attrs.Zapisi}">
             <h:dataTable value="#{cc.attrs.Zapisi}" var="ljub" 
                 class="small table table-bordered table-sm align-middle table-striped" >
                 <ui:remove>
@@ -64,6 +67,11 @@
                 </h:form>
             </h:column>
         </h:dataTable>
+        </h:panelGroup>
+        <h:panelGroup 
+            rendered="#{empty cc.attrs.Zapisi and cc.attrs.pretrazivano}">            
+            <div class="alert alert-info">#{cc.attrs.Poruka}</div>
+        </h:panelGroup>
         </div>
     </cc:implementation>
 </html>
