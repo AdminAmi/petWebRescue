@@ -120,7 +120,10 @@
                     </div>
                 </div>
                 
-                <!-- Accordion stavka 2: Historija aktivnosti ljubimca (zatvoren po defaultu) -->
+                <!-- Accordion stavka 2: Historija aktivnosti ljubimca (zatvoren po defaultu)
+                     i vidi se jedino ako je korisnik logiran
+                -->
+                <c:if test="#{sessionKorisnikPogled.loged}">
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="headingHistorija">
                         <button class="accordion-button collapsed" type="button" 
@@ -138,7 +141,7 @@
                         </div>
                     </div>
                 </div>
-                
+                </c:if>
             </div>
             <!-- ============ KRAJ ACCORDIONA ============ -->
             
