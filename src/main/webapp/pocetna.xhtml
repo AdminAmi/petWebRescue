@@ -11,8 +11,7 @@
     
     <h:head>
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
-        <title>PetRescue - Administracija Ljubimaca</title>
-        
+        <title>PetRescue - Administracija Ljubimaca</title>        
         <!-- Resursi: Bootstrap, Custom CSS i JS -->
         <h:outputStylesheet name="bootstrap.min.css" />
         <h:outputStylesheet name="mycss.css" />
@@ -21,7 +20,7 @@
         
         <f:metadata>
             <!-- Inicijalno učitavanje liste ljubimaca za određenog korisnika -->
-            <f:viewAction action="#{ljubimacPogled.ljubimci(korisnikPogled.k.id)}"/>           
+            <f:viewAction action="#{ljubimacPogled.ljubimci(sessionKorisnikPogled.k.id)}"/>           
         </f:metadata>        
     </h:head>
 

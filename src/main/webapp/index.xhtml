@@ -10,6 +10,7 @@
       xmlns:p="jakarta.faces.passthrough">
     <h:head>
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <meta charset="UTF-8" />
         <title>Pet Rescue</title>
         <h:outputStylesheet   name="bootstrap.min.css" />
         <h:outputStylesheet   name="mycss.css" />
@@ -19,24 +20,24 @@
     </h:head>
     <h:body class="test" >
         <h:messages style="display: none"/>
-        <!-- Uključujem navbar za navigaciju-->
+        <!-- Uključujem flash scope za ispis poruka iz koda-->
         <ui:include src="resources/parts/flash.xhtml"/>
-        <ui:include src="resources/parts/nav.xhtml"/>
-        
-        
+        <!-- Uključujem navbar za navigaciju-->
+        <ui:include src="resources/parts/nav.xhtml"/> 
         <!-- Centralni dio ekrana -->
         <div class="container position-absolute top-50 start-50 translate-middle"  style="opacity: 0.8">
             <div class="mt-2 p-4 bg-light  rounded-pill">
-                <!--<br/><br/><br/><br/><br/><br/>-->
+                <!--Porika dobrodošlice i poziv stranice za registraciju korisnika-->
                <p class=" fs-2  text-center" >
-                   Dobro došli na stranicu za registraciju i odabir kućnog ljubimca 
+                   Dobro došli  
                 <span class="text-center fs-6" style="padding-top: 30px;">
-                    <br/>Ukoliko ne posjedujete korisnički račun prijavite se putem sljedećeg linka: 
+                    <br/>Ukoliko ne posjedujete korisnički račun prijavite se
+                        putem sljedećeg linka: 
                     <a jsf:outcome="unosKorisnikaWeb">
                         <b>Unesite korisničke podatke</b>
                     </a>             
                 </span>
-                   <ui:include src="resources/parts/flash.xhtml"/>
+                   
                </p>
             </div>
         </div >       
