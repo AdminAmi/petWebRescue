@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Context docBase="D:/ww/test/mojPrvi/web/src/main/webapp" path="/web">
+  <Resources cacheMaxSize="10240">
+    <PreResources base="D:/ww/test/mojPrvi/web/target/classes" className="org.apache.catalina.webresources.DirResourceSet" webAppMount="/WEB-INF/classes"/>
+  </Resources>
+</Context>

@@ -27,7 +27,9 @@ public class Ljubimac {
     /** Datum prijema u sklonište ljubimca*/
     private String datumPrijema;
     /** Lista klijenata koji su povezani sa ovim ljubimcem. */
-    private ArrayList <Korisnik> klijenti = new ArrayList<>();    
+    private ArrayList <Korisnik> klijenti = new ArrayList<>();
+
+    private String slikaURL;
 
     
     public Ljubimac() {
@@ -120,4 +122,14 @@ public class Ljubimac {
                 ", starost='" + starost + '\'' +
                 '}';
     }
+
+    public void setSlikaURL(String slikaURL) {
+        this.slikaURL = slikaURL;
+    }
+
+    public String getSlikaURL() {
+        return slikaURL;
+    }
+    
+    
 }

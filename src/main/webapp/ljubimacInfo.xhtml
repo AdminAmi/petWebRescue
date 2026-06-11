@@ -114,6 +114,14 @@
                                             value="Ukloni rezervaciju" 
                                             action="#{ljubimacPogled.ukloniRezervaciju(ljubimacPogled.selektovaniIDk, ljubimacPogled.ljubimacK.ljubimac)}"/>
                                     </c:if>
+                                    <c:if test="#{sessionKorisnikPogled.k.tip=='ADMINISTRATOR' and 
+                                          ljubimacPogled.ljubimacK.ljubimac.status=='UDOMLJEN'}">
+                                       
+                                        
+                                        <h:commandButton class="btn btn-outline-danger" 
+                                            value="Ukloni udomljenje" 
+                                            action="#{ljubimacPogled.ukloniUdomljenje(ljubimacPogled.selektovaniIDk, ljubimacPogled.ljubimacK.ljubimac.id)}"/>
+                                    </c:if>
                                 </div>
                             </h:form>
                         </div>
