@@ -33,7 +33,7 @@ jobs:
 
       - name: Generisi Javadoc
         run: |
-          mvn javadoc:javadoc
+          mvn clean javadoc:javadoc -X
           if [ ! -d "target/site/apidocs" ]; then
             echo "Upozorenje: Maven nije generisao Javadoc."
             mkdir -p target/site/apidocs
