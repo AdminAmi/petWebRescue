@@ -76,8 +76,9 @@
                 <configuration>
                     <show>private</show>
                     <doclint>none</doclint>
-                    <!-- Ovo osigurava da Javadoc nađe sve potrebne biblioteke -->
-                    <additionalJOption>-Xdoclint:none</additionalJOption>
+                    <failOnError>false</failOnError>
+                    <!-- Prisili Maven da uključi sve biblioteke iz POM-a tokom generisanja -->
+                    <includeDependencySources>true</includeDependencySources>
                 </configuration>
                 <executions>
                     <execution>
@@ -85,8 +86,8 @@
                         <goals>
                             <goal>javadoc</goal>
                         </goals>
-                        <!-- Vežemo ga uz 'package' fazu kako bi se izvršio nakon prevođenja -->
-                        <phase>package</phase>
+                        <!-- Vežemo ga za 'compile' fazu umjesto 'package' -->
+                        <phase>compile</phase>
                     </execution>
                 </executions>
             </plugin>
