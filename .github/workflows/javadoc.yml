@@ -36,15 +36,14 @@ jobs:
 
       - name: Generisi Javadoc
         run: |
-          mvn clean compile
-          mvn javadoc:javadoc -Ddoclint=none -Dmaven.javadoc.failOnError=false
+          mvn clean compile javadoc:javadoc -Ddoclint=none -Dmaven.javadoc.failOnError=false
 
       - name: Osiguraj postojanje foldera
         run: |
-          if [ ! -d "target/site/apidocs" ]; then
+          if [ ! -d "target/reports/apidocs" ]; then
             echo "Upozorenje: Maven nije napravio apidocs folder. Kreiram zamjenski..."
-            mkdir -p target/site/apidocs
-            echo "<h1>petWebRescue Javadoc</h1><p>Dokumentacija se generise.</p>" > target/site/apidocs/index.html
+            mkdir -p target/reports/apidocs
+            echo "<h1>petWebRescue Javadoc</h1><p>Dokumentacija se generise.</p>" > target/reports/apidocs/index.html
           fi
 
       - name: Postavi GitHub Pages
@@ -55,7 +54,7 @@ jobs:
       - name: Otpremi Javadoc arhivu
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'target/site/apidocs'
+          path: 'target/reports/apidocs'
 
       - name: Objavi na GitHub Pages
         id: deployment
