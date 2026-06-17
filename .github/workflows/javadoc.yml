@@ -32,7 +32,13 @@ jobs:
           cache: 'maven'     # Ubrzava naknadna pokretanja keširanjem zavisnosti
 
       - name: Generisi Javadoc
-        run: mvn package -DskipTests
+        run: mvn javadoc:javadoc
+         if [ ! -d "target/site/apidocs" ]; then
+            echo "Upozorenje: Maven nije generisao Javadoc (vjerovatno nema Java fajlova u src/main/java)."
+            echo "Kreiram privremeni folder kako akcija ne bi pala..."
+            mkdir -p target/site/apidocs
+            echo "<h1>Projekat petWebRescue - Javadoc uskoro stize</h1><p>Dodajte Java klase u src/main/java da se generise prava dokumentacija.</p>" > target/site/apidocs/index.html
+          fi
 
       - name: Postavi GitHub Pages
         uses: actions/configure-pages@v5 # Slobodno stavite verziju v5 ovdje
