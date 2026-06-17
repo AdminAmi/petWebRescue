@@ -33,17 +33,15 @@ jobs:
 
       - name: Generisi Javadoc
         run: |
-          # Prvo preuzimamo zavisnosti i kompajliramo klase
-           mvn clean compile
+          run: |
+          echo "=== 1. PROVJERA STRUKTURE FOLDERA ==="
+          ls -R src/
           
-          # Generišemo javadoc i ignorišemo potencijalne greške u komentarima
-           mvn javadoc:javadoc -Ddoclint=none -Dmaven.javadoc.skip=false
-         # mvn clean javadoc:javadoc -X
-         # if [ ! -d "target/site/apidocs" ]; then
-         #   echo "Upozorenje: Maven nije generisao Javadoc."
-         #   mkdir -p target/site/apidocs
-         #   echo "<h1>Projekat petWebRescue - Javadoc uskoro stize</h1><p>Dodajte Java klase u src/main/java.</p>" > target/site/apidocs/index.html
-         # fi
+          echo "=== 2. POKRETANJE KOMPAJLIRANJA ==="
+          mvn clean compile
+          
+          echo "=== 3. GENERISANJE JADOC-A ==="
+          mvn javadoc:javadoc -DfailOnError=true -Dmaven.javadoc.failOnError=true
 
       - name: Postavi GitHub Pages
         uses: actions/configure-pages@v5
