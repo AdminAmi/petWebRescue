@@ -76,7 +76,7 @@
                     <show>private</show>
                     <doclint>none</doclint>
                     <!-- Prisilio postavljanje u target/site/apidocs -->
-                    <reportOutputDirectory>${project.reporting.outputDirectory}</reportOutputDirectory>
+                    <outputDirectory>${project.build.directory}/site/apidocs</outputDirectory>
                     <destDir>apidocs</destDir>
                 </configuration>
                
