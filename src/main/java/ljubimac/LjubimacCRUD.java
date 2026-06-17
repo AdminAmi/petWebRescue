@@ -231,7 +231,7 @@ public class LjubimacCRUD extends korisni.Kontroler {
      * 
      * @param lj Objekat ljubimca.
      * @param idAdmina ID administratora koji je zaprimio ljubimca (opciono, može biti 0).
-     * @throws SQLException 
+     * @throws SQLException ukoliko dođe do greške pri radu sa bazom podataka.
      */
     public void dodajLjubimcaSaZaprimanjem(Ljubimac lj, int idAdmina) throws SQLException {
         String sqlLjubimac = "INSERT INTO ljubimac (ime, vrsta, starost, status, datumPrijema) VALUES (?, ?, ?, ?, ?)";
@@ -278,8 +278,14 @@ public class LjubimacCRUD extends korisni.Kontroler {
         }
     }
 
-    /** @return Vraća trenutnog ljubimca kontrolera. */
+    /** 
+     * Vraća trenutnog ljubimca kontrolera.
+     * @return Vraća trenutnog ljubimca kontrolera. 
+     */
     public Ljubimac getLjubimac() { return ljubimac; }
-    /** @param ljubimac Postavlja novog ljubimca u kontroler. */
+    /** 
+     * Postavlja novog ljubimca u kontroler.
+     * @param ljubimac Postavlja novog ljubimca u kontroler. 
+     */
     public void setLjubimac(Ljubimac ljubimac) { this.ljubimac = ljubimac; }
 }

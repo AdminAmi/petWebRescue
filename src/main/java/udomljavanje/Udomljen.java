@@ -1,5 +1,8 @@
 
 package udomljavanje;
+import java.util.Date;
+import korisnik.Korisnik;
+import ljubimac.Ljubimac;
 
 /**
  * Predstavlja entitet udomljavanja koji povezuje klijenta i ljubimca.
@@ -9,9 +12,7 @@ package udomljavanje;
  * @author Amel Džanić
  * @version 1.1
  */
-import java.util.Date;
-import korisnik.Korisnik;
-import ljubimac.Ljubimac;
+
 
 public class Udomljen {
     /** Identifikator klijenta koji učestvuje u procesu. */
@@ -22,11 +23,11 @@ public class Udomljen {
     private String datumUdomljavanja;
     /** Referenca na objekat {@link Ljubimac}. */
     private Ljubimac ljub;
-    /** Referenca na objekat {@link Klijent}. */
+    /** Referenca na objekat {@link Korisnik}. */
     private Korisnik klijent;
     /** 
      * Status udomljavanja (npr. SLOBODAN, REZERVISAN, UDOMLJEN, VRACEN).
-     * Inicijalno se postavlja na SLOBODAN koristeći {@link StanjeLjubimca}.
+     * Inicijalno se postavlja na SLOBODAN koristeći {@link ljubimac.StanjeLjubimca}.
      */    
     private String status;
 
@@ -57,7 +58,7 @@ public class Udomljen {
      * @param idLjubimac        ID ljubimca.
      * @param datumUdomljavanja Datum procesa.
      * @param ljubi             Instanca objekta {@link Ljubimac}.
-     * @param korisnik          Instanca objekta {@link Klijent}.
+     * @param korisnik          Instanca objekta {@link Korisnik}.
      */
     public Udomljen(int idKlijenti, int idLjubimac, String datumUdomljavanja,
             ljubimac.Ljubimac ljubi, Korisnik korisnik) {
@@ -69,30 +70,67 @@ public class Udomljen {
         this.status=ljubimac.StanjeLjubimca.SLOBODAN.toString();
     }
 
-    // Getteri i setteri
-    /** @return Vraća ID klijenta. */
+    
+    /** 
+     * Vraća ID klijenta koji je povezan s ovim udomljavanjem. 
+     * @return ID klijenta koji je povezan s ovim udomljavanjem.
+    */
     public int getIdKlijenti() {return idKlijenti;}
-    /** @param idKlijenti Postavlja ID klijenta. */
+    /** 
+     * Postavlja ID klijenta koji je povezan s ovim udomljavanjem.
+     * @param idKlijenti ID klijenta za postavljanje.
+     */
     public void setIdKlijenti(int idKlijenti) {this.idKlijenti = idKlijenti;}
-    /** @return Vraća ID ljubimca. */
+    /** 
+     * Vraća ID ljubimca koji je povezan s ovim udomljavanjem.
+     * 
+     * @return Vraća ID ljubimca. 
+     */
     public int getIdLjubimac() {return idLjubimac;}
-    /** @param k Postavlja referencu na klijenta. */
+    /** 
+     * Postavlja referencu na klijenta koji je povezan s ovim udomljavanjem.
+     * @param k Referenca na klijenta za postavljanje.
+     */
     public void setKlijent(Korisnik k){klijent=k;}
-    /** @param idLjubimac Postavlja ID ljubimca. */
+    /** 
+     * Postavlja ID ljubimca koji je povezan s ovim udomljavanjem.
+     * @param idLjubimac ID ljubimca za postavljanje.
+     */
     public void setIdLjubimac(int idLjubimac) {this.idLjubimac = idLjubimac;}
-    /** @return Vraća datum udomljavanja. */
+    /** 
+     * Vraća datum udomljavanja.
+     * @return Datum udomljavanja.
+     */
     public String getDatumUdomljavanja() {return datumUdomljavanja;}
-    /** @param datumUdomljavanja Postavlja datum udomljavanja. */
+    /** 
+     * Postavlja datum udomljavanja.
+     * @param datumUdomljavanja Datum udomljavanja za postavljanje.
+     */
     public void setDatumUdomljavanja(String datumUdomljavanja) {this.datumUdomljavanja = datumUdomljavanja;}
-    /** @return Vraća referencu na klijenta. */
+    /** 
+     * Vraća referencu na klijenta koji je povezan s ovim udomljavanjem.
+     * @return Referenca na klijenta.
+     */
     public Korisnik getKlijent() {return klijent;}
-    /** @return Vraća referencu na ljubimca. */
+    /** 
+     * Vraća referencu na ljubimca koji je povezan s ovim udomljavanjem.
+     * @return Referenca na ljubimca.
+     */
     public Ljubimac getLjub() {return ljub;}
-    /** @param lj Postavlja referencu na ljubimca. */
+    /** 
+     * Postavlja referencu na ljubimca koji je povezan s ovim udomljavanjem.
+     * @param lj Referenca na ljubimca za postavljanje.
+     */
     public void setLjub(Ljubimac lj){ljub=lj;}
-    /** @return Trenutni status procesa (npr. SLOBODAN, UDOMLJEN). */
+    /** 
+     * Vraća trenutni status procesa (npr. SLOBODAN, UDOMLJEN).
+     * @return Trenutni status procesa.
+     */
     public String getStatus() {return status;}
-    /** @param status Postavlja novi status procesa. */
+    /** 
+     * Postavlja novi status procesa.
+     * @param status Novi status procesa.
+     */
     public void setStatus(String status) {this.status = status;}    
     /**
      * Vraća tekstualni prikaz objekta sa ključnim ID parametrima.

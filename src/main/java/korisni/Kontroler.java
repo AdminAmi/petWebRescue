@@ -18,11 +18,18 @@ import javax.swing.JOptionPane;
  * @author Amel Dzanic
  */
 public abstract class Kontroler {
-    protected final String      dbPath = "jdbc:sqlite:" + 
-            webUtil.vratiPathDB()+"registracija";;
+    /**
+     * Varijabla <code>dbPath</code> sadrži putanju do baze podataka koja se koristi u ovoj klasi.
+     */
+    protected final String      dbPath = "jdbc:sqlite:" + webUtil.vratiPathDB()+"registracija";
+    /**
+     * Varijabla <code>kone</code> predstavlja konekciju sa bazom podataka. Ova varijabla se koristi za uspostavljanje veze sa bazom i izvršavanje SQL naredbi.
+     */
     protected Connection        kone;
-    
-     public Kontroler() {
+    /**
+     * Konstruktor klase <code>Kontroler</code> pokušava učitati SQLite JDBC driver. Ako driver nije pronađen, ispisuje se poruka o grešci. Ovaj konstruktor se poziva prilikom kreiranja objekata klasa koje nasljeđuju <code>Kontroler</code>.
+     */
+    public Kontroler() {
         try {            
            System.out.println(dbPath + "\nU kontroleru sam");
             Class.forName("org.sqlite.JDBC");       
@@ -75,7 +82,10 @@ public abstract class Kontroler {
         }
     }       
   
-
+    /**
+     * Metoda <code>getDbPath</code> vraća putanju do baze podataka koja se koristi u ovoj klasi.
+     * @return String koji predstavlja putanju do baze podataka
+     */
     public String getDbPath() {
         return dbPath;
     }
