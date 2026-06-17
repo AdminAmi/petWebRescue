@@ -75,11 +75,19 @@
                 <configuration>
                     <show>private</show>
                     <doclint>none</doclint>
-                    <!-- Prisilio postavljanje u target/site/apidocs -->
-                    <outputDirectory>${project.build.directory}/site/apidocs</outputDirectory>
-                    <destDir>apidocs</destDir>
+                    <!-- Ovo osigurava da Javadoc nađe sve potrebne biblioteke -->
+                    <additionalJOption>-Xdoclint:none</additionalJOption>
                 </configuration>
-               
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>javadoc</goal>
+                        </goals>
+                        <!-- Vežemo ga uz 'package' fazu kako bi se izvršio nakon prevođenja -->
+                        <phase>package</phase>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

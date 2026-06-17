@@ -31,8 +31,8 @@ jobs:
           java-version: '17' # Promijenite u '11' ili '21' zavisno od vaše verzije Jave
           cache: 'maven'     # Ubrzava naknadna pokretanja keširanjem zavisnosti
 
-      - name: Generisi Javadoc pomoću Mavena
-        run: mvn javadoc:javadoc
+      - name: Generisi Javadoc
+        run: mvn package -DskipTests
 
       - name: Postavi GitHub Pages
         uses: actions/configure-pages@v5 # Slobodno stavite verziju v5 ovdje
