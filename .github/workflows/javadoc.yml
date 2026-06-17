@@ -3,7 +3,7 @@ name: Generate and Deploy Javadoc
 on:
   push:
     branches:
-      - main # Promijenite u master ako vam se glavna grana tako zove
+      - master # Promijenite u master ako vam se glavna grana tako zove
 
 permissions:
   contents: read
