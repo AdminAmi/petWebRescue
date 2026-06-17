@@ -3,7 +3,7 @@ name: Generate and Deploy Javadoc
 on:
   push:
     branches:
-      - master # Promijenite u master ako vam se glavna grana tako zove
+      - master # Promijenite u main ako vam se glavna grana tako zove
 
 permissions:
   contents: read
@@ -28,28 +28,27 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '17' # Promijenite u '11' ili '21' zavisno od vaše verzije Jave
-          cache: 'maven'     # Ubrzava naknadna pokretanja keširanjem zavisnosti
+          java-version: '17'
+          cache: 'maven'
 
       - name: Generisi Javadoc
-        run: mvn javadoc:javadoc
-         if [ ! -d "target/site/apidocs" ]; then
-            echo "Upozorenje: Maven nije generisao Javadoc (vjerovatno nema Java fajlova u src/main/java)."
-            echo "Kreiram privremeni folder kako akcija ne bi pala..."
+        run: |
+          mvn javadoc:javadoc
+          if [ ! -d "target/site/apidocs" ]; then
+            echo "Upozorenje: Maven nije generisao Javadoc."
             mkdir -p target/site/apidocs
-            echo "<h1>Projekat petWebRescue - Javadoc uskoro stize</h1><p>Dodajte Java klase u src/main/java da se generise prava dokumentacija.</p>" > target/site/apidocs/index.html
+            echo "<h1>Projekat petWebRescue - Javadoc uskoro stize</h1><p>Dodajte Java klase u src/main/java.</p>" > target/site/apidocs/index.html
           fi
 
       - name: Postavi GitHub Pages
-        uses: actions/configure-pages@v5 # Slobodno stavite verziju v5 ovdje
+        uses: actions/configure-pages@v5
         with:
-          enablement: true # Ovo prisilno aktivira Pages ako sistem javi grešku
-
+          enablement: true
 
       - name: Otpremi Javadoc arhivu
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'target/site/apidocs' # Maven uvijek ovdje čuva generisani Javadoc
+          path: 'target/site/apidocs'
 
       - name: Objavi na GitHub Pages
         id: deployment
