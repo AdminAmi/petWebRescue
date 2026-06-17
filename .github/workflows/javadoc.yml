@@ -35,7 +35,10 @@ jobs:
         run: mvn javadoc:javadoc
 
       - name: Postavi GitHub Pages
-        uses: actions/configure-pages@v4
+        uses: actions/configure-pages@v5 # Slobodno stavite verziju v5 ovdje
+        with:
+          enablement: true # Ovo prisilno aktivira Pages ako sistem javi grešku
+
 
       - name: Otpremi Javadoc arhivu
         uses: actions/upload-pages-artifact@v3
