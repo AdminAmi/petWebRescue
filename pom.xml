@@ -77,8 +77,8 @@
                     <show>private</show>
                     <doclint>none</doclint>
                     <failOnError>false</failOnError>
-                    <!-- Prisili Maven da uključi sve biblioteke iz POM-a tokom generisanja -->
-                    <includeDependencySources>true</includeDependencySources>
+                    <!-- Svi operativni sistemi i verzije sada moraju snimiti fajlove ovdje -->
+                    <outputDirectory>${project.build.directory}/site</outputDirectory>
                 </configuration>
                 <executions>
                     <execution>
@@ -86,7 +86,6 @@
                         <goals>
                             <goal>javadoc</goal>
                         </goals>
-                        <!-- Vežemo ga za 'compile' fazu umjesto 'package' -->
                         <phase>compile</phase>
                     </execution>
                 </executions>
